@@ -68,15 +68,15 @@ public final class SecretSharing {
      *                                  values of varying lengths
      */
     public static byte[] combine(@Nonnull Set<Share> shares) {
-        final int[] lens = shares.stream().mapToInt(s -> s.getValue().length).distinct().toArray();
-        if (lens.length == 0) {
+        final int[] l = shares.stream().mapToInt(s -> s.value.length).distinct().toArray();
+        if (l.length == 0) {
             throw new IllegalArgumentException("No shares provided");
         }
-        if (lens.length != 1) {
+        if (l.length != 1) {
             throw new IllegalArgumentException("Varying lengths of share values");
         }
 
-        final byte[] secret = new byte[lens[0]];
+        final byte[] secret = new byte[l[0]];
         for (int i = 0; i < secret.length; i++) {
             final byte[][] points = new byte[shares.size()][secret.length];
             int p = 0;
