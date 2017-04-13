@@ -18,9 +18,8 @@
         </license>
     </licenses>
     <scm>
-        <connection>scm:git:git@github.com:codahale/shamir.git</connection>
-        <developerConnection>scm:git:git@github.com:codahale/shamir.git
-        </developerConnection>
+        <connection>scm:git:https://github.com/codahale/shamir.git</connection>
+        <developerConnection>scm:git:https://github.com/codahale/shamir.git</developerConnection>
         <url>https://github.com/codahale/shamir</url>
     </scm>
 
