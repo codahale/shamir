@@ -31,7 +31,6 @@ public final class SecretSharing {
         if (k <= 1) {
             throw new IllegalArgumentException("K must be > 1");
         }
-
         if (n < k) {
             throw new IllegalArgumentException("N must be >= K");
         }
@@ -72,7 +71,8 @@ public final class SecretSharing {
         final int[] lens = shares.stream().mapToInt(s -> s.getValue().length).distinct().toArray();
         if (lens.length == 0) {
             throw new IllegalArgumentException("No shares provided");
-        } else if (lens.length != 1) {
+        }
+        if (lens.length != 1) {
             throw new IllegalArgumentException("Varying lengths of share values");
         }
 
