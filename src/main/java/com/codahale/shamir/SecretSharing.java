@@ -11,7 +11,7 @@ import java.util.Set;
  * securely split secrets into {@code N} shares, of which {@code K} can be
  * combined to recover the original secret.
  *
- * @see <a href="https://en.wikipedia.org/wiki/Shamir%27s_Secret_Sharing>Shamir's Secret Sharing</a>
+ * @see <a href="https://en.wikipedia.org/wiki/Shamir%27s_Secret_Sharing">Shamir's Secret Sharing</a>
  */
 public final class SecretSharing {
     private SecretSharing() {
