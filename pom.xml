@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.codahale</groupId>
     <artifactId>shamir</artifactId>
-    <version>0.1.1-SNAPSHOT</version>
+    <version>0.1.0-SNAPSHOT</version>
     <description>
         An implementation of Shamir's Secret Sharing algorithm over GF(256).
     </description>
@@ -20,8 +22,7 @@
         <developerConnection>scm:git:git@github.com:codahale/shamir.git
         </developerConnection>
         <url>https://github.com/codahale/shamir</url>
-      <tag>HEAD</tag>
-  </scm>
+    </scm>
 
     <properties>
         <maven.compiler.target>1.8</maven.compiler.target>
