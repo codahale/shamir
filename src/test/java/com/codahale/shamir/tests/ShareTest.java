@@ -19,4 +19,9 @@ public class ShareTest {
     public void value() throws Exception {
         assertArrayEquals("blah".getBytes(UTF_8), share.getValue());
     }
+
+    @Test
+    public void string() throws Exception {
+        assertEquals("Share[id = 1, value = [98, 108, 97, 104]]", share.toString());
+    }
 }
