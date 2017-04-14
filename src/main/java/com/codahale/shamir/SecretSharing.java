@@ -92,7 +92,7 @@ public final class SecretSharing {
 
         final byte[] secret = new byte[l[0]];
         for (int i = 0; i < secret.length; i++) {
-            final byte[][] points = new byte[shares.size()][secret.length];
+            final byte[][] points = new byte[shares.size()][2];
             int p = 0;
             for (Share share : shares) {
                 points[p][GF256.X] = (byte) share.id;

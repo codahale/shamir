@@ -20,6 +20,9 @@ import com.google.common.collect.ImmutableSet;
 import org.junit.Test;
 
 import java.util.Collections;
+import java.util.Set;
+
+import static org.junit.Assert.assertArrayEquals;
 
 public class SecretSharingTest {
     @Test(expected = IllegalArgumentException.class)
@@ -43,5 +46,13 @@ public class SecretSharingTest {
                 new Share(1, new byte[1]),
                 new Share(2, new byte[2])
         ));
+    }
+
+    @Test
+    public void singleByteSecret() throws Exception {
+        final byte[] secret = new byte[]{-41};
+        final Set<Share> shares = SecretSharing.split(8, 3, secret);
+        final byte[] recovered = SecretSharing.combine(shares);
+        assertArrayEquals(secret, recovered);
     }
 }
