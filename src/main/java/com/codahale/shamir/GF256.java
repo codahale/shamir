@@ -114,9 +114,8 @@ interface GF256 {
         return result;
     }
 
-    static byte[] generate(int degree, byte x) {
+    static byte[] generate(SecureRandom random, int degree, byte x) {
         // generate random polynomials until we find one of the given degree
-        final SecureRandom random = new SecureRandom();
         final byte[] p = new byte[degree + 1];
         do {
             random.nextBytes(p);

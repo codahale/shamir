@@ -14,6 +14,7 @@
 
 package com.codahale.shamir;
 
+import java.security.SecureRandom;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
@@ -49,10 +50,12 @@ public final class SecretSharing {
         }
 
         // generate shares
+        final SecureRandom random = new SecureRandom();
+        final int degree = k - 1;
         final byte[][] shares = new byte[n][secret.length];
         for (int i = 0; i < secret.length; i++) {
             // for each byte, generate a random polynomial, p
-            final byte[] p = GF256.generate(k - 1, secret[i]);
+            final byte[] p = GF256.generate(random, degree, secret[i]);
             for (byte x = 1; x <= n; x++) {
                 // each share's byte is p(shareId)
                 shares[x - 1][i] = GF256.eval(p, x);

@@ -16,6 +16,8 @@ package com.codahale.shamir;
 
 import org.junit.Test;
 
+import java.security.SecureRandom;
+
 import static com.codahale.shamir.Generators.bytes;
 import static com.codahale.shamir.Generators.nonZeroBytes;
 import static org.junit.Assert.assertEquals;
@@ -94,7 +96,8 @@ public class GF256Test {
 
     @Test
     public void generate() throws Exception {
-        final byte[] p = GF256.generate(5, (byte) 20);
+        final SecureRandom random = new SecureRandom();
+        final byte[] p = GF256.generate(random, 5, (byte) 20);
         assertEquals(p[0], 20);
         assertTrue(p[p.length - 1] != 0);
     }
