@@ -17,6 +17,7 @@ package com.codahale.shamir;
 import org.quicktheories.quicktheories.core.Source;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.quicktheories.quicktheories.generators.SourceDSL.integers;
@@ -32,21 +33,22 @@ public interface Generators {
     }
 
     static Source<byte[]> byteArrays() {
-        return lists().arrayListsOf(bytes()).ofSizeBetween(1, 1000).as(
-                l -> {
-                    final byte[] bytes = new byte[l.size()];
-                    for (int i = 0; i < l.size(); i++) {
-                        bytes[i] = l.get(i);
-                    }
-                    return bytes;
-                },
-                a -> {
-                    final List<Byte> bytes = new ArrayList<>(a.length);
-                    for (int i = 0; i < a.length; i++) {
-                        bytes.set(i, a[i]);
-                    }
-                    return bytes;
-                }
-        );
+        return lists().arrayListsOf(bytes())
+                      .ofSizeBetween(1, 1000).as(
+                        l -> {
+                            final byte[] bytes = new byte[l.size()];
+                            for (int i = 0; i < l.size(); i++) {
+                                bytes[i] = l.get(i);
+                            }
+                            return bytes;
+                        },
+                        a -> {
+                            final List<Byte> bytes = new ArrayList<>(a.length);
+                            for (int i = 0; i < a.length; i++) {
+                                bytes.set(i, a[i]);
+                            }
+                            return bytes;
+                        })
+                      .describedAs(Arrays::toString);
     }
 }
