@@ -14,10 +14,9 @@
 
 package com.codahale.shamir;
 
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -41,7 +40,7 @@ public final class SecretSharing {
      * @param secret the secret to split
      * @return a set of {@code n} {@link Share} instances
      */
-    public static Set<Share> split(@Nonnegative int n, @Nonnegative int k, @Nonnull byte[] secret) {
+    public static Set<Share> split(int n, int k, byte[] secret) {
         if (k <= 1) {
             throw new IllegalArgumentException("K must be > 1");
         }
@@ -81,9 +80,12 @@ public final class SecretSharing {
      * @throws IllegalArgumentException if {@code shares} is empty or contains
      *                                  values of varying lengths
      */
-    public static byte[] combine(@Nonnull Set<Share> shares) {
-        final int[] l = shares.stream().mapToInt(s -> s.value.length)
-                              .distinct().toArray();
+    public static byte[] combine(Set<Share> shares) {
+        final int[] l = Objects.requireNonNull(shares)
+                               .stream()
+                               .mapToInt(s -> s.value.length)
+                               .distinct()
+                               .toArray();
         if (l.length == 0) {
             throw new IllegalArgumentException("No shares provided");
         }
