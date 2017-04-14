@@ -98,8 +98,8 @@ public final class SecretSharing {
             final byte[][] points = new byte[shares.size()][2];
             int p = 0;
             for (Share share : shares) {
-                points[p][GF256.X] = (byte) share.id;
-                points[p][GF256.Y] = share.value[i];
+                points[p][0] = (byte) share.id;
+                points[p][1] = share.value[i];
                 p++;
             }
             secret[i] = GF256.interpolate(points);

@@ -47,6 +47,7 @@ interface GF256 {
             0x39, 0x4b, 0xdd, 0x7c, 0x84, 0x97, 0xa2, 0xfd, 0x1c, 0x24, 0x6c, 0xb4,
             0xc7, 0x52, 0xf6, 0x01,
     };
+
     int[] LOG = new int[]{
             0x00, 0x00, 0x19, 0x01, 0x32, 0x02, 0x1a, 0xc6, 0x4b, 0xc7, 0x1b, 0x68,
             0x33, 0xee, 0xdf, 0x03, 0x64, 0x04, 0xe0, 0x0e, 0x34, 0x8d, 0x81, 0xef,
@@ -71,9 +72,6 @@ interface GF256 {
             0x67, 0x4a, 0xed, 0xde, 0xc5, 0x31, 0xfe, 0x18, 0x0d, 0x63, 0x8c, 0x80,
             0xc0, 0xf7, 0x70, 0x07,
     };
-    byte Y_INTERCEPT = 0;
-    int X = 0;
-    int Y = 1;
 
     static byte add(byte a, byte b) {
         return (byte) (a ^ b);
@@ -95,11 +93,8 @@ interface GF256 {
             return 0;
         }
 
-        int p = (LOG[toUnsignedInt(e)] - LOG[toUnsignedInt(a)]);
-        if (p < 0) {
-            p += 255;
-        }
-        return (byte) EXP[p];
+        return (byte) EXP[(LOG[toUnsignedInt(e)] + 255 -
+                LOG[toUnsignedInt(a)]) % 255];
     }
 
     static int degree(byte[] p) {
@@ -134,21 +129,19 @@ interface GF256 {
     }
 
     static byte interpolate(byte[][] points) {
-        // calculate the y-intercept of the given points
+        // calculate f(0) of the given points using LaGrange interpolation
         byte value = 0;
         for (int i = 0; i < points.length; i++) {
-            final byte[] a = points[i];
+            final byte aX = points[i][0];
+            final byte aY = points[i][1];
             byte weight = 1;
             for (int j = 0; j < points.length; j++) {
-                final byte[] b = points[j];
+                final byte bX = points[j][0];
                 if (i != j) {
-                    final byte top = add(Y_INTERCEPT, b[X]);
-                    final byte bottom = add(a[X], b[X]);
-                    final byte factor = div(top, bottom);
-                    weight = mul(weight, factor);
+                    weight = mul(weight, div(bX, add(aX, bX)));
                 }
             }
-            value ^= mul(weight, a[Y]);
+            value ^= mul(weight, aY);
         }
         return value;
     }
