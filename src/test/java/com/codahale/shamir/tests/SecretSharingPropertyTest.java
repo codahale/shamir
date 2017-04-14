@@ -17,35 +17,22 @@ package com.codahale.shamir.tests;
 import com.codahale.shamir.SecretSharing;
 import com.codahale.shamir.Share;
 import com.google.common.collect.Sets;
-import org.junit.Test;
+import com.pholser.junit.quickcheck.Property;
+import com.pholser.junit.quickcheck.generator.InRange;
+import com.pholser.junit.quickcheck.runner.JUnitQuickcheck;
 import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 
 import java.security.SecureRandom;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Set;
 
 import static org.junit.Assert.assertArrayEquals;
 
-@RunWith(Parameterized.class)
-public class RoundTrip {
-    private final int n, k;
+@RunWith(JUnitQuickcheck.class)
+public class SecretSharingPropertyTest {
+    @Property(trials = 10)
+    public void roundTrip(@InRange(min = "2", max = "5") int a, @InRange(min = "2", max = "5") int k) throws Exception {
+        final int n = a + k;
 
-    public RoundTrip(int n, int k) {
-        this.n = n;
-        this.k = k;
-    }
-
-    @Parameterized.Parameters
-    public static Collection<Object[]> params() {
-        return Arrays.asList(new Object[][]{
-                {5, 3}, {7, 2}, {6, 4}, {10, 3}, {20, 19}
-        });
-    }
-
-    @Test
-    public void check() throws Exception {
         // generate a random secret
         final SecureRandom random = new SecureRandom();
         final byte[] secret = new byte[1000];

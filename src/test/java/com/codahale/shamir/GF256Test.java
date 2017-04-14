@@ -46,30 +46,6 @@ public class GF256Test {
     }
 
     @Test
-    public void forAllBytes() throws Exception {
-        for (byte x = Byte.MIN_VALUE; x < Byte.MAX_VALUE; x++) {
-            for (byte y = Byte.MIN_VALUE; y < Byte.MAX_VALUE; y++) {
-                assertEquals("mul is commutative",
-                        GF256.mul(x, y), GF256.mul(y, x));
-
-                assertEquals("add is commutative",
-                        GF256.add(x, y), GF256.add(y, x));
-
-                assertEquals("add is the inverse of add",
-                        x, GF256.add(GF256.add(x, y), y));
-
-                if (y != 0) {
-                    assertEquals("div is the inverse of mul",
-                            x, GF256.div(GF256.mul(x, y), y));
-
-                    assertEquals("mul is the inverse of div",
-                            x, GF256.mul(GF256.div(x, y), y));
-                }
-            }
-        }
-    }
-
-    @Test
     public void div() throws Exception {
         assertEquals((byte) 189, GF256.div((byte) 90, (byte) 21));
         assertEquals((byte) 151, GF256.div((byte) 6, (byte) 55));
