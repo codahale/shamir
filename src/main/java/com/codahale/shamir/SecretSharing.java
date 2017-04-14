@@ -42,6 +42,7 @@ public final class SecretSharing {
      * @return a set of {@code n} {@link Share} instances
      */
     public static Set<Share> split(int n, int k, byte[] secret) {
+        Objects.requireNonNull(secret, "secret must not be null");
         if (k <= 1) {
             throw new IllegalArgumentException("K must be > 1");
         }
@@ -81,11 +82,8 @@ public final class SecretSharing {
      *                                  values of varying lengths
      */
     public static byte[] combine(Set<Share> shares) {
-        final int[] l = Objects.requireNonNull(shares)
-                               .stream()
-                               .mapToInt(s -> s.value.length)
-                               .distinct()
-                               .toArray();
+        Objects.requireNonNull(shares, "shares must not be null");
+        final int[] l = shares.stream().mapToInt(s -> s.value.length).distinct().toArray();
         if (l.length == 0) {
             throw new IllegalArgumentException("No shares provided");
         }
