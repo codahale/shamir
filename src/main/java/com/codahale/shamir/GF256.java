@@ -16,6 +16,8 @@ package com.codahale.shamir;
 
 import java.security.SecureRandom;
 
+import static java.lang.Byte.toUnsignedInt;
+
 /**
  * A set of static methods implementing GF(256) arithmetic, polynomial
  * generation, evaluation, and interpolation.
@@ -73,10 +75,6 @@ interface GF256 {
     int X = 0;
     int Y = 1;
 
-    static int unsignedInt(byte b) {
-        return b & 0xFF;
-    }
-
     static byte add(byte a, byte b) {
         return (byte) (a ^ b);
     }
@@ -85,7 +83,7 @@ interface GF256 {
         if (e == 0 || a == 0) {
             return 0;
         }
-        return (byte) EXP[(LOG[unsignedInt(e)] + LOG[unsignedInt(a)]) % 255];
+        return (byte) EXP[(LOG[toUnsignedInt(e)] + LOG[toUnsignedInt(a)]) % 255];
     }
 
     static byte div(byte e, byte a) {
@@ -97,7 +95,7 @@ interface GF256 {
             return 0;
         }
 
-        int p = (LOG[unsignedInt(e)] - LOG[unsignedInt(a)]);
+        int p = (LOG[toUnsignedInt(e)] - LOG[toUnsignedInt(a)]);
         if (p < 0) {
             p += 255;
         }
