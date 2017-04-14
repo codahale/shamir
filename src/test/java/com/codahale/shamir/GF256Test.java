@@ -18,24 +18,13 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.quicktheories.quicktheories.QuickTheory.qt;
+import static org.quicktheories.quicktheories.generators.SourceDSL.integers;
 
 public class GF256Test {
     @Test
     public void add() throws Exception {
         assertEquals((byte) 122, GF256.add((byte) 100, (byte) 30));
-    }
-
-    @Test
-    public void degree() throws Exception {
-        assertEquals(1, GF256.degree(new byte[]{1, 2}));
-        assertEquals(1, GF256.degree(new byte[]{1, 2, 0}));
-        assertEquals(2, GF256.degree(new byte[]{1, 2, 3}));
-        assertEquals(0, GF256.degree(new byte[4]));
-    }
-
-    @Test
-    public void eval() throws Exception {
-        assertEquals((byte) 17, GF256.eval(new byte[]{1, 0, 2, 3}, (byte) 2));
     }
 
     @Test
@@ -56,6 +45,59 @@ public class GF256Test {
     @Test(expected = ArithmeticException.class)
     public void divByZero() throws Exception {
         GF256.div((byte) 100, (byte) 0);
+    }
+
+    @Test
+    public void mulIsCommutative() {
+        qt().forAll(integers().between(0, 255), integers().between(0, 255))
+                .check((x, y) ->
+                        GF256.mul(x.byteValue(), y.byteValue()) ==
+                                GF256.mul(y.byteValue(), x.byteValue()));
+    }
+
+    @Test
+    public void addIsCommutative() {
+        qt().forAll(integers().between(0, 255), integers().between(0, 255))
+                .check((x, y) ->
+                        GF256.add(x.byteValue(), y.byteValue()) ==
+                                GF256.add(y.byteValue(), x.byteValue()));
+    }
+
+    @Test
+    public void addIsTheInverseOfAdd() {
+        qt().forAll(integers().between(0, 255), integers().between(0, 255))
+                .check((x, y) ->
+                        GF256.add(GF256.add(x.byteValue(), y.byteValue()),
+                                y.byteValue()) == x.byteValue());
+    }
+
+    @Test
+    public void divIsTheInverseOfMul() {
+        qt().forAll(integers().between(0, 255), integers().between(1, 255))
+                .check((x, y) ->
+                        GF256.div(GF256.mul(x.byteValue(), y.byteValue()),
+                                y.byteValue()) == x.byteValue());
+    }
+
+    @Test
+    public void mulIsTheInverseOfDiv() {
+        qt().forAll(integers().between(0, 255), integers().between(1, 255))
+                .check((x, y) ->
+                        GF256.mul(GF256.div(x.byteValue(), y.byteValue()),
+                                y.byteValue()) == x.byteValue());
+    }
+
+    @Test
+    public void degree() throws Exception {
+        assertEquals(1, GF256.degree(new byte[]{1, 2}));
+        assertEquals(1, GF256.degree(new byte[]{1, 2, 0}));
+        assertEquals(2, GF256.degree(new byte[]{1, 2, 3}));
+        assertEquals(0, GF256.degree(new byte[4]));
+    }
+
+    @Test
+    public void eval() throws Exception {
+        assertEquals((byte) 17, GF256.eval(new byte[]{1, 0, 2, 3}, (byte) 2));
     }
 
     @Test
