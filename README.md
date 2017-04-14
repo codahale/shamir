@@ -8,13 +8,7 @@ algorithm](http://en.wikipedia.org/wiki/Shamir's_Secret_Sharing) over GF(256).
 
 ## Add to your project
 
-```xml
-<dependency>
-    <groupId>com.codahale</groupId>
-    <artifactId>shamir</artifactId>
-    <version>0.1.0</version>
-</dependency>
-```
+[See the latest version.](https://maven-badges.herokuapp.com/maven-central/com.codahale/shamir)
 
 ## Use the thing
 
