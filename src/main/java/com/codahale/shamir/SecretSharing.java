@@ -15,10 +15,10 @@
 package com.codahale.shamir;
 
 import java.security.SecureRandom;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * Two static methods which use Shamir's Secret Sharing over {@code GF(256)} to
@@ -51,23 +51,20 @@ public final class SecretSharing {
 
         // generate shares
         final SecureRandom random = new SecureRandom();
-        final int degree = k - 1;
         final byte[][] shares = new byte[n][secret.length];
         for (int i = 0; i < secret.length; i++) {
             // for each byte, generate a random polynomial, p
-            final byte[] p = GF256.generate(random, degree, secret[i]);
+            final byte[] p = GF256.generate(random, k - 1, secret[i]);
             for (byte x = 1; x <= n; x++) {
                 // each share's byte is p(shareId)
                 shares[x - 1][i] = GF256.eval(p, x);
             }
         }
 
-        // accumulate shares in a set
-        final Set<Share> result = new HashSet<>(n);
-        for (int i = 0; i < shares.length; i++) {
-            result.add(new Share(i + 1, shares[i]));
-        }
-        return Collections.unmodifiableSet(result);
+        // return as a set of objects
+        return IntStream.range(0, n)
+                        .mapToObj(i -> new Share(i + 1, shares[i]))
+                        .collect(Collectors.toSet());
     }
 
     /**
