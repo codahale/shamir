@@ -30,19 +30,18 @@ import static org.junit.Assert.assertArrayEquals;
 
 @RunWith(Parameterized.class)
 public class RoundTrip {
+    private final int n, k;
+
+    public RoundTrip(int n, int k) {
+        this.n = n;
+        this.k = k;
+    }
+
     @Parameterized.Parameters
     public static Collection<Object[]> params() {
         return Arrays.asList(new Object[][]{
                 {5, 3}, {7, 2}, {6, 4}, {10, 3}, {20, 19}
         });
-    }
-
-    private final int n;
-    private final int k;
-
-    public RoundTrip(int n, int k) {
-        this.n = n;
-        this.k = k;
     }
 
     @Test

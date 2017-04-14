@@ -69,10 +69,14 @@ interface GF256 {
             0x67, 0x4a, 0xed, 0xde, 0xc5, 0x31, 0xfe, 0x18, 0x0d, 0x63, 0x8c, 0x80,
             0xc0, 0xf7, 0x70, 0x07,
     };
+    byte Y_INTERCEPT = 0;
+    int X = 0;
+    int Y = 1;
 
     static int unsignedInt(byte b) {
         return b & 0xFF;
     }
+
     static byte add(byte a, byte b) {
         return (byte) (a ^ b);
     }
@@ -130,10 +134,6 @@ interface GF256 {
 
         return p;
     }
-
-    byte Y_INTERCEPT = 0;
-    int X = 0;
-    int Y = 1;
 
     static byte interpolate(byte[][] points) {
         // calculate the y-intercept of the given points
