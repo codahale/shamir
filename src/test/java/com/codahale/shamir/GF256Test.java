@@ -27,9 +27,9 @@ public class GF256Test {
 
     @Test
     public void degree() throws Exception {
-        assertEquals(1, GF256.degree(new byte[] {1, 2}));
-        assertEquals(1, GF256.degree(new byte[] {1, 2, 0}));
-        assertEquals(2, GF256.degree(new byte[] {1, 2, 3}));
+        assertEquals(1, GF256.degree(new byte[]{1, 2}));
+        assertEquals(1, GF256.degree(new byte[]{1, 2, 0}));
+        assertEquals(2, GF256.degree(new byte[]{1, 2, 3}));
         assertEquals(0, GF256.degree(new byte[4]));
     }
 
@@ -43,6 +43,30 @@ public class GF256Test {
         assertEquals((byte) 254, GF256.mul((byte) 90, (byte) 21));
         assertEquals((byte) 167, GF256.mul((byte) 133, (byte) 5));
         assertEquals((byte) 0, GF256.mul((byte) 0, (byte) 21));
+    }
+
+    @Test
+    public void forAllBytes() throws Exception {
+        for (byte x = Byte.MIN_VALUE; x < Byte.MAX_VALUE; x++) {
+            for (byte y = Byte.MIN_VALUE; y < Byte.MAX_VALUE; y++) {
+                assertEquals("mul is commutative",
+                        GF256.mul(x, y), GF256.mul(y, x));
+
+                assertEquals("add is commutative",
+                        GF256.add(x, y), GF256.add(y, x));
+
+                assertEquals("add is the inverse of add",
+                        x, GF256.add(GF256.add(x, y), y));
+
+                if (y != 0) {
+                    assertEquals("div is the inverse of mul",
+                            x, GF256.div(GF256.mul(x, y), y));
+
+                    assertEquals("mul is the inverse of div",
+                            x, GF256.mul(GF256.div(x, y), y));
+                }
+            }
+        }
     }
 
     @Test
