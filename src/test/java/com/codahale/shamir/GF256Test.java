@@ -50,41 +50,41 @@ public class GF256Test {
     @Test
     public void mulIsCommutative() {
         qt().forAll(integers().between(0, 255), integers().between(0, 255))
-                .check((x, y) ->
-                        GF256.mul(x.byteValue(), y.byteValue()) ==
-                                GF256.mul(y.byteValue(), x.byteValue()));
+            .check((x, y) ->
+                    GF256.mul(x.byteValue(), y.byteValue()) ==
+                            GF256.mul(y.byteValue(), x.byteValue()));
     }
 
     @Test
     public void addIsCommutative() {
         qt().forAll(integers().between(0, 255), integers().between(0, 255))
-                .check((x, y) ->
-                        GF256.add(x.byteValue(), y.byteValue()) ==
-                                GF256.add(y.byteValue(), x.byteValue()));
+            .check((x, y) ->
+                    GF256.add(x.byteValue(), y.byteValue()) ==
+                            GF256.add(y.byteValue(), x.byteValue()));
     }
 
     @Test
     public void addIsTheInverseOfAdd() {
         qt().forAll(integers().between(0, 255), integers().between(0, 255))
-                .check((x, y) ->
-                        GF256.add(GF256.add(x.byteValue(), y.byteValue()),
-                                y.byteValue()) == x.byteValue());
+            .check((x, y) ->
+                    GF256.add(GF256.add(x.byteValue(), y.byteValue()),
+                            y.byteValue()) == x.byteValue());
     }
 
     @Test
     public void divIsTheInverseOfMul() {
         qt().forAll(integers().between(0, 255), integers().between(1, 255))
-                .check((x, y) ->
-                        GF256.div(GF256.mul(x.byteValue(), y.byteValue()),
-                                y.byteValue()) == x.byteValue());
+            .check((x, y) ->
+                    GF256.div(GF256.mul(x.byteValue(), y.byteValue()),
+                            y.byteValue()) == x.byteValue());
     }
 
     @Test
     public void mulIsTheInverseOfDiv() {
         qt().forAll(integers().between(0, 255), integers().between(1, 255))
-                .check((x, y) ->
-                        GF256.mul(GF256.div(x.byteValue(), y.byteValue()),
-                                y.byteValue()) == x.byteValue());
+            .check((x, y) ->
+                    GF256.mul(GF256.div(x.byteValue(), y.byteValue()),
+                            y.byteValue()) == x.byteValue());
     }
 
     @Test

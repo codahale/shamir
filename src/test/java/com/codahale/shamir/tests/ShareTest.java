@@ -36,6 +36,7 @@ public class ShareTest {
 
     @Test
     public void string() throws Exception {
-        assertEquals("Share[id = 1, value = [98, 108, 97, 104]]", share.toString());
+        assertEquals("Share[id = 1, value = [98, 108, 97, 104]]",
+                share.toString());
     }
 }

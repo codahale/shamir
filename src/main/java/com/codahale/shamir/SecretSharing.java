@@ -82,7 +82,8 @@ public final class SecretSharing {
      *                                  values of varying lengths
      */
     public static byte[] combine(@Nonnull Set<Share> shares) {
-        final int[] l = shares.stream().mapToInt(s -> s.value.length).distinct().toArray();
+        final int[] l = shares.stream().mapToInt(s -> s.value.length)
+                              .distinct().toArray();
         if (l.length == 0) {
             throw new IllegalArgumentException("No shares provided");
         }

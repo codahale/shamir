@@ -64,21 +64,22 @@ public class SecretSharingTest {
     @Test
     public void roundTrip() throws Exception {
         qt().withExamples(100)
-                .forAll(integers().between(2, 5), integers().between(2, 5),
-                        strings().allPossible().ofLengthBetween(1, 1000))
-                .checkAssert((top, k, s) -> {
-                    // split the secret
-                    final byte[] secret = s.getBytes(StandardCharsets.ISO_8859_1);
-                    final Set<Share> shares = SecretSharing.split(top + k, k, secret);
+            .forAll(integers().between(2, 5), integers().between(2, 5),
+                    strings().allPossible().ofLengthBetween(1, 1000))
+            .checkAssert((top, k, s) -> {
+                // split the secret
+                final byte[] secret = s.getBytes(StandardCharsets.ISO_8859_1);
+                final Set<Share> shares = SecretSharing
+                        .split(top + k, k, secret);
 
-                    // All distinct subsets of shares which are at or over the threshold
-                    // should combine to recover the original secret.
-                    for (Set<Share> subset : Sets.powerSet(shares)) {
-                        if (subset.size() >= k) {
-                            final byte[] recovered = SecretSharing.combine(subset);
-                            assertArrayEquals(secret, recovered);
-                        }
+                // All distinct subsets of shares which are at or over the threshold
+                // should combine to recover the original secret.
+                for (Set<Share> subset : Sets.powerSet(shares)) {
+                    if (subset.size() >= k) {
+                        final byte[] recovered = SecretSharing.combine(subset);
+                        assertArrayEquals(secret, recovered);
                     }
-                });
+                }
+            });
     }
 }
