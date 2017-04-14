@@ -20,14 +20,13 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import org.junit.Test;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Set;
 
+import static com.codahale.shamir.Generators.byteArrays;
 import static org.junit.Assert.assertArrayEquals;
 import static org.quicktheories.quicktheories.QuickTheory.qt;
 import static org.quicktheories.quicktheories.generators.SourceDSL.integers;
-import static org.quicktheories.quicktheories.generators.SourceDSL.strings;
 
 public class SecretSharingTest {
     @Test(expected = IllegalArgumentException.class)
@@ -64,13 +63,10 @@ public class SecretSharingTest {
     @Test
     public void roundTrip() throws Exception {
         qt().withExamples(100)
-            .forAll(integers().between(2, 5), integers().between(2, 5),
-                    strings().allPossible().ofLengthBetween(1, 1000))
-            .checkAssert((top, k, s) -> {
+            .forAll(integers().between(2, 5), integers().between(2, 5), byteArrays())
+            .checkAssert((top, k, secret) -> {
                 // split the secret
-                final byte[] secret = s.getBytes(StandardCharsets.ISO_8859_1);
-                final Set<Share> shares = SecretSharing
-                        .split(top + k, k, secret);
+                final Set<Share> shares = SecretSharing.split(top + k, k, secret);
 
                 // All distinct subsets of shares which are at or over the threshold
                 // should combine to recover the original secret.

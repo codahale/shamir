@@ -16,10 +16,11 @@ package com.codahale.shamir;
 
 import org.junit.Test;
 
+import static com.codahale.shamir.Generators.bytes;
+import static com.codahale.shamir.Generators.nonZeroBytes;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.quicktheories.quicktheories.QuickTheory.qt;
-import static org.quicktheories.quicktheories.generators.SourceDSL.integers;
 
 public class GF256Test {
     @Test
@@ -47,44 +48,35 @@ public class GF256Test {
         GF256.div((byte) 100, (byte) 0);
     }
 
+
     @Test
     public void mulIsCommutative() {
-        qt().forAll(integers().between(0, 255), integers().between(0, 255))
-            .check((x, y) ->
-                    GF256.mul(x.byteValue(), y.byteValue()) ==
-                            GF256.mul(y.byteValue(), x.byteValue()));
+        qt().forAll(bytes(), bytes())
+            .check((x, y) -> GF256.mul(x, y) == GF256.mul(y, x));
     }
 
     @Test
     public void addIsCommutative() {
-        qt().forAll(integers().between(0, 255), integers().between(0, 255))
-            .check((x, y) ->
-                    GF256.add(x.byteValue(), y.byteValue()) ==
-                            GF256.add(y.byteValue(), x.byteValue()));
+        qt().forAll(bytes(), bytes())
+            .check((x, y) -> GF256.add(x, y) == GF256.add(y, x));
     }
 
     @Test
     public void addIsTheInverseOfAdd() {
-        qt().forAll(integers().between(0, 255), integers().between(0, 255))
-            .check((x, y) ->
-                    GF256.add(GF256.add(x.byteValue(), y.byteValue()),
-                            y.byteValue()) == x.byteValue());
+        qt().forAll(bytes(), bytes())
+            .check((x, y) -> GF256.add(GF256.add(x, y), y) == x);
     }
 
     @Test
     public void divIsTheInverseOfMul() {
-        qt().forAll(integers().between(0, 255), integers().between(1, 255))
-            .check((x, y) ->
-                    GF256.div(GF256.mul(x.byteValue(), y.byteValue()),
-                            y.byteValue()) == x.byteValue());
+        qt().forAll(bytes(), nonZeroBytes())
+            .check((x, y) -> GF256.div(GF256.mul(x, y), y) == x);
     }
 
     @Test
     public void mulIsTheInverseOfDiv() {
-        qt().forAll(integers().between(0, 255), integers().between(1, 255))
-            .check((x, y) ->
-                    GF256.mul(GF256.div(x.byteValue(), y.byteValue()),
-                            y.byteValue()) == x.byteValue());
+        qt().forAll(bytes(), nonZeroBytes())
+            .check((x, y) -> GF256.mul(GF256.div(x, y), y) == x);
     }
 
     @Test
