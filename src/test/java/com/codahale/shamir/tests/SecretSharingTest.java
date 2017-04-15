@@ -69,6 +69,21 @@ public class SecretSharingTest {
   }
 
   @Test
+  public void moreThanByteMaxValueShares() throws Exception {
+    final byte[] secret = new byte[]{-41};
+    assertThat(SecretSharing.combine(SecretSharing.split(200, 3, secret)))
+        .isEqualTo(secret);
+  }
+
+  @Test
+  public void tooManyShares() throws Exception {
+    final byte[] secret = new byte[]{-41};
+    assertThatThrownBy(() -> SecretSharing.split(2_000, 3, secret))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("N must be <= 255");
+  }
+
+  @Test
   public void roundTrip() throws Exception {
     // All distinct subsets of shares of cardinality greater than or equal to the threshold should
     // combine to recover the original secret.

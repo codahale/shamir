@@ -51,6 +51,9 @@ public final class SecretSharing {
     if (n < k) {
       throw new IllegalArgumentException("N must be >= K");
     }
+    if (n > 255) {
+      throw new IllegalArgumentException("N must be <= 255");
+    }
 
     // generate shares
     final SecureRandom random = new SecureRandom();
@@ -58,9 +61,9 @@ public final class SecretSharing {
     for (int i = 0; i < secret.length; i++) {
       // for each byte, generate a random polynomial, p
       final byte[] p = GF256.generate(random, k - 1, secret[i]);
-      for (byte x = 1; x <= n; x++) {
+      for (int x = 1; x <= n; x++) {
         // each share's byte is p(shareId)
-        shares[x - 1][i] = GF256.eval(p, x);
+        shares[x - 1][i] = GF256.eval(p, (byte) x);
       }
     }
 
