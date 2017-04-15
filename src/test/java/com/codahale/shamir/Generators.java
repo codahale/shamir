@@ -14,41 +14,39 @@
 
 package com.codahale.shamir;
 
-import org.quicktheories.quicktheories.core.Source;
+import static org.quicktheories.quicktheories.generators.SourceDSL.integers;
+import static org.quicktheories.quicktheories.generators.SourceDSL.lists;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import static org.quicktheories.quicktheories.generators.SourceDSL.integers;
-import static org.quicktheories.quicktheories.generators.SourceDSL.lists;
+import org.quicktheories.quicktheories.core.Source;
 
 public interface Generators {
-    static Source<Byte> bytes() {
-        return integers().between(0, 255).as(Integer::byteValue, Byte::intValue);
-    }
 
-    static Source<Byte> nonZeroBytes() {
-        return integers().between(1, 255).as(Integer::byteValue, Byte::intValue);
-    }
+  static Source<Byte> bytes() {
+    return integers().between(0, 255).as(Integer::byteValue, Byte::intValue);
+  }
 
-    static Source<byte[]> byteArrays() {
-        return lists().arrayListsOf(bytes())
-                      .ofSizeBetween(1, 1000).as(
-                        l -> {
-                            final byte[] bytes = new byte[l.size()];
-                            for (int i = 0; i < l.size(); i++) {
-                                bytes[i] = l.get(i);
-                            }
-                            return bytes;
-                        },
-                        a -> {
-                            final List<Byte> bytes = new ArrayList<>(a.length);
-                            for (int i = 0; i < a.length; i++) {
-                                bytes.set(i, a[i]);
-                            }
-                            return bytes;
-                        })
-                      .describedAs(Arrays::toString);
-    }
+  static Source<Byte> nonZeroBytes() {
+    return integers().between(1, 255).as(Integer::byteValue, Byte::intValue);
+  }
+
+  static Source<byte[]> byteArrays() {
+    return lists().arrayListsOf(bytes()).ofSizeBetween(1, 1000).as(
+        l -> {
+          final byte[] bytes = new byte[l.size()];
+          for (int i = 0; i < l.size(); i++) {
+            bytes[i] = l.get(i);
+          }
+          return bytes;
+        },
+        a -> {
+          final List<Byte> bytes = new ArrayList<>(a.length);
+          for (int i = 0; i < a.length; i++) {
+            bytes.set(i, a[i]);
+          }
+          return bytes;
+        }).describedAs(Arrays::toString);
+  }
 }

@@ -14,68 +14,68 @@
 
 package com.codahale.shamir.tests;
 
-import com.codahale.shamir.SecretSharing;
-import com.codahale.shamir.Share;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
-import org.junit.Test;
-
-import java.util.Collections;
-import java.util.Set;
-
 import static com.codahale.shamir.Generators.byteArrays;
 import static org.junit.Assert.assertArrayEquals;
 import static org.quicktheories.quicktheories.QuickTheory.qt;
 import static org.quicktheories.quicktheories.generators.SourceDSL.integers;
 
+import com.codahale.shamir.SecretSharing;
+import com.codahale.shamir.Share;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
+import java.util.Collections;
+import java.util.Set;
+import org.junit.Test;
+
 public class SecretSharingTest {
-    @Test(expected = IllegalArgumentException.class)
-    public void thresholdTooLow() throws Exception {
-        SecretSharing.split(1, 1, new byte[10]);
-    }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void thresholdTooHigh() throws Exception {
-        SecretSharing.split(1, 2, new byte[10]);
-    }
+  @Test(expected = IllegalArgumentException.class)
+  public void thresholdTooLow() throws Exception {
+    SecretSharing.split(1, 1, new byte[10]);
+  }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void emptyShares() throws Exception {
-        SecretSharing.combine(Collections.emptySet());
-    }
+  @Test(expected = IllegalArgumentException.class)
+  public void thresholdTooHigh() throws Exception {
+    SecretSharing.split(1, 2, new byte[10]);
+  }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void irregularShares() throws Exception {
-        SecretSharing.combine(ImmutableSet.of(
-                new Share(1, new byte[1]),
-                new Share(2, new byte[2])
-        ));
-    }
+  @Test(expected = IllegalArgumentException.class)
+  public void emptyShares() throws Exception {
+    SecretSharing.combine(Collections.emptySet());
+  }
 
-    @Test
-    public void singleByteSecret() throws Exception {
-        final byte[] secret = new byte[]{-41};
-        final Set<Share> shares = SecretSharing.split(8, 3, secret);
-        final byte[] recovered = SecretSharing.combine(shares);
-        assertArrayEquals(secret, recovered);
-    }
+  @Test(expected = IllegalArgumentException.class)
+  public void irregularShares() throws Exception {
+    SecretSharing.combine(ImmutableSet.of(
+        new Share(1, new byte[1]),
+        new Share(2, new byte[2])
+    ));
+  }
 
-    @Test
-    public void roundTrip() throws Exception {
-        qt().withExamples(100)
-            .forAll(integers().between(2, 5), integers().between(2, 5), byteArrays())
-            .checkAssert((top, k, secret) -> {
-                // split the secret
-                final Set<Share> shares = SecretSharing.split(top + k, k, secret);
+  @Test
+  public void singleByteSecret() throws Exception {
+    final byte[] secret = new byte[]{-41};
+    final Set<Share> shares = SecretSharing.split(8, 3, secret);
+    final byte[] recovered = SecretSharing.combine(shares);
+    assertArrayEquals(secret, recovered);
+  }
 
-                // All distinct subsets of shares which are at or over the threshold
-                // should combine to recover the original secret.
-                for (Set<Share> subset : Sets.powerSet(shares)) {
-                    if (subset.size() >= k) {
-                        final byte[] recovered = SecretSharing.combine(subset);
-                        assertArrayEquals(secret, recovered);
-                    }
-                }
-            });
-    }
+  @Test
+  public void roundTrip() throws Exception {
+    qt().withExamples(100)
+        .forAll(integers().between(2, 5), integers().between(2, 5), byteArrays())
+        .checkAssert((top, k, secret) -> {
+          // split the secret
+          final Set<Share> shares = SecretSharing.split(top + k, k, secret);
+
+          // All distinct subsets of shares which are at or over the threshold
+          // should combine to recover the original secret.
+          for (Set<Share> subset : Sets.powerSet(shares)) {
+            if (subset.size() >= k) {
+              final byte[] recovered = SecretSharing.combine(subset);
+              assertArrayEquals(secret, recovered);
+            }
+          }
+        });
+  }
 }

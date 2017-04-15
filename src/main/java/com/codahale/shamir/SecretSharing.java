@@ -25,83 +25,85 @@ import java.util.stream.IntStream;
  * securely split secrets into {@code N} shares, of which {@code K} can be
  * combined to recover the original secret.
  *
- * @see <a href="https://en.wikipedia.org/wiki/Shamir%27s_Secret_Sharing">Shamir's Secret Sharing</a>
+ * @see <a href="https://en.wikipedia.org/wiki/Shamir%27s_Secret_Sharing">Shamir's Secret
+ * Sharing</a>
  */
 public final class SecretSharing {
-    private SecretSharing() {
-        throw new AssertionError("No SecretSharing instances for you!");
+
+  private SecretSharing() {
+    throw new AssertionError("No SecretSharing instances for you!");
+  }
+
+  /**
+   * Splits the given secret into {@code n} shares, of which any {@code k} or
+   * more can be combined to recover the original secret.
+   *
+   * @param n the number of shares to produce (must be {@code >1})
+   * @param k the threshold of combinable shares (must be {@code <= n})
+   * @param secret the secret to split
+   * @return a set of {@code n} {@link Share} instances
+   */
+  public static Set<Share> split(int n, int k, byte[] secret) {
+    Objects.requireNonNull(secret, "secret must not be null");
+    if (k <= 1) {
+      throw new IllegalArgumentException("K must be > 1");
+    }
+    if (n < k) {
+      throw new IllegalArgumentException("N must be >= K");
     }
 
-    /**
-     * Splits the given secret into {@code n} shares, of which any {@code k} or
-     * more can be combined to recover the original secret.
-     *
-     * @param n      the number of shares to produce (must be {@code >1})
-     * @param k      the threshold of combinable shares (must be {@code <= n})
-     * @param secret the secret to split
-     * @return a set of {@code n} {@link Share} instances
-     */
-    public static Set<Share> split(int n, int k, byte[] secret) {
-        Objects.requireNonNull(secret, "secret must not be null");
-        if (k <= 1) {
-            throw new IllegalArgumentException("K must be > 1");
-        }
-        if (n < k) {
-            throw new IllegalArgumentException("N must be >= K");
-        }
-
-        // generate shares
-        final SecureRandom random = new SecureRandom();
-        final byte[][] shares = new byte[n][secret.length];
-        for (int i = 0; i < secret.length; i++) {
-            // for each byte, generate a random polynomial, p
-            final byte[] p = GF256.generate(random, k - 1, secret[i]);
-            for (byte x = 1; x <= n; x++) {
-                // each share's byte is p(shareId)
-                shares[x - 1][i] = GF256.eval(p, x);
-            }
-        }
-
-        // return as a set of objects
-        return IntStream.range(0, n)
-                        .mapToObj(i -> new Share(i + 1, shares[i]))
-                        .collect(Collectors.toSet());
+    // generate shares
+    final SecureRandom random = new SecureRandom();
+    final byte[][] shares = new byte[n][secret.length];
+    for (int i = 0; i < secret.length; i++) {
+      // for each byte, generate a random polynomial, p
+      final byte[] p = GF256.generate(random, k - 1, secret[i]);
+      for (byte x = 1; x <= n; x++) {
+        // each share's byte is p(shareId)
+        shares[x - 1][i] = GF256.eval(p, x);
+      }
     }
 
-    /**
-     * Combines the given shares into the original secret.
-     * <p>
-     * <b>N.B.:</b> There is no way to determine whether or not the returned
-     * value is actually the original secret. If the shares are incorrect, or
-     * are under the threshold value used to split the secret, a random value
-     * will be returned.
-     *
-     * @param shares a set of {@link Share} instances
-     * @return the original secret
-     * @throws IllegalArgumentException if {@code shares} is empty or contains
-     *                                  values of varying lengths
-     */
-    public static byte[] combine(Set<Share> shares) {
-        Objects.requireNonNull(shares, "shares must not be null");
-        final int[] l = shares.stream().mapToInt(s -> s.value.length).distinct().toArray();
-        if (l.length == 0) {
-            throw new IllegalArgumentException("No shares provided");
-        }
-        if (l.length != 1) {
-            throw new IllegalArgumentException("Varying lengths of share values");
-        }
+    // return as a set of objects
+    return IntStream.range(0, n)
+                    .mapToObj(i -> new Share(i + 1, shares[i]))
+                    .collect(Collectors.toSet());
+  }
 
-        final byte[] secret = new byte[l[0]];
-        for (int i = 0; i < secret.length; i++) {
-            final byte[][] points = new byte[shares.size()][2];
-            int p = 0;
-            for (Share share : shares) {
-                points[p][0] = (byte) share.id;
-                points[p][1] = share.value[i];
-                p++;
-            }
-            secret[i] = GF256.interpolate(points);
-        }
-        return secret;
+  /**
+   * Combines the given shares into the original secret.
+   * <p>
+   * <b>N.B.:</b> There is no way to determine whether or not the returned
+   * value is actually the original secret. If the shares are incorrect, or
+   * are under the threshold value used to split the secret, a random value
+   * will be returned.
+   *
+   * @param shares a set of {@link Share} instances
+   * @return the original secret
+   * @throws IllegalArgumentException if {@code shares} is empty or contains values of varying
+   * lengths
+   */
+  public static byte[] combine(Set<Share> shares) {
+    Objects.requireNonNull(shares, "shares must not be null");
+    final int[] l = shares.stream().mapToInt(s -> s.value.length).distinct().toArray();
+    if (l.length == 0) {
+      throw new IllegalArgumentException("No shares provided");
     }
+    if (l.length != 1) {
+      throw new IllegalArgumentException("Varying lengths of share values");
+    }
+
+    final byte[] secret = new byte[l[0]];
+    for (int i = 0; i < secret.length; i++) {
+      final byte[][] points = new byte[shares.size()][2];
+      int p = 0;
+      for (Share share : shares) {
+        points[p][0] = (byte) share.id;
+        points[p][1] = share.value[i];
+        p++;
+      }
+      secret[i] = GF256.interpolate(points);
+    }
+    return secret;
+  }
 }
