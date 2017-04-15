@@ -84,16 +84,7 @@ public final class SecretSharing {
    * lengths
    */
   public static byte[] combine(Set<Share> shares) {
-    Objects.requireNonNull(shares, "shares must not be null");
-    final int[] l = shares.stream().mapToInt(s -> s.value.length).distinct().toArray();
-    if (l.length == 0) {
-      throw new IllegalArgumentException("No shares provided");
-    }
-    if (l.length != 1) {
-      throw new IllegalArgumentException("Varying lengths of share values");
-    }
-
-    final byte[] secret = new byte[l[0]];
+    final byte[] secret = new byte[secretLength(shares)];
     for (int i = 0; i < secret.length; i++) {
       final byte[][] points = new byte[shares.size()][2];
       int p = 0;
@@ -105,5 +96,17 @@ public final class SecretSharing {
       secret[i] = GF256.interpolate(points);
     }
     return secret;
+  }
+
+  private static int secretLength(Set<Share> shares) {
+    Objects.requireNonNull(shares, "Shares must not be null");
+    final int[] l = shares.stream().mapToInt(s -> s.value.length).distinct().toArray();
+    if (l.length == 0) {
+      throw new IllegalArgumentException("No shares provided");
+    }
+    if (l.length != 1) {
+      throw new IllegalArgumentException("Varying lengths of share values");
+    }
+    return l[0];
   }
 }
