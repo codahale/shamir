@@ -1,6 +1,17 @@
 dist: trusty
 sudo: false
 language: java
+install: true
+addons:
+  sonarqube:
+    organization: "codahale-github"
+    token:
+      secure: pNgm3Ipt7xuIKuVMsL7cjKIJ4rtYk3eJKfAvB5+AzZ0Xisy06k5QPTyKUuuxMBkAvXb0tMQwCvWAyrf3JC1nakNRR80KOJACG/+FRSmnjsi3jnsOqclYq5jZDMnQZZbjjSTBDNPBaM041N09rXvo/u9+uVQDjhUxoMdUFtzRdhHFqKlli2Xg2xgmLBGJPrEu2P/dWLXZdb3I+ytUnStxtIUsXNx7stpL0MRmQWjLnsIdW5lHs7Pk0ji3hoFzu1XXfkkHIrKCFyxGmg1SHCKZX6YWidCXytZBuHvCOehij8jvJnTTHRfFlDKTiogfUF+CeYDSqjJ4JkHEzOJqoR1Ql/EbKfrHo/biTtF/Yx2sgulPXum7kXAprzLgzEjFKXdDdBwkJMdTMQolCW5Lxbm5jPOgGSWizjhh8uJmGwLh5t0h8HqzYqddePnC/BK6O5qVdB2if9/pK3hjSroaW7kYFxfaoPhaH9J9yh0JgJ71kfjuG5KA4hHl2UFtFVABXBGtMO+QbeIfZacdIx6dTrfihO8SB0kziG7qgDl3w1DAD3E6N2BPSUz/UKz6wP8q1+KLLU1HAGM5K2iPz8Cq+zFIt7y5Q+9g0thKXO6gde/weF08OtTmZBKObwUZqWkXuZNeq2zuM9yjaFGpj4bcfUC/qSR3T2zvAgYJzBjH05Xw4gs=
 jdk:
   - openjdk8
-
+script:
+  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package sonar:sonar
+cache:
+  directories:
+    - '$HOME/.m2/repository'
+    - '$HOME/.sonar/cache'
