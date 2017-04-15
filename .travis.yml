@@ -4,14 +4,14 @@ language: java
 install: true
 addons:
   sonarqube:
-    organization: "codahale-github"
+    organization: codahale-github
     token:
-      secure: pNgm3Ipt7xuIKuVMsL7cjKIJ4rtYk3eJKfAvB5+AzZ0Xisy06k5QPTyKUuuxMBkAvXb0tMQwCvWAyrf3JC1nakNRR80KOJACG/+FRSmnjsi3jnsOqclYq5jZDMnQZZbjjSTBDNPBaM041N09rXvo/u9+uVQDjhUxoMdUFtzRdhHFqKlli2Xg2xgmLBGJPrEu2P/dWLXZdb3I+ytUnStxtIUsXNx7stpL0MRmQWjLnsIdW5lHs7Pk0ji3hoFzu1XXfkkHIrKCFyxGmg1SHCKZX6YWidCXytZBuHvCOehij8jvJnTTHRfFlDKTiogfUF+CeYDSqjJ4JkHEzOJqoR1Ql/EbKfrHo/biTtF/Yx2sgulPXum7kXAprzLgzEjFKXdDdBwkJMdTMQolCW5Lxbm5jPOgGSWizjhh8uJmGwLh5t0h8HqzYqddePnC/BK6O5qVdB2if9/pK3hjSroaW7kYFxfaoPhaH9J9yh0JgJ71kfjuG5KA4hHl2UFtFVABXBGtMO+QbeIfZacdIx6dTrfihO8SB0kziG7qgDl3w1DAD3E6N2BPSUz/UKz6wP8q1+KLLU1HAGM5K2iPz8Cq+zFIt7y5Q+9g0thKXO6gde/weF08OtTmZBKObwUZqWkXuZNeq2zuM9yjaFGpj4bcfUC/qSR3T2zvAgYJzBjH05Xw4gs=
+      secure: zZ55Zb8w0SVG/IjFf4yTmsAzWF+DOvKPwT+6NXUZdSPXMfIbJep9GFeZgiXExmW2imoSsHshyff4uXcp/PX5PNGJNitm8lkbtIKU9ceA3+yWHsaTExiKv+t+WysLvaXqfglqQ1u/7N6GOAAbGBEK9upKwaI1204aecSVIWH0h9Vb05D/O/WHOcZQyRRyCHPLEsx8urY5XBFsumK2W4AAc0Kd2zsJ7XRRCRY5NYEVV10sxLeB53DhcCPogxFkNyfzGiPlT5rnZDr4AZPsBYJhYBqXvoD8S+DyUXpkdauD7CXagxw43KHtlI00+JYDyeGY0k2dwElRyrgT9WcP++hq5c/ctKW5oFqmJUC30JenxoYWElzX5c482VjLhDXHy8PM44YWtebEufXJm3Usq9zNOyqhs4DdSXcO7C7b/StwHHKgUVC1dMrCPIOhPMAh5swwPpnytc0jzEMVZpfD4B74YttmfHvDS6TONGWZbPVa0GxOXyquRNMhb9HZKcKc0N4YbqwTEy1XHMc9ok2zTlsgfC6ldQMjL151P7wQNvG+naqG6QRgxZvUF+mZlSomIK3n+8+ygpkSXGqCFFQeDQLNtAG+EDvpvaPe83vdDTvYtxproTtd1dFJ7CCAtGvRIQrYMw1F7THacoS/+pvISev4BzgEkqRaxkawa1xgUeCPbpk=
 jdk:
-  - openjdk8
+- openjdk8
 script:
-  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package sonar:sonar
+- mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package sonar:sonar
 cache:
   directories:
-    - '$HOME/.m2/repository'
-    - '$HOME/.sonar/cache'
+  - "$HOME/.m2/repository"
+  - "$HOME/.sonar/cache"
