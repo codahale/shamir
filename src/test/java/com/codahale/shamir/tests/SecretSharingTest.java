@@ -23,6 +23,7 @@ import com.codahale.shamir.SecretSharing;
 import com.codahale.shamir.Share;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
 import org.junit.Test;
@@ -62,20 +63,14 @@ public class SecretSharingTest {
 
   @Test
   public void roundTrip() throws Exception {
+    // All distinct subsets of shares of cardinality greater than or equal to the threshold should
+    // combine to recover the original secret.
     qt().withExamples(100)
         .forAll(integers().between(2, 5), integers().between(2, 5), byteArrays())
-        .checkAssert((top, k, secret) -> {
-          // split the secret
-          final Set<Share> shares = SecretSharing.split(top + k, k, secret);
-
-          // All distinct subsets of shares which are at or over the threshold
-          // should combine to recover the original secret.
-          for (Set<Share> subset : Sets.powerSet(shares)) {
-            if (subset.size() >= k) {
-              final byte[] recovered = SecretSharing.combine(subset);
-              assertArrayEquals(secret, recovered);
-            }
-          }
-        });
+        .asWithPrecursor((top, k, secret) -> SecretSharing.split(top + k, k, secret))
+        .check((top, k, secret, shares) -> Sets.powerSet(shares).stream()
+                                               .filter(s -> s.size() >= k)
+                                               .map(SecretSharing::combine)
+                                               .allMatch(s -> Arrays.equals(s, secret)));
   }
 }
