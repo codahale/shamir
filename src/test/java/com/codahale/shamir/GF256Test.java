@@ -16,8 +16,8 @@ package com.codahale.shamir;
 
 import static com.codahale.shamir.Generators.bytes;
 import static com.codahale.shamir.Generators.nonZeroBytes;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.quicktheories.quicktheories.QuickTheory.qt;
 
 import java.security.SecureRandom;
@@ -27,27 +27,37 @@ public class GF256Test {
 
   @Test
   public void add() throws Exception {
-    assertEquals((byte) 122, GF256.add((byte) 100, (byte) 30));
+    assertThat(GF256.add((byte) 100, (byte) 30))
+        .isEqualTo((byte) 122);
   }
 
   @Test
   public void mul() throws Exception {
-    assertEquals((byte) 254, GF256.mul((byte) 90, (byte) 21));
-    assertEquals((byte) 167, GF256.mul((byte) 133, (byte) 5));
-    assertEquals((byte) 0, GF256.mul((byte) 0, (byte) 21));
+    assertThat(GF256.mul((byte) 90, (byte) 21))
+        .isEqualTo((byte) 254);
+    assertThat(GF256.mul((byte) 133, (byte) 5))
+        .isEqualTo((byte) 167);
+    assertThat(GF256.mul((byte) 0, (byte) 21))
+        .isEqualTo((byte) 0);
   }
 
   @Test
   public void div() throws Exception {
-    assertEquals((byte) 189, GF256.div((byte) 90, (byte) 21));
-    assertEquals((byte) 151, GF256.div((byte) 6, (byte) 55));
-    assertEquals((byte) 138, GF256.div((byte) 22, (byte) 192));
-    assertEquals((byte) 0, GF256.div((byte) 0, (byte) 192));
+    assertThat(GF256.div((byte) 90, (byte) 21))
+        .isEqualTo((byte) 189);
+    assertThat(GF256.div((byte) 6, (byte) 55))
+        .isEqualTo((byte) 151);
+    assertThat(GF256.div((byte) 22, (byte) 192))
+        .isEqualTo((byte) 138);
+    assertThat(GF256.div((byte) 0, (byte) 192))
+        .isEqualTo((byte) 0);
   }
 
-  @Test(expected = ArithmeticException.class)
+  @Test
   public void divByZero() throws Exception {
-    GF256.div((byte) 100, (byte) 0);
+    assertThatThrownBy(() -> GF256.div((byte) 100, (byte) 0))
+        .isInstanceOf(ArithmeticException.class)
+        .hasMessage("Divide by zero");
   }
 
 
@@ -83,43 +93,41 @@ public class GF256Test {
 
   @Test
   public void degree() throws Exception {
-    assertEquals(1, GF256.degree(new byte[]{1, 2}));
-    assertEquals(1, GF256.degree(new byte[]{1, 2, 0}));
-    assertEquals(2, GF256.degree(new byte[]{1, 2, 3}));
-    assertEquals(0, GF256.degree(new byte[4]));
+    assertThat(GF256.degree(new byte[]{1, 2}))
+        .isEqualTo(1);
+    assertThat(GF256.degree(new byte[]{1, 2, 0}))
+        .isEqualTo(1);
+    assertThat(GF256.degree(new byte[]{1, 2, 3}))
+        .isEqualTo(2);
+    assertThat(GF256.degree(new byte[4]))
+        .isEqualTo(0);
   }
 
   @Test
   public void eval() throws Exception {
-    assertEquals((byte) 17, GF256.eval(new byte[]{1, 0, 2, 3}, (byte) 2));
+    assertThat(GF256.eval(new byte[]{1, 0, 2, 3}, (byte) 2))
+        .isEqualTo((byte) 17);
   }
 
   @Test
   public void generate() throws Exception {
     final SecureRandom random = new SecureRandom();
     final byte[] p = GF256.generate(random, 5, (byte) 20);
-    assertEquals(p[0], 20);
-    assertTrue(p[p.length - 1] != 0);
+    assertThat(p[0])
+        .isEqualTo((byte) 20);
+    assertThat(p)
+        .hasSize(6);
+    assertThat(p[p.length - 1])
+        .isNotZero();
   }
 
   @Test
   public void interpolate() throws Exception {
-    assertEquals(0, GF256.interpolate(new byte[][]{
-        new byte[]{1, 1},
-        new byte[]{2, 2},
-        new byte[]{3, 3},
-    }));
-
-    assertEquals(30, GF256.interpolate(new byte[][]{
-        new byte[]{1, 80},
-        new byte[]{2, 90},
-        new byte[]{3, 20},
-    }));
-
-    assertEquals(107, GF256.interpolate(new byte[][]{
-        new byte[]{1, 43},
-        new byte[]{2, 22},
-        new byte[]{3, 86},
-    }));
+    assertThat(GF256.interpolate(new byte[][]{{1, 1}, {2, 2}, {3, 3}}))
+        .isEqualTo((byte) 0);
+    assertThat(GF256.interpolate(new byte[][]{{1, 80}, {2, 90}, {3, 20}}))
+        .isEqualTo((byte) 30);
+    assertThat(GF256.interpolate(new byte[][]{{1, 43}, {2, 22}, {3, 86}}))
+        .isEqualTo((byte) 107);
   }
 }

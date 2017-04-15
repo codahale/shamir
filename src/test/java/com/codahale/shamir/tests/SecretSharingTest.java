@@ -15,7 +15,8 @@
 package com.codahale.shamir.tests;
 
 import static com.codahale.shamir.Generators.byteArrays;
-import static org.junit.Assert.assertArrayEquals;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.quicktheories.quicktheories.QuickTheory.qt;
 import static org.quicktheories.quicktheories.generators.SourceDSL.integers;
 
@@ -25,40 +26,46 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Set;
 import org.junit.Test;
 
 public class SecretSharingTest {
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void thresholdTooLow() throws Exception {
-    SecretSharing.split(1, 1, new byte[10]);
+    assertThatThrownBy(() -> SecretSharing.split(1, 1, new byte[10]))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("K must be > 1");
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void thresholdTooHigh() throws Exception {
-    SecretSharing.split(1, 2, new byte[10]);
+    assertThatThrownBy(() -> SecretSharing.split(1, 2, new byte[10]))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("N must be >= K");
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void emptyShares() throws Exception {
-    SecretSharing.combine(Collections.emptySet());
+    assertThatThrownBy(() -> SecretSharing.combine(Collections.emptySet()))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("No shares provided");
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void irregularShares() throws Exception {
-    SecretSharing.combine(ImmutableSet.of(
-        new Share(1, new byte[1]),
-        new Share(2, new byte[2])
-    ));
+    final Share one = new Share(1, new byte[1]);
+    final Share two = new Share(2, new byte[2]);
+
+    assertThatThrownBy(() -> SecretSharing.combine(ImmutableSet.of(one, two)))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("Varying lengths of share values");
   }
 
   @Test
   public void singleByteSecret() throws Exception {
     final byte[] secret = new byte[]{-41};
-    final Set<Share> shares = SecretSharing.split(8, 3, secret);
-    final byte[] recovered = SecretSharing.combine(shares);
-    assertArrayEquals(secret, recovered);
+    assertThat(SecretSharing.combine(SecretSharing.split(8, 3, secret)))
+        .isEqualTo(secret);
   }
 
   @Test

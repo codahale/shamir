@@ -15,8 +15,7 @@
 package com.codahale.shamir.tests;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import com.codahale.shamir.Share;
 import org.junit.Test;
@@ -27,16 +26,19 @@ public class ShareTest {
 
   @Test
   public void id() throws Exception {
-    assertEquals(1, share.getId());
+    assertThat(share.getId())
+        .isEqualTo(1);
   }
 
   @Test
   public void value() throws Exception {
-    assertArrayEquals("blah".getBytes(UTF_8), share.getValue());
+    assertThat(share.getValue())
+        .isEqualTo("blah".getBytes(UTF_8));
   }
 
   @Test
   public void string() throws Exception {
-    assertEquals("Share[id = 1, value = [98, 108, 97, 104]]", share.toString());
+    assertThat(share.toString())
+        .isEqualTo("Share[id = 1, value = [98, 108, 97, 104]]");
   }
 }
