@@ -1,5 +1,9 @@
 # Change Log
 
+## v0.1.5: 2017-04-15
+
+* Fix share splitting for >127 shares.
+
 ## v0.1.4: 2017-04-14
 
 * Simplify some internals.
