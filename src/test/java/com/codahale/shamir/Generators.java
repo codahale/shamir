@@ -43,8 +43,8 @@ public interface Generators {
         },
         a -> {
           final List<Byte> bytes = new ArrayList<>(a.length);
-          for (int i = 0; i < a.length; i++) {
-            bytes.set(i, a[i]);
+          for (byte b : a) {
+            bytes.add(b);
           }
           return bytes;
         }).describedAs(Arrays::toString);
