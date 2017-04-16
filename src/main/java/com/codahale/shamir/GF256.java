@@ -86,9 +86,7 @@ interface GF256 {
   }
 
   static byte div(byte e, byte a) {
-    if (a == 0) {
-      throw new ArithmeticException("Divide by zero");
-    }
+    assert a != 0;
     if (e == 0) {
       return 0;
     }

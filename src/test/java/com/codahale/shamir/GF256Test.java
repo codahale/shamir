@@ -17,7 +17,6 @@ package com.codahale.shamir;
 import static com.codahale.shamir.Generators.bytes;
 import static com.codahale.shamir.Generators.nonZeroBytes;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.quicktheories.quicktheories.QuickTheory.qt;
 
 import java.security.SecureRandom;
@@ -52,14 +51,6 @@ public class GF256Test {
     assertThat(GF256.div((byte) 0, (byte) 192))
         .isEqualTo((byte) 0);
   }
-
-  @Test
-  public void divByZero() throws Exception {
-    assertThatThrownBy(() -> GF256.div((byte) 100, (byte) 0))
-        .isInstanceOf(ArithmeticException.class)
-        .hasMessage("Divide by zero");
-  }
-
 
   @Test
   public void mulIsCommutative() {
