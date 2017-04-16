@@ -126,7 +126,7 @@ interface GF256 {
   }
 
   static byte interpolate(byte[][] points) {
-    // calculate f(0) of the given points using LaGrange interpolation
+    // calculate f(0) of the given points using Lagrange interpolation
     byte value = 0;
     for (int i = 0; i < points.length; i++) {
       final byte aX = points[i][0];
