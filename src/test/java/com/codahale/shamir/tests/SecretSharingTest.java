@@ -95,4 +95,17 @@ public class SecretSharingTest {
                                                .map(SecretSharing::combine)
                                                .allMatch(s -> Arrays.equals(s, secret)));
   }
+
+  @Test
+  public void minorityOpinions() throws Exception {
+    // All distinct subsets of shares of cardinality less than the threshold should never combine to
+    // recover the original secret.
+    qt().withExamples(100)
+        .forAll(integers().between(2, 5), integers().between(2, 5), byteArrays())
+        .asWithPrecursor((top, k, secret) -> SecretSharing.split(top + k, k, secret))
+        .check((top, k, secret, shares) -> Sets.powerSet(shares).stream()
+                                               .filter(s -> s.size() < k && !s.isEmpty())
+                                               .map(SecretSharing::combine)
+                                               .noneMatch(s -> Arrays.equals(s, secret)));
+  }
 }
