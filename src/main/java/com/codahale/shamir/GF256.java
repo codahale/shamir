@@ -93,6 +93,15 @@ interface GF256 {
     return (byte) EXP[(LOG[toUnsignedInt(e)] + 255 - LOG[toUnsignedInt(a)]) % 255];
   }
 
+  static byte eval(byte[] p, byte x) {
+    // Horner's method
+    byte result = 0;
+    for (int i = 1; i <= p.length; i++) {
+      result = add(mul(result, x), p[p.length - i]);
+    }
+    return result;
+  }
+
   static int degree(byte[] p) {
     for (int i = p.length - 1; i >= 1; i--) {
       if (p[i] != 0) {
@@ -102,17 +111,10 @@ interface GF256 {
     return 0;
   }
 
-  static byte eval(byte[] p, byte x) {
-    byte result = 0;
-    for (int i = 1; i <= p.length; i++) {
-      result = add(mul(result, x), p[p.length - i]);
-    }
-    return result;
-  }
-
   static byte[] generate(SecureRandom random, int degree, byte x) {
-    // generate random polynomials until we find one of the given degree
     final byte[] p = new byte[degree + 1];
+
+    // generate random polynomials until we find one of the given degree
     do {
       random.nextBytes(p);
     } while (degree(p) != degree);
