@@ -138,7 +138,7 @@ interface GF256 {
           weight = mul(weight, div(bX, add(aX, bX)));
         }
       }
-      value ^= mul(weight, aY);
+      value = add(value, mul(weight, aY));
     }
     return value;
   }
