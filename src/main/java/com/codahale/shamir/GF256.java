@@ -86,7 +86,6 @@ interface GF256 {
   }
 
   static byte div(byte e, byte a) {
-    assert a != 0;
     if (e == 0) {
       return 0;
     }
