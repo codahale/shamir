@@ -1,14 +1,19 @@
 # Shamir's Secret Sharing
 
 [![Build Status](https://secure.travis-ci.org/codahale/shamir.svg)](http://travis-ci.org/codahale/shamir)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.codahale/shamir/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/com.codahale/shamir)
 
 A Java implementation of [Shamir's Secret Sharing
 algorithm](http://en.wikipedia.org/wiki/Shamir's_Secret_Sharing) over GF(256).
 
 ## Add to your project
 
-[See the latest version.](https://maven-badges.herokuapp.com/maven-central/com.codahale/shamir)
+```xml
+<dependency>
+  <groupId>com.codahale</groupId>
+  <artifactId>shamir</artifactId>
+  <version>0.1.5</version>
+</dependency>
+```
 
 ## Use the thing
 
