@@ -24,8 +24,8 @@ import com.codahale.shamir.SecretSharing;
 import com.codahale.shamir.Share;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.Set;
 import org.junit.Test;
 
 public class SecretSharingTest {
@@ -87,28 +87,30 @@ public class SecretSharingTest {
   public void roundTrip() throws Exception {
     qt().forAll(integers().between(2, 5), integers().between(2, 5), byteArrays())
         .asWithPrecursor((top, k, secret) -> SecretSharing.split(top + k, k, secret))
-        .check((top, k, secret, shares) ->
-            // Try each subset of the set of shares.
-            Sets.powerSet(shares).stream()
-                .allMatch(subset -> {
-                  // Empty subsets don't count.
-                  if (subset.isEmpty()) {
-                    return true;
-                  }
+        .checkAssert((top, k, secret, shares) -> {
+          // For each subset of the set of shares:
+          for (Set<Share> subset : Sets.powerSet(shares)) {
+            // Don't evaluate empty sets.
+            if (subset.isEmpty()) {
+              continue;
+            }
 
-                  // Combine the shares and try to recover the original secret.
-                  final byte[] recovered = SecretSharing.combine(subset);
+            // Combine the shares and try to recover the original secret.
+            final byte[] recovered = SecretSharing.combine(subset);
 
-                  // Every subset of shares with K or more shares will combine to form the original
-                  // secret.
-                  if (subset.size() >= k) {
-                    return Arrays.equals(recovered, secret);
-                  }
+            // Every subset of shares with K or more shares will combine to form the original
+            // secret.
+            if (subset.size() >= k) {
+              assertThat(recovered).isEqualTo(secret);
+            }
 
-                  // No subset of shares with fewer than K shares will combine to form the original
-                  // secret. We only check this for secrets three bytes or longer to limit our false
-                  // positive rate to under 1/2^24.
-                  return secret.length <= 3 || !Arrays.equals(recovered, secret);
-                }));
+            // No subset of shares with fewer than K shares will combine to form the original
+            // secret. We only check this for secrets three bytes or longer to limit our false
+            // positive rate to under 1/2^24.
+            if (subset.size() < k && secret.length >= 3) {
+              assertThat(recovered).isNotEqualTo(secret);
+            }
+          }
+        });
   }
 }
