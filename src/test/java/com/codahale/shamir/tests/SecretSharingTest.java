@@ -24,8 +24,8 @@ import com.codahale.shamir.SecretSharing;
 import com.codahale.shamir.Share;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.Set;
 import org.junit.Test;
 
 public class SecretSharingTest {
@@ -84,33 +84,26 @@ public class SecretSharingTest {
   }
 
   @Test
-  public void roundTrip() throws Exception {
-    qt().forAll(integers().between(2, 5), integers().between(2, 5), byteArrays())
+  public void quorateCombine() throws Exception {
+    // All distinct subsets of shares of cardinality greater than or equal to the threshold should
+    // combine to recover the original secret.
+    qt().forAll(integers().between(2, 5), integers().between(2, 5), byteArrays(1, 1000))
         .asWithPrecursor((top, k, secret) -> SecretSharing.split(top + k, k, secret))
-        .checkAssert((top, k, secret, shares) -> {
-          // For each subset of the set of shares:
-          for (Set<Share> subset : Sets.powerSet(shares)) {
-            // Don't evaluate empty sets.
-            if (subset.isEmpty()) {
-              continue;
-            }
+        .check((top, k, secret, shares) -> Sets.powerSet(shares).stream().parallel()
+                                               .filter(s -> s.size() >= k)
+                                               .map(SecretSharing::combine)
+                                               .allMatch(s -> Arrays.equals(s, secret)));
+  }
 
-            // Combine the shares and try to recover the original secret.
-            final byte[] recovered = SecretSharing.combine(subset);
-
-            // Every subset of shares with K or more shares will combine to form the original
-            // secret.
-            if (subset.size() >= k) {
-              assertThat(recovered).isEqualTo(secret);
-            }
-
-            // No subset of shares with fewer than K shares will combine to form the original
-            // secret. We only check this for secrets three bytes or longer to limit our false
-            // positive rate to under 1/2^24.
-            if (subset.size() < k && secret.length >= 3) {
-              assertThat(recovered).isNotEqualTo(secret);
-            }
-          }
-        });
+  @Test
+  public void inquorateCombine() throws Exception {
+    // All distinct subsets of shares of cardinality less than the threshold should never combine to
+    // recover the original secret. Only check larger secrets to avoid false positives.
+    qt().forAll(integers().between(2, 5), integers().between(2, 5), byteArrays(3, 1000))
+        .asWithPrecursor((top, k, secret) -> SecretSharing.split(top + k, k, secret))
+        .check((top, k, secret, shares) -> Sets.powerSet(shares).stream().parallel()
+                                               .filter(s -> s.size() < k && !s.isEmpty())
+                                               .map(SecretSharing::combine)
+                                               .noneMatch(s -> Arrays.equals(s, secret)));
   }
 }

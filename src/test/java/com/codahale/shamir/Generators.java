@@ -32,8 +32,8 @@ public interface Generators {
     return integers().between(1, 255).as(Integer::byteValue, Byte::intValue);
   }
 
-  static Source<byte[]> byteArrays() {
-    return lists().arrayListsOf(bytes()).ofSizeBetween(1, 1000).as(
+  static Source<byte[]> byteArrays(int minSize, int maxSize) {
+    return lists().arrayListsOf(bytes()).ofSizeBetween(minSize, maxSize).as(
         l -> {
           final byte[] bytes = new byte[l.size()];
           for (int i = 0; i < l.size(); i++) {
