@@ -99,15 +99,16 @@ public class SecretSharingTest {
                   // Combine the shares and try to recover the original secret.
                   final byte[] recovered = SecretSharing.combine(subset);
 
-                  // No subset of shares with fewer than K shares will combine to form the original
-                  // secret.
-                  if (subset.size() < k) {
-                    return !Arrays.equals(recovered, secret);
-                  }
-
                   // Every subset of shares with K or more shares will combine to form the original
                   // secret.
-                  return Arrays.equals(recovered, secret);
+                  if (subset.size() >= k) {
+                    return Arrays.equals(recovered, secret);
+                  }
+
+                  // No subset of shares with fewer than K shares will combine to form the original
+                  // secret. We only check this for secrets three bytes or longer to limit our false
+                  // positive rate to under 1/2^24.
+                  return secret.length <= 3 || !Arrays.equals(recovered, secret);
                 }));
   }
 }
