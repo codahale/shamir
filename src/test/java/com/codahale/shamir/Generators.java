@@ -17,36 +17,26 @@ package com.codahale.shamir;
 import static org.quicktheories.quicktheories.generators.SourceDSL.integers;
 import static org.quicktheories.quicktheories.generators.SourceDSL.lists;
 
-import java.util.ArrayList;
+import com.google.common.primitives.Bytes;
 import java.util.Arrays;
-import java.util.List;
 import org.quicktheories.quicktheories.core.Source;
 
 public interface Generators {
 
   static Source<Byte> bytes() {
-    return integers().between(0, 255).as(Integer::byteValue, Byte::intValue);
+    return integers().between(0, 255)
+                     .as(Integer::byteValue, Byte::intValue);
   }
 
   static Source<Byte> nonZeroBytes() {
-    return integers().between(1, 255).as(Integer::byteValue, Byte::intValue);
+    return integers().between(1, 255)
+                     .as(Integer::byteValue, Byte::intValue);
   }
 
   static Source<byte[]> byteArrays(int minSize, int maxSize) {
-    return lists().arrayListsOf(bytes()).ofSizeBetween(minSize, maxSize).as(
-        l -> {
-          final byte[] bytes = new byte[l.size()];
-          for (int i = 0; i < l.size(); i++) {
-            bytes[i] = l.get(i);
-          }
-          return bytes;
-        },
-        a -> {
-          final List<Byte> bytes = new ArrayList<>(a.length);
-          for (byte b : a) {
-            bytes.add(b);
-          }
-          return bytes;
-        }).describedAs(Arrays::toString);
+    return lists().arrayListsOf(bytes())
+                  .ofSizeBetween(minSize, maxSize)
+                  .as(Bytes::toArray, Bytes::asList)
+                  .describedAs(Arrays::toString);
   }
 }
