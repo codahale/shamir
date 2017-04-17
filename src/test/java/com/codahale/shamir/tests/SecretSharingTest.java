@@ -90,7 +90,7 @@ public class SecretSharingTest {
     qt().withExamples(500)
         .forAll(integers().between(2, 5), integers().between(2, 5), byteArrays(1, 1000))
         .asWithPrecursor((top, k, secret) -> SecretSharing.split(top + k, k, secret))
-        .check((top, k, secret, shares) -> Sets.powerSet(shares).stream()
+        .check((top, k, secret, shares) -> Sets.powerSet(shares).stream().parallel()
                                                .filter(s -> s.size() >= k)
                                                .map(SecretSharing::combine)
                                                .allMatch(s -> Arrays.equals(s, secret)));
@@ -103,7 +103,7 @@ public class SecretSharingTest {
     qt().withExamples(500)
         .forAll(integers().between(2, 5), integers().between(2, 5), byteArrays(3, 1000))
         .asWithPrecursor((top, k, secret) -> SecretSharing.split(top + k, k, secret))
-        .check((top, k, secret, shares) -> Sets.powerSet(shares).stream()
+        .check((top, k, secret, shares) -> Sets.powerSet(shares).stream().parallel()
                                                .filter(s -> s.size() < k && !s.isEmpty())
                                                .map(SecretSharing::combine)
                                                .noneMatch(s -> Arrays.equals(s, secret)));
