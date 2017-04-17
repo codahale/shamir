@@ -85,25 +85,21 @@ public class SecretSharingTest {
 
   @Test
   public void roundTrip() throws Exception {
-    // All distinct subsets of shares of cardinality greater than or equal to the threshold should
-    // combine to recover the original secret.
     qt().forAll(integers().between(2, 5), integers().between(2, 5), byteArrays())
         .asWithPrecursor((top, k, secret) -> SecretSharing.split(top + k, k, secret))
-        .check((top, k, secret, shares) -> Sets.powerSet(shares).stream()
-                                               .filter(s -> s.size() >= k)
-                                               .map(SecretSharing::combine)
-                                               .allMatch(s -> Arrays.equals(s, secret)));
-  }
-
-  @Test
-  public void minorityOpinions() throws Exception {
-    // All distinct subsets of shares of cardinality less than the threshold should never combine to
-    // recover the original secret.
-    qt().forAll(integers().between(2, 5), integers().between(2, 5), byteArrays())
-        .asWithPrecursor((top, k, secret) -> SecretSharing.split(top + k, k, secret))
-        .check((top, k, secret, shares) -> Sets.powerSet(shares).stream()
-                                               .filter(s -> s.size() < k && !s.isEmpty())
-                                               .map(SecretSharing::combine)
-                                               .noneMatch(s -> Arrays.equals(s, secret)));
+        .check((top, k, secret, shares) ->
+            Sets.powerSet(shares).stream().filter(s -> !s.isEmpty())
+                .allMatch(subset -> {
+                  final byte[] recovered = SecretSharing.combine(subset);
+                  if (subset.size() < k) {
+                    // No subset of shares with fewer than K shares will combine to form the
+                    // original secret.
+                    return !Arrays.equals(recovered, secret);
+                  } else {
+                    // Every subset of shares with K or more shares will combine to form the
+                    // original secret.
+                    return Arrays.equals(recovered, secret);
+                  }
+                }));
   }
 }
