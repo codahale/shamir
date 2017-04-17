@@ -89,7 +89,7 @@ public class SecretSharingTest {
         .asWithPrecursor((top, k, secret) -> SecretSharing.split(top + k, k, secret))
         .check((top, k, secret, shares) ->
             // Try each subset of the set of shares.
-            Sets.powerSet(shares).stream().parallel()
+            Sets.powerSet(shares).stream()
                 .allMatch(subset -> {
                   // Empty subsets don't count.
                   if (subset.isEmpty()) {
