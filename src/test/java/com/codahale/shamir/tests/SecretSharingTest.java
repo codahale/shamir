@@ -88,7 +88,7 @@ public class SecretSharingTest {
     qt().forAll(integers().between(2, 5), integers().between(2, 5), byteArrays())
         .asWithPrecursor((top, k, secret) -> SecretSharing.split(top + k, k, secret))
         .check((top, k, secret, shares) ->
-            Sets.powerSet(shares).stream().filter(s -> !s.isEmpty())
+            Sets.powerSet(shares).stream().filter(s -> !s.isEmpty()).parallel()
                 .allMatch(subset -> {
                   final byte[] recovered = SecretSharing.combine(subset);
                   if (subset.size() < k) {
