@@ -87,7 +87,7 @@ public class SecretSharingTest {
   public void roundTrip() throws Exception {
     // All distinct subsets of shares of cardinality greater than or equal to the threshold should
     // combine to recover the original secret.
-    qt().withExamples(100)
+    qt().withExamples(200)
         .forAll(integers().between(2, 5), integers().between(2, 5), byteArrays())
         .asWithPrecursor((top, k, secret) -> SecretSharing.split(top + k, k, secret))
         .check((top, k, secret, shares) -> Sets.powerSet(shares).stream()
@@ -100,7 +100,7 @@ public class SecretSharingTest {
   public void minorityOpinions() throws Exception {
     // All distinct subsets of shares of cardinality less than the threshold should never combine to
     // recover the original secret.
-    qt().withExamples(100)
+    qt().withExamples(200)
         .forAll(integers().between(2, 5), integers().between(2, 5), byteArrays())
         .asWithPrecursor((top, k, secret) -> SecretSharing.split(top + k, k, secret))
         .check((top, k, secret, shares) -> Sets.powerSet(shares).stream()
