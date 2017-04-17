@@ -88,18 +88,26 @@ public class SecretSharingTest {
     qt().forAll(integers().between(2, 5), integers().between(2, 5), byteArrays())
         .asWithPrecursor((top, k, secret) -> SecretSharing.split(top + k, k, secret))
         .check((top, k, secret, shares) ->
-            Sets.powerSet(shares).stream().filter(s -> !s.isEmpty()).parallel()
+            // Try each subset of the set of shares.
+            Sets.powerSet(shares).stream().parallel()
                 .allMatch(subset -> {
-                  final byte[] recovered = SecretSharing.combine(subset);
-                  if (subset.size() < k) {
-                    // No subset of shares with fewer than K shares will combine to form the
-                    // original secret.
-                    return !Arrays.equals(recovered, secret);
-                  } else {
-                    // Every subset of shares with K or more shares will combine to form the
-                    // original secret.
-                    return Arrays.equals(recovered, secret);
+                  // Empty subsets don't count.
+                  if (subset.isEmpty()) {
+                    return true;
                   }
+
+                  // Combine the shares and try to recover the original secret.
+                  final byte[] recovered = SecretSharing.combine(subset);
+
+                  // No subset of shares with fewer than K shares will combine to form the original
+                  // secret.
+                  if (subset.size() < k) {
+                    return !Arrays.equals(recovered, secret);
+                  }
+
+                  // Every subset of shares with K or more shares will combine to form the original
+                  // secret.
+                  return Arrays.equals(recovered, secret);
                 }));
   }
 }
