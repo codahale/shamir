@@ -17,7 +17,6 @@ package com.codahale.shamir;
 import java.security.SecureRandom;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -44,16 +43,10 @@ public final class SecretSharing {
    * @return a set of {@code n} {@link Share} instances
    */
   public static Set<Share> split(int n, int k, byte[] secret) {
-    Objects.requireNonNull(secret, "secret must not be null");
-    if (k <= 1) {
-      throw new IllegalArgumentException("K must be > 1");
-    }
-    if (n < k) {
-      throw new IllegalArgumentException("N must be >= K");
-    }
-    if (n > 255) {
-      throw new IllegalArgumentException("N must be <= 255");
-    }
+    checkNotNull(secret, "Secret must not be null");
+    checkArgument(k > 1, "K must be > 1");
+    checkArgument(n >= k, "N must be >= K");
+    checkArgument(n <= 255, "N must be <= 255");
 
     // generate share values
     final SecureRandom random = new SecureRandom();
@@ -89,7 +82,11 @@ public final class SecretSharing {
    * lengths
    */
   public static byte[] combine(Set<Share> shares) {
-    final byte[] secret = new byte[secretLength(shares)];
+    checkNotNull(shares, "Shares must not be null");
+    final int[] lengths = shares.stream().mapToInt(s -> s.value.length).distinct().toArray();
+    checkArgument(lengths.length > 0, "No shares provided");
+    checkArgument(lengths.length == 1, "Varying lengths of share values");
+    final byte[] secret = new byte[lengths[0]];
     for (int i = 0; i < secret.length; i++) {
       final byte[][] points = new byte[shares.size()][2];
       int j = 0;
@@ -103,15 +100,17 @@ public final class SecretSharing {
     return secret;
   }
 
-  private static int secretLength(Set<Share> shares) {
-    Objects.requireNonNull(shares, "Shares must not be null");
-    final int[] lengths = shares.stream().mapToInt(s -> s.value.length).distinct().toArray();
-    if (lengths.length == 0) {
-      throw new IllegalArgumentException("No shares provided");
+  // I miss you Guava
+
+  private static void checkArgument(boolean condition, String message) {
+    if (!condition) {
+      throw new IllegalArgumentException(message);
     }
-    if (lengths.length != 1) {
-      throw new IllegalArgumentException("Varying lengths of share values");
+  }
+
+  private static void checkNotNull(Object o, String message) {
+    if (o == null) {
+      throw new NullPointerException(message);
     }
-    return lengths[0];
   }
 }
