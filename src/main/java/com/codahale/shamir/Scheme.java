@@ -102,8 +102,8 @@ public class Scheme {
    */
   public byte[] join(Set<Share> shares) {
     checkNotNull(shares, "Shares must not be null");
+    checkArgument(shares.size() > 0, "No shares provided");
     final int[] lengths = shares.stream().mapToInt(s -> s.value.length).distinct().toArray();
-    checkArgument(lengths.length > 0, "No shares provided");
     checkArgument(lengths.length == 1, "Varying lengths of share values");
     final byte[] secret = new byte[lengths[0]];
     for (int i = 0; i < secret.length; i++) {
