@@ -31,6 +31,12 @@ public class GF256Test {
   }
 
   @Test
+  public void sub() throws Exception {
+    assertThat(GF256.sub((byte) 100, (byte) 30))
+        .isEqualTo((byte) 122);
+  }
+
+  @Test
   public void mul() throws Exception {
     assertThat(GF256.mul((byte) 90, (byte) 21))
         .isEqualTo((byte) 254);
@@ -65,9 +71,9 @@ public class GF256Test {
   }
 
   @Test
-  public void addIsTheInverseOfAdd() {
+  public void subIsTheInverseOfAdd() {
     qt().forAll(bytes(), bytes())
-        .check((x, y) -> GF256.add(GF256.add(x, y), y) == x);
+        .check((x, y) -> GF256.sub(GF256.add(x, y), y) == x);
   }
 
   @Test

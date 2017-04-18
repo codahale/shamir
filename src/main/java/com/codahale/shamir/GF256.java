@@ -78,6 +78,10 @@ interface GF256 {
     return (byte) (a ^ b);
   }
 
+  static byte sub(byte a, byte b) {
+    return (byte) (a ^ b);
+  }
+
   static byte mul(byte e, byte a) {
     if (e == 0 || a == 0) {
       return 0;
@@ -125,20 +129,21 @@ interface GF256 {
   }
 
   static byte interpolate(byte[][] points) {
-    // calculate f(0) of the given points using Lagrange interpolation
-    byte value = 0;
+    // calculate f(0) of the given points using Lagrangian interpolation
+    final byte x = 0;
+    byte y = 0;
     for (int i = 0; i < points.length; i++) {
       final byte aX = points[i][0];
       final byte aY = points[i][1];
-      byte weight = 1;
+      byte li = 1;
       for (int j = 0; j < points.length; j++) {
         final byte bX = points[j][0];
         if (i != j) {
-          weight = mul(weight, div(bX, add(aX, bX)));
+          li = mul(li, div(sub(x, bX), sub(aX, bX)));
         }
       }
-      value = add(value, mul(weight, aY));
+      y = add(y, mul(li, aY));
     }
-    return value;
+    return y;
   }
 }
