@@ -14,7 +14,7 @@
 
 package com.codahale.shamir.perf;
 
-import com.codahale.shamir.SecretSharing;
+import com.codahale.shamir.Scheme;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
@@ -26,8 +26,9 @@ public class LoadHarness {
     new BufferedReader(new InputStreamReader(System.in)).readLine();
     System.out.println("Running...");
     final byte[] secret = new byte[10 * 1024];
+    final Scheme scheme = new Scheme(200, 20);
     while (true) {
-      SecretSharing.combine(SecretSharing.split(200, 20, secret));
+      scheme.join(scheme.split(secret));
     }
   }
 }

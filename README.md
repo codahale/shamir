@@ -18,22 +18,23 @@ algorithm](http://en.wikipedia.org/wiki/Shamir's_Secret_Sharing) over GF(256).
 ## Use the thing
 
 ```java
-import com.codahale.shamir.SecretSharing;
+import com.codahale.shamir.Scheme;
 import com.codahale.shamir.Share;
 import java.util.Set;
 
 class Example {
-    void doIt() {
-        final byte[] secret = "hello there".getBytes();
+  void doIt() {
+    // split into 5 shares, any 3 of which can be combined
+    final Scheme scheme = new Scheme(5, 3);
+    final byte[] secret = "hello there".getBytes();
        
-        // split into 5 shares, any 3 of which can be combined
-        final Set<Share> shares = SecretSharing.split(5, 3, secret);
+    final Set<Share> shares = scheme.split(5, 3, secret);
        
-        // combine shares to recover the original secret
-        final byte[] recovered = SecretSharing.combine(shares);
+    // join shares to recover the original secret
+    final byte[] recovered = scheme.join(shares);
         
-        System.out.println(new String(recovered));
-    } 
+    System.out.println(new String(recovered));
+  } 
 }
 ```
 

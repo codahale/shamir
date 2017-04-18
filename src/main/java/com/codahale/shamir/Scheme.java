@@ -20,36 +20,44 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Two static methods which use Shamir's Secret Sharing over {@code GF(256)} to
- * securely split secrets into {@code N} shares, of which {@code K} can be
- * combined to recover the original secret.
+ * A class which uses Shamir's Secret Sharing over {@code GF(256)} to securely split secrets into
+ * {@code N} shares, of which any {@code K} can be joined to recover the original secret.
  *
  * @see <a href="https://en.wikipedia.org/wiki/Shamir%27s_Secret_Sharing">Shamir's Secret
  * Sharing</a>
+ * @see <a href="http://www.cs.utsa.edu/~wagner/laws/FFM.html">{@code GF(256)}</a>
  */
-public final class SecretSharing {
+public class Scheme {
 
-  private SecretSharing() {
-    throw new AssertionError("No SecretSharing instances for you!");
-  }
+  private final int n, k;
+  private final SecureRandom random;
 
   /**
-   * Splits the given secret into {@code n} shares, of which any {@code k} or
-   * more can be combined to recover the original secret.
+   * Creates a new {@link Scheme} instance.
    *
    * @param n the number of shares to produce (must be {@code >1})
    * @param k the threshold of combinable shares (must be {@code <= n})
-   * @param secret the secret to split
-   * @return a set of {@code n} {@link Share} instances
    */
-  public static Set<Share> split(int n, int k, byte[] secret) {
-    checkNotNull(secret, "Secret must not be null");
+  public Scheme(int n, int k) {
     checkArgument(k > 1, "K must be > 1");
     checkArgument(n >= k, "N must be >= K");
     checkArgument(n <= 255, "N must be <= 255");
+    this.n = n;
+    this.k = k;
+    this.random = new SecureRandom();
+  }
+
+  /**
+   * Splits the given secret into {@code n} shares, of which any {@code k} or more can be combined
+   * to recover the original secret.
+   *
+   * @param secret the secret to split
+   * @return a set of {@code n} {@link Share} instances
+   */
+  public Set<Share> split(byte[] secret) {
+    checkNotNull(secret, "Secret must not be null");
 
     // generate share values
-    final SecureRandom random = new SecureRandom();
     final byte[][] values = new byte[n][secret.length];
     for (int i = 0; i < secret.length; i++) {
       // for each byte, generate a random polynomial, p
@@ -69,19 +77,18 @@ public final class SecretSharing {
   }
 
   /**
-   * Combines the given shares into the original secret.
+   * Joins the given shares to recover the original secret.
    * <p>
-   * <b>N.B.:</b> There is no way to determine whether or not the returned
-   * value is actually the original secret. If the shares are incorrect, or
-   * are under the threshold value used to split the secret, a random value
-   * will be returned.
+   * <b>N.B.:</b> There is no way to determine whether or not the returned value is actually the
+   * original secret. If the shares are incorrect, or are under the threshold value used to split
+   * the secret, a random value will be returned.
    *
    * @param shares a set of {@link Share} instances
    * @return the original secret
    * @throws IllegalArgumentException if {@code shares} is empty or contains values of varying
    * lengths
    */
-  public static byte[] combine(Set<Share> shares) {
+  public byte[] join(Set<Share> shares) {
     checkNotNull(shares, "Shares must not be null");
     final int[] lengths = shares.stream().mapToInt(s -> s.value.length).distinct().toArray();
     checkArgument(lengths.length > 0, "No shares provided");
@@ -99,8 +106,6 @@ public final class SecretSharing {
     }
     return secret;
   }
-
-  // I miss you Guava
 
   private static void checkArgument(boolean condition, String message) {
     if (!condition) {
