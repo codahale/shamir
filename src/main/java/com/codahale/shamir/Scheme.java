@@ -20,12 +20,15 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * A class which uses Shamir's Secret Sharing over {@code GF(256)} to securely split secrets into
- * {@code N} shares, of which any {@code K} can be joined to recover the original secret.
+ * {@link Scheme} implemented Shamir's Secret Sharing over {@code GF(256)} to securely split secrets
+ * into {@code N} shares, of which any {@code K} can be joined to recover the original secret.
+ * <p>
+ * {@link Scheme} uses the same GF(256) field polynomial as the Advanced Encryption Standard (AES):
+ * {@code 0x11b}, or {@code x^8 + x^4 + x^3 + x + 1}.
  *
  * @see <a href="https://en.wikipedia.org/wiki/Shamir%27s_Secret_Sharing">Shamir's Secret
  * Sharing</a>
- * @see <a href="http://www.cs.utsa.edu/~wagner/laws/FFM.html">{@code GF(256)}</a>
+ * @see <a href="http://www.cs.utsa.edu/~wagner/laws/FFM.html">The Finite Field {@code GF(256)}</a>
  */
 public class Scheme {
 
