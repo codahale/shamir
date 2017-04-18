@@ -47,6 +47,18 @@ public class Scheme {
     this.random = new SecureRandom();
   }
 
+  private static void checkArgument(boolean condition, String message) {
+    if (!condition) {
+      throw new IllegalArgumentException(message);
+    }
+  }
+
+  private static void checkNotNull(Object o, String message) {
+    if (o == null) {
+      throw new NullPointerException(message);
+    }
+  }
+
   /**
    * Splits the given secret into {@code n} shares, of which any {@code k} or more can be combined
    * to recover the original secret.
@@ -105,17 +117,5 @@ public class Scheme {
       secret[i] = GF256.interpolate(points);
     }
     return secret;
-  }
-
-  private static void checkArgument(boolean condition, String message) {
-    if (!condition) {
-      throw new IllegalArgumentException(message);
-    }
-  }
-
-  private static void checkNotNull(Object o, String message) {
-    if (o == null) {
-      throw new NullPointerException(message);
-    }
   }
 }
