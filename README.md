@@ -89,7 +89,11 @@ encoded as a separate `GF(256)` polynomial, and the resulting shares are the agg
 those polynomials.
 
 Using `GF(256)` allows for secrets of arbitrary length and does not require additional parameters,
-unlike `GF(Q)`, which requires a safe modulus. It's also much faster than `GF(Q)`.
+unlike `GF(Q)`, which requires a safe modulus. It's also **much** faster than `GF(Q)`: splitting and
+combining a 1KiB secret into 8 shares with a threshold of 3 takes single-digit milliseconds, whereas
+performing the same operation over `GF(Q)` takes several seconds, even using per-byte polynomials.
+Treating the secret as a single `y` coordinate over `GF(Q)` is even slower, and requires a modulus
+larger than the secret.
 
 ## License
 
