@@ -99,8 +99,8 @@ interface GF256 {
   static byte eval(byte[] p, byte x) {
     // Horner's method
     byte result = 0;
-    for (int i = 1; i <= p.length; i++) {
-      result = add(mul(result, x), p[p.length - i]);
+    for (int i = p.length - 1; i >= 0; i--) {
+      result = add(mul(result, x), p[i]);
     }
     return result;
   }
