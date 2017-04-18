@@ -44,6 +44,8 @@ public class GF256Test {
         .isEqualTo((byte) 167);
     assertThat(GF256.mul((byte) 0, (byte) 21))
         .isEqualTo((byte) 0);
+    assertThat(GF256.mul((byte) 0xb6, (byte) 0x53))
+        .isEqualTo((byte) 0x36);
   }
 
   @Test
