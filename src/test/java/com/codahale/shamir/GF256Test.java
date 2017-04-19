@@ -15,7 +15,6 @@
 package com.codahale.shamir;
 
 import static com.codahale.shamir.Generators.bytes;
-import static com.codahale.shamir.Generators.nonZeroBytes;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.quicktheories.quicktheories.QuickTheory.qt;
 
@@ -80,13 +79,13 @@ public class GF256Test {
 
   @Test
   public void divIsTheInverseOfMul() {
-    qt().forAll(bytes(), nonZeroBytes())
+    qt().forAll(bytes(), bytes(1, 255))
         .check((x, y) -> GF256.div(GF256.mul(x, y), y) == x);
   }
 
   @Test
   public void mulIsTheInverseOfDiv() {
-    qt().forAll(bytes(), nonZeroBytes())
+    qt().forAll(bytes(), bytes(1, 255))
         .check((x, y) -> GF256.mul(GF256.div(x, y), y) == x);
   }
 

@@ -14,29 +14,26 @@
 
 package com.codahale.shamir;
 
-import static org.quicktheories.quicktheories.generators.SourceDSL.integers;
-import static org.quicktheories.quicktheories.generators.SourceDSL.lists;
-
-import com.google.common.primitives.Bytes;
 import okio.ByteString;
 import org.quicktheories.quicktheories.core.Source;
 
 public interface Generators {
 
-  static Source<Byte> bytes() {
-    return integers().between(0, 255)
-                     .as(Integer::byteValue, Byte::intValue);
+  static Source<Byte> bytes(int minValue, int maxValue) {
+    return Source.of((prng, step) -> ((byte) prng.nextInt(minValue, maxValue)));
   }
 
-  static Source<Byte> nonZeroBytes() {
-    return integers().between(1, 255)
-                     .as(Integer::byteValue, Byte::intValue);
+  static Source<Byte> bytes() {
+    return bytes(0, 255);
   }
 
   static Source<ByteString> byteStrings(int minSize, int maxSize) {
-    return lists().arrayListsOf(bytes())
-                  .ofSizeBetween(minSize, maxSize)
-                  .as(l -> ByteString.of(Bytes.toArray(l)), s -> Bytes.asList(s.toByteArray()))
-                  .describedAs(ByteString::toString);
+    return Source.of((prng, step) -> {
+      final byte[] bytes = new byte[prng.nextInt(minSize, maxSize)];
+      for (int i = 0; i < bytes.length; i++) {
+        bytes[i] = (byte) prng.nextInt(0, 255);
+      }
+      return ByteString.of(bytes);
+    });
   }
 }
