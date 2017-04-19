@@ -18,10 +18,11 @@ import java.security.SecureRandom;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import okio.ByteString;
 
 /**
  * {@link Scheme} implemented Shamir's Secret Sharing over {@code GF(256)} to securely split secrets
- * into {@code N} shares, of which any {@code K} can be joined to recover the original secret.
+ * into {@code N} parts, of which any {@code K} can be joined to recover the original secret.
  * <p>
  * {@link Scheme} uses the same GF(256) field polynomial as the Advanced Encryption Standard (AES):
  * {@code 0x11b}, or {@code x^8 + x^4 + x^3 + x + 1}.
@@ -38,8 +39,8 @@ public class Scheme {
   /**
    * Creates a new {@link Scheme} instance.
    *
-   * @param n the number of shares to produce (must be {@code >1})
-   * @param k the threshold of joinable shares (must be {@code <= n})
+   * @param n the number of parts to produce (must be {@code >1})
+   * @param k the threshold of joinable parts (must be {@code <= n})
    */
   public Scheme(int n, int k) {
     checkArgument(k > 1, "K must be > 1");
@@ -63,62 +64,62 @@ public class Scheme {
   }
 
   /**
-   * Splits the given secret into {@code n} shares, of which any {@code k} or more can be combined
+   * Splits the given secret into {@code n} parts, of which any {@code k} or more can be combined
    * to recover the original secret.
    *
    * @param secret the secret to split
-   * @return a set of {@code n} {@link Share} instances
+   * @return a set of {@code n} {@link Part} instances
    */
-  public Set<Share> split(byte[] secret) {
+  public Set<Part> split(ByteString secret) {
     checkNotNull(secret, "Secret must not be null");
 
-    // generate share values
-    final byte[][] values = new byte[n][secret.length];
-    for (int i = 0; i < secret.length; i++) {
+    // generate part values
+    final byte[][] values = new byte[n][secret.size()];
+    for (int i = 0; i < secret.size(); i++) {
       // for each byte, generate a random polynomial, p
-      final byte[] p = GF256.generate(random, k - 1, secret[i]);
+      final byte[] p = GF256.generate(random, k - 1, secret.getByte(i));
       for (int x = 1; x <= n; x++) {
-        // each share's byte is p(shareId)
+        // each part's byte is p(partId)
         values[x - 1][i] = GF256.eval(p, (byte) x);
       }
     }
 
     // return as a set of objects
-    final Set<Share> shares = new HashSet<>(n);
+    final Set<Part> parts = new HashSet<>(n);
     for (int i = 0; i < values.length; i++) {
-      shares.add(new Share(i + 1, values[i]));
+      parts.add(Part.of(i + 1, ByteString.of(values[i])));
     }
-    return Collections.unmodifiableSet(shares);
+    return Collections.unmodifiableSet(parts);
   }
 
   /**
-   * Joins the given shares to recover the original secret.
+   * Joins the given parts to recover the original secret.
    * <p>
    * <b>N.B.:</b> There is no way to determine whether or not the returned value is actually the
-   * original secret. If the shares are incorrect, or are under the threshold value used to split
+   * original secret. If the parts are incorrect, or are under the threshold value used to split
    * the secret, a random value will be returned.
    *
-   * @param shares a set of {@link Share} instances
+   * @param parts a set of {@link Part} instances
    * @return the original secret
-   * @throws IllegalArgumentException if {@code shares} is empty or contains values of varying
+   * @throws IllegalArgumentException if {@code parts} is empty or contains values of varying
    * lengths
    */
-  public byte[] join(Set<Share> shares) {
-    checkNotNull(shares, "Shares must not be null");
-    checkArgument(shares.size() > 0, "No shares provided");
-    final int[] lengths = shares.stream().mapToInt(s -> s.value.length).distinct().toArray();
-    checkArgument(lengths.length == 1, "Varying lengths of share values");
+  public ByteString join(Set<Part> parts) {
+    checkNotNull(parts, "Shares must not be null");
+    checkArgument(parts.size() > 0, "No parts provided");
+    final int[] lengths = parts.stream().mapToInt(s -> s.value().size()).distinct().toArray();
+    checkArgument(lengths.length == 1, "Varying lengths of part values");
     final byte[] secret = new byte[lengths[0]];
     for (int i = 0; i < secret.length; i++) {
-      final byte[][] points = new byte[shares.size()][2];
+      final byte[][] points = new byte[parts.size()][2];
       int j = 0;
-      for (Share share : shares) {
-        points[j][0] = (byte) share.id;
-        points[j][1] = share.value[i];
+      for (Part part : parts) {
+        points[j][0] = part.id();
+        points[j][1] = part.value().getByte(i);
         j++;
       }
       secret[i] = GF256.interpolate(points);
     }
-    return secret;
+    return ByteString.of(secret);
   }
 }

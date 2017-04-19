@@ -18,7 +18,7 @@ import static org.quicktheories.quicktheories.generators.SourceDSL.integers;
 import static org.quicktheories.quicktheories.generators.SourceDSL.lists;
 
 import com.google.common.primitives.Bytes;
-import java.util.Arrays;
+import okio.ByteString;
 import org.quicktheories.quicktheories.core.Source;
 
 public interface Generators {
@@ -33,10 +33,10 @@ public interface Generators {
                      .as(Integer::byteValue, Byte::intValue);
   }
 
-  static Source<byte[]> byteArrays(int minSize, int maxSize) {
+  static Source<ByteString> byteStrings(int minSize, int maxSize) {
     return lists().arrayListsOf(bytes())
                   .ofSizeBetween(minSize, maxSize)
-                  .as(Bytes::toArray, Bytes::asList)
-                  .describedAs(Arrays::toString);
+                  .as(l -> ByteString.of(Bytes.toArray(l)), s -> Bytes.asList(s.toByteArray()))
+                  .describedAs(ByteString::toString);
   }
 }

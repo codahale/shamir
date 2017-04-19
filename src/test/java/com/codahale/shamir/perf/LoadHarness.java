@@ -17,6 +17,7 @@ package com.codahale.shamir.perf;
 import com.codahale.shamir.Scheme;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import okio.ByteString;
 
 public class LoadHarness {
 
@@ -25,7 +26,7 @@ public class LoadHarness {
     System.out.println("Press enter to begin");
     new BufferedReader(new InputStreamReader(System.in)).readLine();
     System.out.println("Running...");
-    final byte[] secret = new byte[10 * 1024];
+    final ByteString secret = ByteString.of(new byte[10 * 1024]);
     final Scheme scheme = new Scheme(200, 20);
     while (true) {
       scheme.join(scheme.split(secret));

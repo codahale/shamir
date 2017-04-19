@@ -14,31 +14,33 @@
 
 package com.codahale.shamir.tests;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.codahale.shamir.Share;
+import com.codahale.shamir.Part;
+import com.google.common.base.Charsets;
+import okio.ByteString;
 import org.junit.Test;
 
-public class ShareTest {
+public class PartTest {
 
-  private final Share share = new Share(1, "blah".getBytes(UTF_8));
+  private final ByteString blah = ByteString.encodeString("blah", Charsets.UTF_8);
+  private final Part part = Part.of(1, blah);
 
   @Test
   public void id() throws Exception {
-    assertThat(share.getId())
-        .isEqualTo(1);
+    assertThat(part.id())
+        .isEqualTo((byte) 1);
   }
 
   @Test
   public void value() throws Exception {
-    assertThat(share.getValue())
-        .isEqualTo("blah".getBytes(UTF_8));
+    assertThat(part.value())
+        .isEqualTo(blah);
   }
 
   @Test
   public void string() throws Exception {
-    assertThat(share.toString())
-        .isEqualTo("Share[id = 1, value = [98, 108, 97, 104]]");
+    assertThat(part.toString())
+        .isEqualTo("Part{id=1, value=[text=blah]}");
   }
 }
