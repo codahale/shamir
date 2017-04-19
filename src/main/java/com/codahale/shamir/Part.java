@@ -47,4 +47,8 @@ public abstract class Part {
    * @return the part's value
    */
   public abstract ByteString value();
+
+  int valueLength() {
+    return value().size();
+  }
 }
