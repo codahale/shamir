@@ -1,5 +1,9 @@
 # Change Log
 
+## v0.2.0: 2017-04-18
+
+* Move static methods into `Share` class.
+
 ## v0.1.6: 2017-04-17
 
 * Small simplifications.
