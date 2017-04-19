@@ -72,7 +72,7 @@ public class SchemeTest {
   @Test
   public void splitAndJoinSingleByteSecret() throws Exception {
     final Scheme scheme = new Scheme(8, 3);
-    final byte[] secret = new byte[]{-41};
+    final byte[] secret = {-41};
     Assertions.assertThat(scheme.join(scheme.split(secret)))
               .isEqualTo(secret);
   }
@@ -80,7 +80,7 @@ public class SchemeTest {
   @Test
   public void splitAndJoinMoreThanByteMaxValueShares() throws Exception {
     final Scheme scheme = new Scheme(200, 3);
-    final byte[] secret = new byte[]{-41};
+    final byte[] secret = {-41};
     assertThat(scheme.join(scheme.split(secret)))
         .isEqualTo(secret);
   }
