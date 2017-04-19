@@ -1,5 +1,11 @@
 # Change Log
 
+## v0.3.0: 2017-04-18
+
+* Renamed `Share` to `Part`, revamped API.
+* Changed API to use `okio`'s `ByteString`.
+* Improved efficiency of GF256 operations.
+
 ## v0.2.0: 2017-04-18
 
 * Move static methods into `Share` class.
