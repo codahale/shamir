@@ -236,6 +236,9 @@
             </goals>
             <configuration>
               <failOnWarning>true</failOnWarning>
+              <ignoredDependencies>
+                <ignoredDependency>com.google.auto.value:auto-value</ignoredDependency>
+              </ignoredDependencies>
             </configuration>
           </execution>
         </executions>
