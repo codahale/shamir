@@ -14,6 +14,9 @@
 
 package com.codahale.shamir;
 
+import static com.codahale.shamir.Misc.checkArgument;
+import static com.codahale.shamir.Misc.checkNotNull;
+
 import java.security.SecureRandom;
 import java.util.Collections;
 import java.util.HashSet;
@@ -49,18 +52,6 @@ public class Scheme {
     this.n = n;
     this.k = k;
     this.random = new SecureRandom();
-  }
-
-  private static void checkArgument(boolean condition, String message) {
-    if (!condition) {
-      throw new IllegalArgumentException(message);
-    }
-  }
-
-  private static void checkNotNull(Object o, String message) {
-    if (o == null) {
-      throw new NullPointerException(message);
-    }
   }
 
   /**
