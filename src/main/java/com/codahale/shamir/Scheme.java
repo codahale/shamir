@@ -39,7 +39,7 @@ public class Scheme {
    * Creates a new {@link Scheme} instance.
    *
    * @param n the number of shares to produce (must be {@code >1})
-   * @param k the threshold of combinable shares (must be {@code <= n})
+   * @param k the threshold of joinable shares (must be {@code <= n})
    */
   public Scheme(int n, int k) {
     checkArgument(k > 1, "K must be > 1");
