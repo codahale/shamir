@@ -14,13 +14,12 @@
 
 package com.codahale.shamir;
 
-import static com.codahale.shamir.Misc.checkArgument;
-import static com.codahale.shamir.Misc.checkNotNull;
-
 import java.security.SecureRandom;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import javax.annotation.Nonnull;
+import jdk.nashorn.internal.ir.annotations.Immutable;
 import okio.ByteString;
 
 /**
@@ -34,6 +33,7 @@ import okio.ByteString;
  * Sharing</a>
  * @see <a href="http://www.cs.utsa.edu/~wagner/laws/FFM.html">The Finite Field {@code GF(256)}</a>
  */
+@Immutable
 public class Scheme {
 
   private final int n, k;
@@ -54,6 +54,12 @@ public class Scheme {
     this.random = new SecureRandom();
   }
 
+  private static void checkArgument(boolean condition, String message) {
+    if (!condition) {
+      throw new IllegalArgumentException(message);
+    }
+  }
+
   /**
    * Splits the given secret into {@code n} parts, of which any {@code k} or more can be combined
    * to recover the original secret.
@@ -61,9 +67,7 @@ public class Scheme {
    * @param secret the secret to split
    * @return a set of {@code n} {@link Part} instances
    */
-  public Set<Part> split(ByteString secret) {
-    checkNotNull(secret, "Secret must not be null");
-
+  public Set<Part> split(@Nonnull ByteString secret) {
     // generate part values
     final byte[][] values = new byte[n][secret.size()];
     for (int i = 0; i < secret.size(); i++) {
@@ -95,8 +99,7 @@ public class Scheme {
    * @throws IllegalArgumentException if {@code parts} is empty or contains values of varying
    * lengths
    */
-  public ByteString join(Set<Part> parts) {
-    checkNotNull(parts, "Shares must not be null");
+  public ByteString join(@Nonnull Set<Part> parts) {
     checkArgument(parts.size() > 0, "No parts provided");
     final int[] lengths = parts.stream().mapToInt(Part::valueLength).distinct().toArray();
     checkArgument(lengths.length == 1, "Varying lengths of part values");
