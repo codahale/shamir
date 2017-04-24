@@ -14,12 +14,13 @@
 
 package com.codahale.shamir;
 
+import com.google.auto.value.AutoValue;
 import java.security.SecureRandom;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import javax.annotation.Nonnull;
-import jdk.nashorn.internal.ir.annotations.Immutable;
+import javax.annotation.concurrent.Immutable;
 import okio.ByteString;
 
 /**
@@ -27,31 +28,31 @@ import okio.ByteString;
  * into {@code N} parts, of which any {@code K} can be joined to recover the original secret.
  * <p>
  * {@link Scheme} uses the same GF(256) field polynomial as the Advanced Encryption Standard (AES):
- * {@code 0x11b}, or {@code x^8 + x^4 + x^3 + x + 1}.
+ * {@code 0x11b}, or {@code x}<sup>8</sup> + {@code x}<sup>4</sup> + {@code x}<sup>3</sup> +
+ * {@code x} + 1.
  *
  * @see <a href="https://en.wikipedia.org/wiki/Shamir%27s_Secret_Sharing">Shamir's Secret
  * Sharing</a>
  * @see <a href="http://www.cs.utsa.edu/~wagner/laws/FFM.html">The Finite Field {@code GF(256)}</a>
  */
+@AutoValue
 @Immutable
-public class Scheme {
+public abstract class Scheme {
 
-  private final int n, k;
-  private final SecureRandom random;
+  private final SecureRandom random = new SecureRandom();
 
   /**
    * Creates a new {@link Scheme} instance.
    *
    * @param n the number of parts to produce (must be {@code >1})
    * @param k the threshold of joinable parts (must be {@code <= n})
+   * @return an {@code N}/{@code K} {@link Scheme}
    */
-  public Scheme(int n, int k) {
+  public static Scheme of(int n, int k) {
     checkArgument(k > 1, "K must be > 1");
     checkArgument(n >= k, "N must be >= K");
     checkArgument(n <= 255, "N must be <= 255");
-    this.n = n;
-    this.k = k;
-    this.random = new SecureRandom();
+    return new AutoValue_Scheme(n, k);
   }
 
   private static void checkArgument(boolean condition, String message) {
@@ -59,6 +60,20 @@ public class Scheme {
       throw new IllegalArgumentException(message);
     }
   }
+
+  /**
+   * The number of parts the scheme will generate when splitting a secret.
+   *
+   * @return {@code N}
+   */
+  public abstract int n();
+
+  /**
+   * The number of parts the scheme will require to re-create a secret.
+   *
+   * @return {@code K}
+   */
+  public abstract int k();
 
   /**
    * Splits the given secret into {@code n} parts, of which any {@code k} or more can be combined
@@ -69,18 +84,18 @@ public class Scheme {
    */
   public Set<Part> split(@Nonnull ByteString secret) {
     // generate part values
-    final byte[][] values = new byte[n][secret.size()];
+    final byte[][] values = new byte[n()][secret.size()];
     for (int i = 0; i < secret.size(); i++) {
       // for each byte, generate a random polynomial, p
-      final byte[] p = GF256.generate(random, k - 1, secret.getByte(i));
-      for (int x = 1; x <= n; x++) {
+      final byte[] p = GF256.generate(random, k() - 1, secret.getByte(i));
+      for (int x = 1; x <= n(); x++) {
         // each part's byte is p(partId)
         values[x - 1][i] = GF256.eval(p, (byte) x);
       }
     }
 
     // return as a set of objects
-    final Set<Part> parts = new HashSet<>(n);
+    final Set<Part> parts = new HashSet<>(n());
     for (int i = 0; i < values.length; i++) {
       parts.add(Part.of(i + 1, ByteString.of(values[i])));
     }

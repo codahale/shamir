@@ -27,7 +27,7 @@ public class LoadHarness {
     new BufferedReader(new InputStreamReader(System.in)).readLine();
     System.out.println("Running...");
     final ByteString secret = ByteString.of(new byte[10 * 1024]);
-    final Scheme scheme = new Scheme(200, 20);
+    final Scheme scheme = Scheme.of(200, 20);
     while (true) {
       scheme.join(scheme.split(secret));
     }

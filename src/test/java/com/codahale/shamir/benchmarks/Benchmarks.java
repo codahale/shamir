@@ -32,7 +32,7 @@ import org.openjdk.jmh.runner.RunnerException;
 public class Benchmarks {
 
   private static final ByteString SECRET = ByteString.of(new byte[1024]);
-  private static final Scheme SCHEME = new Scheme(5, 3);
+  private static final Scheme SCHEME = Scheme.of(5, 3);
   private static final Set<Part> PARTS = SCHEME.split(SECRET);
 
   public static void main(String[] args) throws IOException, RunnerException {

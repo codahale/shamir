@@ -32,29 +32,39 @@ import org.junit.Test;
 public class SchemeTest {
 
   @Test
+  public void hasProperties() throws Exception {
+    final Scheme scheme = Scheme.of(5, 3);
+
+    assertThat(scheme.n())
+        .isEqualTo(5);
+    assertThat(scheme.k())
+        .isEqualTo(3);
+  }
+
+  @Test
   public void tooManyShares() throws Exception {
-    assertThatThrownBy(() -> new Scheme(2_000, 3))
+    assertThatThrownBy(() -> Scheme.of(2_000, 3))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("N must be <= 255");
   }
 
   @Test
   public void thresholdTooLow() throws Exception {
-    assertThatThrownBy(() -> new Scheme(1, 1))
+    assertThatThrownBy(() -> Scheme.of(1, 1))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("K must be > 1");
   }
 
   @Test
   public void thresholdTooHigh() throws Exception {
-    assertThatThrownBy(() -> new Scheme(1, 2))
+    assertThatThrownBy(() -> Scheme.of(1, 2))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("N must be >= K");
   }
 
   @Test
   public void joinEmptyParts() throws Exception {
-    assertThatThrownBy(() -> new Scheme(3, 2).join(Collections.emptySet()))
+    assertThatThrownBy(() -> Scheme.of(3, 2).join(Collections.emptySet()))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("No parts provided");
   }
@@ -64,14 +74,14 @@ public class SchemeTest {
     final Part one = Part.of(1, ByteString.of((byte) 1));
     final Part two = Part.of(2, ByteString.of((byte) 1, (byte) 2));
 
-    assertThatThrownBy(() -> new Scheme(3, 2).join(ImmutableSet.of(one, two)))
+    assertThatThrownBy(() -> Scheme.of(3, 2).join(ImmutableSet.of(one, two)))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("Varying lengths of part values");
   }
 
   @Test
   public void splitAndJoinSingleByteSecret() throws Exception {
-    final Scheme scheme = new Scheme(8, 3);
+    final Scheme scheme = Scheme.of(8, 3);
     final ByteString secret = ByteString.encodeUtf8("x");
     Assertions.assertThat(scheme.join(scheme.split(secret)))
               .isEqualTo(secret);
@@ -79,7 +89,7 @@ public class SchemeTest {
 
   @Test
   public void splitAndJoinMoreThanByteMaxValueParts() throws Exception {
-    final Scheme scheme = new Scheme(200, 3);
+    final Scheme scheme = Scheme.of(200, 3);
     final ByteString secret = ByteString.encodeUtf8("x");
     assertThat(scheme.join(scheme.split(secret)))
         .isEqualTo(secret);
@@ -90,7 +100,7 @@ public class SchemeTest {
     // All distinct subsets of parts of cardinality greater than or equal to the threshold should
     // join to recover the original secret.
     qt().forAll(integers().between(2, 5), integers().between(2, 5), byteStrings(1, 300))
-        .asWithPrecursor((k, extra, secret) -> new Scheme(k + extra, k))
+        .asWithPrecursor((k, extra, secret) -> Scheme.of(k + extra, k))
         .check((k, e, secret, scheme) -> Sets.powerSet(scheme.split(secret)).stream().parallel()
                                              .filter(s -> s.size() >= k)
                                              .map(scheme::join)
@@ -102,7 +112,7 @@ public class SchemeTest {
     // All distinct subsets of parts of cardinality less than the threshold should never join to
     // recover the original secret. Only check larger secrets to avoid false positives.
     qt().forAll(integers().between(2, 5), integers().between(2, 5), byteStrings(3, 300))
-        .asWithPrecursor((k, extra, secret) -> new Scheme(k + extra, k))
+        .asWithPrecursor((k, extra, secret) -> Scheme.of(k + extra, k))
         .check((k, e, secret, scheme) -> Sets.powerSet(scheme.split(secret)).stream().parallel()
                                              .filter(s -> s.size() < k && !s.isEmpty())
                                              .map(scheme::join)
