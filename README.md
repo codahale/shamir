@@ -11,7 +11,7 @@ algorithm](http://en.wikipedia.org/wiki/Shamir's_Secret_Sharing) over GF(256).
 <dependency>
   <groupId>com.codahale</groupId>
   <artifactId>shamir</artifactId>
-  <version>0.3.0</version>
+  <version>0.4.0</version>
 </dependency>
 ```
 

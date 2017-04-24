@@ -1,5 +1,9 @@
 # Change Log
 
+## v0.4.0: 2017-04-23
+
+* Converted `Scheme` into an auto-value class.
+
 ## v0.3.0: 2017-04-18
 
 * Renamed `Share` to `Part`, revamped API.
