@@ -92,6 +92,20 @@ performing the same operation over `GF(Q)` takes several seconds, even using per
 Treating the secret as a single `y` coordinate over `GF(Q)` is even slower, and requires a modulus
 larger than the secret.
 
+## Performance
+
+It's fast. Plenty fast.
+
+For a 1KiB secret split with a `n=5,k=3` scheme:
+
+```
+Benchmark         Mode  Cnt    Score   Error  Units
+Benchmarks.join   avgt  200  398.890 ± 5.116  us/op
+Benchmarks.split  avgt  200  461.810 ± 7.770  us/op
+```
+
+**N.B.:** `split` is quadratic with respect to the number of shares being combined.
+
 ## License
 
 Copyright © 2017 Coda Hale
