@@ -7,7 +7,7 @@ install: true
 before_script:
  - "echo $JAVA_OPTS"
  - "export JAVA_OPTS=-Xmx1G"
-script: mvn -B verify
+script: mvn -e -B verify
 cache:
   directories:
   - $HOME/.m2
