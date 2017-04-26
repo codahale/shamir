@@ -15,8 +15,8 @@
 package com.codahale.shamir.tests;
 
 import static com.codahale.shamir.Generators.byteStrings;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.quicktheories.quicktheories.QuickTheory.qt;
 import static org.quicktheories.quicktheories.generators.SourceDSL.integers;
 
@@ -26,7 +26,6 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import java.util.Collections;
 import okio.ByteString;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 class SchemeTest {
@@ -35,38 +34,29 @@ class SchemeTest {
   void hasProperties() throws Exception {
     final Scheme scheme = Scheme.of(5, 3);
 
-    assertThat(scheme.n())
-        .isEqualTo(5);
-    assertThat(scheme.k())
-        .isEqualTo(3);
+    assertEquals(5, scheme.n());
+    assertEquals(3, scheme.k());
   }
 
   @Test
   void tooManyShares() throws Exception {
-    assertThatThrownBy(() -> Scheme.of(2_000, 3))
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("N must be <= 255");
+    assertThrows(IllegalArgumentException.class, () -> Scheme.of(2_000, 3));
   }
 
   @Test
   void thresholdTooLow() throws Exception {
-    assertThatThrownBy(() -> Scheme.of(1, 1))
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("K must be > 1");
+    assertThrows(IllegalArgumentException.class, () -> Scheme.of(1, 1));
   }
 
   @Test
   void thresholdTooHigh() throws Exception {
-    assertThatThrownBy(() -> Scheme.of(1, 2))
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("N must be >= K");
+    assertThrows(IllegalArgumentException.class, () -> Scheme.of(1, 2));
   }
 
   @Test
   void joinEmptyParts() throws Exception {
-    assertThatThrownBy(() -> Scheme.of(3, 2).join(Collections.emptySet()))
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("No parts provided");
+    assertThrows(IllegalArgumentException.class,
+        () -> Scheme.of(3, 2).join(Collections.emptySet()));
   }
 
   @Test
@@ -74,25 +64,24 @@ class SchemeTest {
     final Part one = Part.of(1, ByteString.of((byte) 1));
     final Part two = Part.of(2, ByteString.of((byte) 1, (byte) 2));
 
-    assertThatThrownBy(() -> Scheme.of(3, 2).join(ImmutableSet.of(one, two)))
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Varying lengths of part values");
+    assertThrows(IllegalArgumentException.class,
+        () -> Scheme.of(3, 2).join(ImmutableSet.of(one, two)));
   }
 
   @Test
   void splitAndJoinSingleByteSecret() throws Exception {
     final Scheme scheme = Scheme.of(8, 3);
     final ByteString secret = ByteString.encodeUtf8("x");
-    Assertions.assertThat(scheme.join(scheme.split(secret)))
-              .isEqualTo(secret);
+
+    assertEquals(secret, scheme.join(scheme.split(secret)));
   }
 
   @Test
   void splitAndJoinMoreThanByteMaxValueParts() throws Exception {
     final Scheme scheme = Scheme.of(200, 3);
     final ByteString secret = ByteString.encodeUtf8("x");
-    assertThat(scheme.join(scheme.split(secret)))
-        .isEqualTo(secret);
+
+    assertEquals(secret, scheme.join(scheme.split(secret)));
   }
 
   @Test

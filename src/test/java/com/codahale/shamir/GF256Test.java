@@ -15,7 +15,8 @@
 package com.codahale.shamir;
 
 import static com.codahale.shamir.Generators.bytes;
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.quicktheories.quicktheories.QuickTheory.qt;
 
 import java.security.SecureRandom;
@@ -25,38 +26,28 @@ class GF256Test {
 
   @Test
   void add() throws Exception {
-    assertThat(GF256.add((byte) 100, (byte) 30))
-        .isEqualTo((byte) 122);
+    assertEquals(122, GF256.add((byte) 100, (byte) 30));
   }
 
   @Test
   void sub() throws Exception {
-    assertThat(GF256.sub((byte) 100, (byte) 30))
-        .isEqualTo((byte) 122);
+    assertEquals(122, GF256.sub((byte) 100, (byte) 30));
   }
 
   @Test
   void mul() throws Exception {
-    assertThat(GF256.mul((byte) 90, (byte) 21))
-        .isEqualTo((byte) 254);
-    assertThat(GF256.mul((byte) 133, (byte) 5))
-        .isEqualTo((byte) 167);
-    assertThat(GF256.mul((byte) 0, (byte) 21))
-        .isEqualTo((byte) 0);
-    assertThat(GF256.mul((byte) 0xb6, (byte) 0x53))
-        .isEqualTo((byte) 0x36);
+    assertEquals(254, GF256.mul((byte) 90, (byte) 21));
+    assertEquals(167, GF256.mul((byte) 133, (byte) 5));
+    assertEquals(0, GF256.mul((byte) 0, (byte) 21));
+    assertEquals(0x36, GF256.mul((byte) 0xb6, (byte) 0x53));
   }
 
   @Test
   void div() throws Exception {
-    assertThat(GF256.div((byte) 90, (byte) 21))
-        .isEqualTo((byte) 189);
-    assertThat(GF256.div((byte) 6, (byte) 55))
-        .isEqualTo((byte) 151);
-    assertThat(GF256.div((byte) 22, (byte) 192))
-        .isEqualTo((byte) 138);
-    assertThat(GF256.div((byte) 0, (byte) 192))
-        .isEqualTo((byte) 0);
+    assertEquals(189, GF256.div((byte) 90, (byte) 21));
+    assertEquals(151, GF256.div((byte) 6, (byte) 55));
+    assertEquals(138, GF256.div((byte) 22, (byte) 192));
+    assertEquals(0, GF256.div((byte) 0, (byte) 192));
   }
 
   @Test
@@ -91,41 +82,30 @@ class GF256Test {
 
   @Test
   void degree() throws Exception {
-    assertThat(GF256.degree(new byte[]{1, 2}))
-        .isEqualTo(1);
-    assertThat(GF256.degree(new byte[]{1, 2, 0}))
-        .isEqualTo(1);
-    assertThat(GF256.degree(new byte[]{1, 2, 3}))
-        .isEqualTo(2);
-    assertThat(GF256.degree(new byte[4]))
-        .isEqualTo(0);
+    assertEquals(1, GF256.degree(new byte[]{1, 2}));
+    assertEquals(1, GF256.degree(new byte[]{1, 2, 0}));
+    assertEquals(2, GF256.degree(new byte[]{1, 2, 3}));
+    assertEquals(0, GF256.degree(new byte[4]));
   }
 
   @Test
   void eval() throws Exception {
-    assertThat(GF256.eval(new byte[]{1, 0, 2, 3}, (byte) 2))
-        .isEqualTo((byte) 17);
+    assertEquals(17, GF256.eval(new byte[]{1, 0, 2, 3}, (byte) 2));
   }
 
   @Test
   void generate() throws Exception {
     final SecureRandom random = new SecureRandom();
     final byte[] p = GF256.generate(random, 5, (byte) 20);
-    assertThat(p[0])
-        .isEqualTo((byte) 20);
-    assertThat(p)
-        .hasSize(6);
-    assertThat(p[p.length - 1])
-        .isNotZero();
+    assertEquals(20, p[0]);
+    assertEquals(6, p.length);
+    assertTrue(p[p.length - 1] != 0);
   }
 
   @Test
   void interpolate() throws Exception {
-    assertThat(GF256.interpolate(new byte[][]{{1, 1}, {2, 2}, {3, 3}}))
-        .isEqualTo((byte) 0);
-    assertThat(GF256.interpolate(new byte[][]{{1, 80}, {2, 90}, {3, 20}}))
-        .isEqualTo((byte) 30);
-    assertThat(GF256.interpolate(new byte[][]{{1, 43}, {2, 22}, {3, 86}}))
-        .isEqualTo((byte) 107);
+    assertEquals(0, GF256.interpolate(new byte[][]{{1, 1}, {2, 2}, {3, 3}}));
+    assertEquals(30, GF256.interpolate(new byte[][]{{1, 80}, {2, 90}, {3, 20}}));
+    assertEquals(107, GF256.interpolate(new byte[][]{{1, 43}, {2, 22}, {3, 86}}));
   }
 }

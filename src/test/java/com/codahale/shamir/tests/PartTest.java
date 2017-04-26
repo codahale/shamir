@@ -14,7 +14,7 @@
 
 package com.codahale.shamir.tests;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.codahale.shamir.Part;
 import com.google.common.base.Charsets;
@@ -28,19 +28,16 @@ class PartTest {
 
   @Test
   void id() throws Exception {
-    assertThat(part.id())
-        .isEqualTo((byte) 1);
+    assertEquals(1, part.id());
   }
 
   @Test
   void value() throws Exception {
-    assertThat(part.value())
-        .isEqualTo(blah);
+    assertEquals(blah, part.value());
   }
 
   @Test
   void string() throws Exception {
-    assertThat(part.toString())
-        .isEqualTo("Part{id=1, value=[text=blah]}");
+    assertEquals("Part{id=1, value=[text=blah]}", part.toString());
   }
 }
