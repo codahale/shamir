@@ -166,7 +166,6 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>2.20</version>
         <configuration>
-          <argLine>-Xms512m -Xmx512m</argLine>
           <excludes>
             <exclude>**/generated/**</exclude>
           </excludes>

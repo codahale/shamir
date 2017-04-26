@@ -26,28 +26,28 @@ class GF256Test {
 
   @Test
   void add() throws Exception {
-    assertEquals(122, GF256.add((byte) 100, (byte) 30));
+    assertEquals((byte) 122, GF256.add((byte) 100, (byte) 30));
   }
 
   @Test
   void sub() throws Exception {
-    assertEquals(122, GF256.sub((byte) 100, (byte) 30));
+    assertEquals((byte) 122, GF256.sub((byte) 100, (byte) 30));
   }
 
   @Test
   void mul() throws Exception {
-    assertEquals(254, GF256.mul((byte) 90, (byte) 21));
-    assertEquals(167, GF256.mul((byte) 133, (byte) 5));
-    assertEquals(0, GF256.mul((byte) 0, (byte) 21));
-    assertEquals(0x36, GF256.mul((byte) 0xb6, (byte) 0x53));
+    assertEquals((byte) 254, GF256.mul((byte) 90, (byte) 21));
+    assertEquals((byte) 167, GF256.mul((byte) 133, (byte) 5));
+    assertEquals((byte) 0, GF256.mul((byte) 0, (byte) 21));
+    assertEquals((byte) 0x36, GF256.mul((byte) 0xb6, (byte) 0x53));
   }
 
   @Test
   void div() throws Exception {
-    assertEquals(189, GF256.div((byte) 90, (byte) 21));
-    assertEquals(151, GF256.div((byte) 6, (byte) 55));
-    assertEquals(138, GF256.div((byte) 22, (byte) 192));
-    assertEquals(0, GF256.div((byte) 0, (byte) 192));
+    assertEquals((byte) 189, GF256.div((byte) 90, (byte) 21));
+    assertEquals((byte) 151, GF256.div((byte) 6, (byte) 55));
+    assertEquals((byte) 138, GF256.div((byte) 22, (byte) 192));
+    assertEquals((byte) 0, GF256.div((byte) 0, (byte) 192));
   }
 
   @Test
