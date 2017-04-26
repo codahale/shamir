@@ -27,12 +27,12 @@ import com.google.common.collect.Sets;
 import java.util.Collections;
 import okio.ByteString;
 import org.assertj.core.api.Assertions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class SchemeTest {
+class SchemeTest {
 
   @Test
-  public void hasProperties() throws Exception {
+  void hasProperties() throws Exception {
     final Scheme scheme = Scheme.of(5, 3);
 
     assertThat(scheme.n())
@@ -42,35 +42,35 @@ public class SchemeTest {
   }
 
   @Test
-  public void tooManyShares() throws Exception {
+  void tooManyShares() throws Exception {
     assertThatThrownBy(() -> Scheme.of(2_000, 3))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("N must be <= 255");
   }
 
   @Test
-  public void thresholdTooLow() throws Exception {
+  void thresholdTooLow() throws Exception {
     assertThatThrownBy(() -> Scheme.of(1, 1))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("K must be > 1");
   }
 
   @Test
-  public void thresholdTooHigh() throws Exception {
+  void thresholdTooHigh() throws Exception {
     assertThatThrownBy(() -> Scheme.of(1, 2))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("N must be >= K");
   }
 
   @Test
-  public void joinEmptyParts() throws Exception {
+  void joinEmptyParts() throws Exception {
     assertThatThrownBy(() -> Scheme.of(3, 2).join(Collections.emptySet()))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("No parts provided");
   }
 
   @Test
-  public void joinIrregularParts() throws Exception {
+  void joinIrregularParts() throws Exception {
     final Part one = Part.of(1, ByteString.of((byte) 1));
     final Part two = Part.of(2, ByteString.of((byte) 1, (byte) 2));
 
@@ -80,7 +80,7 @@ public class SchemeTest {
   }
 
   @Test
-  public void splitAndJoinSingleByteSecret() throws Exception {
+  void splitAndJoinSingleByteSecret() throws Exception {
     final Scheme scheme = Scheme.of(8, 3);
     final ByteString secret = ByteString.encodeUtf8("x");
     Assertions.assertThat(scheme.join(scheme.split(secret)))
@@ -88,7 +88,7 @@ public class SchemeTest {
   }
 
   @Test
-  public void splitAndJoinMoreThanByteMaxValueParts() throws Exception {
+  void splitAndJoinMoreThanByteMaxValueParts() throws Exception {
     final Scheme scheme = Scheme.of(200, 3);
     final ByteString secret = ByteString.encodeUtf8("x");
     assertThat(scheme.join(scheme.split(secret)))
@@ -96,7 +96,7 @@ public class SchemeTest {
   }
 
   @Test
-  public void splitAndJoinQuorate() throws Exception {
+  void splitAndJoinQuorate() throws Exception {
     // All distinct subsets of parts of cardinality greater than or equal to the threshold should
     // join to recover the original secret.
     qt().forAll(integers().between(2, 5), integers().between(2, 5), byteStrings(1, 300))
@@ -108,7 +108,7 @@ public class SchemeTest {
   }
 
   @Test
-  public void splitAndJoinInquorate() throws Exception {
+  void splitAndJoinInquorate() throws Exception {
     // All distinct subsets of parts of cardinality less than the threshold should never join to
     // recover the original secret. Only check larger secrets to avoid false positives.
     qt().forAll(integers().between(2, 5), integers().between(2, 5), byteStrings(3, 300))

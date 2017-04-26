@@ -19,27 +19,27 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.codahale.shamir.Part;
 import com.google.common.base.Charsets;
 import okio.ByteString;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class PartTest {
+class PartTest {
 
   private final ByteString blah = ByteString.encodeString("blah", Charsets.UTF_8);
   private final Part part = Part.of(1, blah);
 
   @Test
-  public void id() throws Exception {
+  void id() throws Exception {
     assertThat(part.id())
         .isEqualTo((byte) 1);
   }
 
   @Test
-  public void value() throws Exception {
+  void value() throws Exception {
     assertThat(part.value())
         .isEqualTo(blah);
   }
 
   @Test
-  public void string() throws Exception {
+  void string() throws Exception {
     assertThat(part.toString())
         .isEqualTo("Part{id=1, value=[text=blah]}");
   }

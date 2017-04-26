@@ -19,24 +19,24 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.quicktheories.quicktheories.QuickTheory.qt;
 
 import java.security.SecureRandom;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class GF256Test {
+class GF256Test {
 
   @Test
-  public void add() throws Exception {
+  void add() throws Exception {
     assertThat(GF256.add((byte) 100, (byte) 30))
         .isEqualTo((byte) 122);
   }
 
   @Test
-  public void sub() throws Exception {
+  void sub() throws Exception {
     assertThat(GF256.sub((byte) 100, (byte) 30))
         .isEqualTo((byte) 122);
   }
 
   @Test
-  public void mul() throws Exception {
+  void mul() throws Exception {
     assertThat(GF256.mul((byte) 90, (byte) 21))
         .isEqualTo((byte) 254);
     assertThat(GF256.mul((byte) 133, (byte) 5))
@@ -48,7 +48,7 @@ public class GF256Test {
   }
 
   @Test
-  public void div() throws Exception {
+  void div() throws Exception {
     assertThat(GF256.div((byte) 90, (byte) 21))
         .isEqualTo((byte) 189);
     assertThat(GF256.div((byte) 6, (byte) 55))
@@ -60,37 +60,37 @@ public class GF256Test {
   }
 
   @Test
-  public void mulIsCommutative() {
+  void mulIsCommutative() {
     qt().forAll(bytes(), bytes())
         .check((x, y) -> GF256.mul(x, y) == GF256.mul(y, x));
   }
 
   @Test
-  public void addIsCommutative() {
+  void addIsCommutative() {
     qt().forAll(bytes(), bytes())
         .check((x, y) -> GF256.add(x, y) == GF256.add(y, x));
   }
 
   @Test
-  public void subIsTheInverseOfAdd() {
+  void subIsTheInverseOfAdd() {
     qt().forAll(bytes(), bytes())
         .check((x, y) -> GF256.sub(GF256.add(x, y), y) == x);
   }
 
   @Test
-  public void divIsTheInverseOfMul() {
+  void divIsTheInverseOfMul() {
     qt().forAll(bytes(), bytes(1, 255))
         .check((x, y) -> GF256.div(GF256.mul(x, y), y) == x);
   }
 
   @Test
-  public void mulIsTheInverseOfDiv() {
+  void mulIsTheInverseOfDiv() {
     qt().forAll(bytes(), bytes(1, 255))
         .check((x, y) -> GF256.mul(GF256.div(x, y), y) == x);
   }
 
   @Test
-  public void degree() throws Exception {
+  void degree() throws Exception {
     assertThat(GF256.degree(new byte[]{1, 2}))
         .isEqualTo(1);
     assertThat(GF256.degree(new byte[]{1, 2, 0}))
@@ -102,13 +102,13 @@ public class GF256Test {
   }
 
   @Test
-  public void eval() throws Exception {
+  void eval() throws Exception {
     assertThat(GF256.eval(new byte[]{1, 0, 2, 3}, (byte) 2))
         .isEqualTo((byte) 17);
   }
 
   @Test
-  public void generate() throws Exception {
+  void generate() throws Exception {
     final SecureRandom random = new SecureRandom();
     final byte[] p = GF256.generate(random, 5, (byte) 20);
     assertThat(p[0])
@@ -120,7 +120,7 @@ public class GF256Test {
   }
 
   @Test
-  public void interpolate() throws Exception {
+  void interpolate() throws Exception {
     assertThat(GF256.interpolate(new byte[][]{{1, 1}, {2, 2}, {3, 3}}))
         .isEqualTo((byte) 0);
     assertThat(GF256.interpolate(new byte[][]{{1, 80}, {2, 90}, {3, 20}}))
