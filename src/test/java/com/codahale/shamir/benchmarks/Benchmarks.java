@@ -19,33 +19,51 @@ import com.codahale.shamir.Scheme;
 import java.io.IOException;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import okio.ByteString;
 import org.openjdk.jmh.Main;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Mode;
 import org.openjdk.jmh.annotations.OutputTimeUnit;
+import org.openjdk.jmh.annotations.Param;
+import org.openjdk.jmh.annotations.Scope;
+import org.openjdk.jmh.annotations.Setup;
+import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.runner.RunnerException;
 
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.MICROSECONDS)
+@State(Scope.Benchmark)
 public class Benchmarks {
 
-  private static final ByteString SECRET = ByteString.of(new byte[1024]);
-  private static final Scheme SCHEME = Scheme.of(5, 3);
-  private static final Set<Part> PARTS = SCHEME.split(SECRET);
+  @Param({"100", "1024"})
+  private int secretSize = 1024;
+  @Param({"2", "4", "8", "16", "32"})
+  private int n = 2;
+  private ByteString secret;
+  private Scheme scheme;
+  private Set<Part> parts;
 
   public static void main(String[] args) throws IOException, RunnerException {
     Main.main(args);
   }
 
+  @Setup
+  public void setup() {
+    this.secret = ByteString.of(new byte[secretSize]);
+    final int k = (n / 2) + 1;
+    this.scheme = Scheme.of(n, k);
+    this.parts = scheme.split(secret).stream().limit(k).collect(Collectors.toSet());
+  }
+
   @Benchmark
   public Set<Part> split() {
-    return SCHEME.split(SECRET);
+    return scheme.split(secret);
   }
 
   @Benchmark
   public ByteString join() {
-    return SCHEME.join(PARTS);
+    return scheme.join(parts);
   }
 }
