@@ -79,12 +79,6 @@
       <artifactId>guava</artifactId>
       <version>22.0</version>
       <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>com.google.code.findbugs</groupId>
-          <artifactId>jsr305</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.openjdk.jmh</groupId>
@@ -291,7 +285,7 @@
             <id>enforce</id>
             <configuration>
               <rules>
-                <dependencyConvergence />
+                <requireUpperBoundDeps/>
               </rules>
             </configuration>
             <goals>
