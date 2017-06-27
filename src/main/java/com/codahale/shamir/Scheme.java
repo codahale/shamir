@@ -17,12 +17,10 @@ package com.codahale.shamir;
 import com.google.auto.value.AutoValue;
 import java.security.SecureRandom;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
-import javax.annotation.concurrent.Immutable;
 
 /**
  * {@link Scheme} implemented Shamir's Secret Sharing over {@code GF(256)} to securely split secrets
@@ -37,7 +35,6 @@ import javax.annotation.concurrent.Immutable;
  * @see <a href="http://www.cs.utsa.edu/~wagner/laws/FFM.html">The Finite Field {@code GF(256)}</a>
  */
 @AutoValue
-@Immutable
 public abstract class Scheme {
 
   private final SecureRandom random = new SecureRandom();
@@ -82,10 +79,10 @@ public abstract class Scheme {
    * to recover the original secret.
    *
    * @param secret the secret to split
-   * @return a set of {@code n} {@link Part} instances
+   * @return a map of {@code n} part IDs and their values
    */
   @CheckReturnValue
-  public Set<Part> split(byte[] secret) {
+  public Map<Integer, byte[]> split(byte[] secret) {
     // generate part values
     final byte[][] values = new byte[n()][secret.length];
     for (int i = 0; i < secret.length; i++) {
@@ -98,11 +95,11 @@ public abstract class Scheme {
     }
 
     // return as a set of objects
-    final Set<Part> parts = new HashSet<>(n());
+    final Map<Integer, byte[]> parts = new HashMap<>(n());
     for (int i = 0; i < values.length; i++) {
-      parts.add(Part.of(i + 1, values[i]));
+      parts.put(i + 1, values[i]);
     }
-    return Collections.unmodifiableSet(parts);
+    return Collections.unmodifiableMap(parts);
   }
 
   /**
@@ -112,22 +109,23 @@ public abstract class Scheme {
    * original secret. If the parts are incorrect, or are under the threshold value used to split
    * the secret, a random value will be returned.
    *
-   * @param parts a set of {@link Part} instances
+   * @param parts a map of part IDs to part values
    * @return the original secret
    * @throws IllegalArgumentException if {@code parts} is empty or contains values of varying
    * lengths
    */
-  public byte[] join(@Nonnull Set<Part> parts) {
+  @CheckReturnValue
+  public byte[] join(Map<Integer, byte[]> parts) {
     checkArgument(parts.size() > 0, "No parts provided");
-    final int[] lengths = parts.stream().mapToInt(Part::valueLength).distinct().toArray();
+    final int[] lengths = parts.values().stream().mapToInt(v -> v.length).distinct().toArray();
     checkArgument(lengths.length == 1, "Varying lengths of part values");
     final byte[] secret = new byte[lengths[0]];
     for (int i = 0; i < secret.length; i++) {
       final byte[][] points = new byte[parts.size()][2];
       int j = 0;
-      for (Part part : parts) {
-        points[j][0] = part.id();
-        points[j][1] = part.value()[i];
+      for (Map.Entry<Integer, byte[]> part : parts.entrySet()) {
+        points[j][0] = part.getKey().byteValue();
+        points[j][1] = part.getValue()[i];
         j++;
       }
       secret[i] = GF256.interpolate(points);

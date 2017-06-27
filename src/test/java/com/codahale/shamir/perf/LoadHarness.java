@@ -18,6 +18,7 @@ import com.codahale.shamir.Scheme;
 
 public class LoadHarness {
 
+  @SuppressWarnings("ResultOfMethodCallIgnored")
   public static void main(String[] args) throws Exception {
     final byte[] secret = new byte[10 * 1024];
     final Scheme scheme = Scheme.of(200, 20);

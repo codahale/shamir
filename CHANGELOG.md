@@ -1,5 +1,9 @@
 # Change Log
 
+## v0.6.0: 2017-06-27
+
+* Moved to a `Map`-based API.
+
 ## v0.5.0: 2017-06-26
 
 * Removed okio as a dependency.

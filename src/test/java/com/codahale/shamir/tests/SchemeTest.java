@@ -21,13 +21,15 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.quicktheories.quicktheories.QuickTheory.qt;
 import static org.quicktheories.quicktheories.generators.SourceDSL.integers;
 
-import com.codahale.shamir.Part;
 import com.codahale.shamir.Scheme;
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 class SchemeTest {
@@ -58,19 +60,21 @@ class SchemeTest {
     assertThrows(IllegalArgumentException.class, () -> Scheme.of(1, 2));
   }
 
+  @SuppressWarnings("ResultOfMethodCallIgnored")
   @Test
   void joinEmptyParts() throws Exception {
     assertThrows(IllegalArgumentException.class,
-        () -> Scheme.of(3, 2).join(Collections.emptySet()));
+        () -> Scheme.of(3, 2).join(Collections.emptyMap()));
   }
 
+  @SuppressWarnings("ResultOfMethodCallIgnored")
   @Test
   void joinIrregularParts() throws Exception {
-    final Part one = Part.of(1, new byte[]{1});
-    final Part two = Part.of(2, new byte[]{1, 2});
+    final byte[] one = new byte[]{1};
+    final byte[] two = new byte[]{1, 2};
 
     assertThrows(IllegalArgumentException.class,
-        () -> Scheme.of(3, 2).join(ImmutableSet.of(one, two)));
+        () -> Scheme.of(3, 2).join(ImmutableMap.of(1, one, 2, two)));
   }
 
   @Test
@@ -95,10 +99,15 @@ class SchemeTest {
     // join to recover the original secret.
     qt().forAll(integers().between(2, 5), integers().between(2, 5), byteArrays(1, 300))
         .asWithPrecursor((k, extra, secret) -> Scheme.of(k + extra, k))
-        .check((k, e, secret, scheme) -> Sets.powerSet(scheme.split(secret)).stream().parallel()
-                                             .filter(s -> s.size() >= k)
-                                             .map(scheme::join)
-                                             .allMatch(s -> Arrays.equals(s, secret)));
+        .check((k, e, secret, scheme) -> {
+          final Map<Integer, byte[]> parts = scheme.split(secret);
+          return Sets.powerSet(parts.entrySet())
+                     .stream()
+                     .parallel()
+                     .filter(s -> s.size() >= k)
+                     .map(entries -> join(scheme, entries))
+                     .allMatch(s -> Arrays.equals(s, secret));
+        });
   }
 
   @Test
@@ -107,9 +116,20 @@ class SchemeTest {
     // recover the original secret. Only check larger secrets to avoid false positives.
     qt().forAll(integers().between(2, 5), integers().between(2, 5), byteArrays(3, 300))
         .asWithPrecursor((k, extra, secret) -> Scheme.of(k + extra, k))
-        .check((k, e, secret, scheme) -> Sets.powerSet(scheme.split(secret)).stream().parallel()
-                                             .filter(s -> s.size() < k && !s.isEmpty())
-                                             .map(scheme::join)
-                                             .noneMatch(s -> Arrays.equals(s, secret)));
+        .check((k, e, secret, scheme) -> {
+          final Map<Integer, byte[]> parts = scheme.split(secret);
+          return Sets.powerSet(parts.entrySet())
+                     .stream()
+                     .parallel()
+                     .filter(s -> s.size() < k && !s.isEmpty())
+                     .map(entries -> join(scheme, entries))
+                     .noneMatch(s -> Arrays.equals(s, secret));
+        });
+  }
+
+  private byte[] join(Scheme scheme, Set<Map.Entry<Integer, byte[]>> entries) {
+    final Map<Integer, byte[]> m = new HashMap<>();
+    entries.forEach(v -> m.put(v.getKey(), v.getValue()));
+    return scheme.join(m);
   }
 }

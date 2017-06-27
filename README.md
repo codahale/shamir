@@ -18,16 +18,15 @@ algorithm](http://en.wikipedia.org/wiki/Shamir's_Secret_Sharing) over GF(256).
 ## Use the thing
 
 ```java
-import com.codahale.shamir.Part;
 import com.codahale.shamir.Scheme;
 import java.nio.charset.StandardCharsets;
-import java.util.Set;
+import java.util.Map;
 
 class Example {
   void doIt() {
     final Scheme scheme = new Scheme(5, 3);
     final byte[] secret = "hello there".getBytes(StandardCharsets.UTF_8);
-    final Set<Part> parts = scheme.split(5, 3, secret);
+    final Map<Integer, byte[]> parts = scheme.split(5, 3, secret);
     final byte[] recovered = scheme.join(parts);
     System.out.println(new String(recovered, StandardCharsets.UTF_8));
   } 

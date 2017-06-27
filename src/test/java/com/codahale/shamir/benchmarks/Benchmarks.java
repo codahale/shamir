@@ -14,12 +14,11 @@
 
 package com.codahale.shamir.benchmarks;
 
-import com.codahale.shamir.Part;
 import com.codahale.shamir.Scheme;
 import java.io.IOException;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 import org.openjdk.jmh.Main;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
@@ -42,7 +41,7 @@ public class Benchmarks {
   private int n = 2;
   private byte[] secret;
   private Scheme scheme;
-  private Set<Part> parts;
+  private Map<Integer, byte[]> parts;
 
   public static void main(String[] args) throws IOException, RunnerException {
     Main.main(args);
@@ -53,11 +52,14 @@ public class Benchmarks {
     this.secret = new byte[secretSize];
     final int k = (n / 2) + 1;
     this.scheme = Scheme.of(n, k);
-    this.parts = scheme.split(secret).stream().limit(k).collect(Collectors.toSet());
+    this.parts = new HashMap<>(scheme.split(secret));
+    while (parts.size() > k) {
+      parts.entrySet().iterator().remove();
+    }
   }
 
   @Benchmark
-  public Set<Part> split() {
+  public Map<Integer, byte[]> split() {
     return scheme.split(secret);
   }
 
