@@ -1,5 +1,9 @@
 # Change Log
 
+## v0.5.0: 2017-06-26
+
+* Removed okio as a dependency.
+
 ## v0.4.0: 2017-04-23
 
 * Converted `Scheme` into an auto-value class.

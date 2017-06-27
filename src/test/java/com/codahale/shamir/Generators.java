@@ -14,7 +14,7 @@
 
 package com.codahale.shamir;
 
-import okio.ByteString;
+import java.util.Arrays;
 import org.quicktheories.quicktheories.core.Source;
 
 public interface Generators {
@@ -27,13 +27,13 @@ public interface Generators {
     return bytes(0, 255);
   }
 
-  static Source<ByteString> byteStrings(int minSize, int maxSize) {
+  static Source<byte[]> byteArrays(int minSize, int maxSize) {
     return Source.of((prng, step) -> {
       final byte[] bytes = new byte[prng.nextInt(minSize, maxSize)];
       for (int i = 0; i < bytes.length; i++) {
         bytes[i] = (byte) prng.nextInt(0, 255);
       }
-      return ByteString.of(bytes);
-    });
+      return bytes;
+    }).describedAs(Arrays::toString);
   }
 }

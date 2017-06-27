@@ -15,7 +15,7 @@
 package com.codahale.shamir;
 
 import com.google.auto.value.AutoValue;
-import okio.ByteString;
+import javax.annotation.CheckReturnValue;
 
 /**
  * A part of a split secret.
@@ -30,7 +30,8 @@ public abstract class Part {
    * @param value the part's value
    * @return a new {@link Part} instance
    */
-  public static Part of(int id, ByteString value) {
+  @CheckReturnValue
+  public static Part of(int id, byte[] value) {
     return new AutoValue_Part((byte) id, value);
   }
 
@@ -39,6 +40,7 @@ public abstract class Part {
    *
    * @return the part's ID
    */
+  @CheckReturnValue
   public abstract byte id();
 
   /**
@@ -46,9 +48,12 @@ public abstract class Part {
    *
    * @return the part's value
    */
-  public abstract ByteString value();
+  @CheckReturnValue
+  @SuppressWarnings("mutable")
+  public abstract byte[] value();
 
+  @CheckReturnValue
   int valueLength() {
-    return value().size();
+    return value().length;
   }
 }

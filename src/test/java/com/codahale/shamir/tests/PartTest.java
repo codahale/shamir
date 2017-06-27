@@ -14,16 +14,16 @@
 
 package com.codahale.shamir.tests;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.codahale.shamir.Part;
-import com.google.common.base.Charsets;
-import okio.ByteString;
+import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.Test;
 
 class PartTest {
 
-  private final ByteString blah = ByteString.encodeString("blah", Charsets.UTF_8);
+  private final byte[] blah = "blah".getBytes(StandardCharsets.UTF_8);
   private final Part part = Part.of(1, blah);
 
   @Test
@@ -33,11 +33,11 @@ class PartTest {
 
   @Test
   void value() throws Exception {
-    assertEquals(blah, part.value());
+    assertArrayEquals(blah, part.value());
   }
 
   @Test
   void string() throws Exception {
-    assertEquals("Part{id=1, value=[text=blah]}", part.toString());
+    assertEquals("Part{id=1, value=[98, 108, 97, 104]}", part.toString());
   }
 }

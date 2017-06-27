@@ -11,7 +11,7 @@ algorithm](http://en.wikipedia.org/wiki/Shamir's_Secret_Sharing) over GF(256).
 <dependency>
   <groupId>com.codahale</groupId>
   <artifactId>shamir</artifactId>
-  <version>0.4.0</version>
+  <version>0.5.0</version>
 </dependency>
 ```
 
@@ -20,16 +20,16 @@ algorithm](http://en.wikipedia.org/wiki/Shamir's_Secret_Sharing) over GF(256).
 ```java
 import com.codahale.shamir.Part;
 import com.codahale.shamir.Scheme;
-import okio.ByteString;
+import java.nio.charset.StandardCharsets;
 import java.util.Set;
 
 class Example {
   void doIt() {
     final Scheme scheme = new Scheme(5, 3);
-    final ByteString secret = ByteString.encodeUtf8("hello there");
+    final byte[] secret = "hello there".getBytes(StandardCharsets.UTF_8);
     final Set<Part> parts = scheme.split(5, 3, secret);
-    final ByteString recovered = scheme.join(parts);
-    System.out.println(recovered.utf8());
+    final byte[] recovered = scheme.join(parts);
+    System.out.println(new String(recovered, StandardCharsets.UTF_8));
   } 
 }
 ```
@@ -96,12 +96,12 @@ larger than the secret.
 
 It's fast. Plenty fast.
 
-For a 1KiB secret split with a `n=5,k=3` scheme:
+For a 1KiB secret split with a `n=4,k=3` scheme:
 
 ```
-Benchmark         Mode  Cnt    Score   Error  Units
-Benchmarks.join   avgt  200  398.890 ± 5.116  us/op
-Benchmarks.split  avgt  200  461.810 ± 7.770  us/op
+Benchmark         (n)  (secretSize)  Mode  Cnt     Score    Error  Units
+Benchmarks.join     4          1024  avgt  200   196.787 ±  0.974  us/op
+Benchmarks.split    4          1024  avgt  200   396.708 ±  1.520  us/op
 ```
 
 **N.B.:** `split` is quadratic with respect to the number of shares being combined.

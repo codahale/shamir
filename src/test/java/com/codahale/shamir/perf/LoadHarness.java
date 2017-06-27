@@ -15,20 +15,13 @@
 package com.codahale.shamir.perf;
 
 import com.codahale.shamir.Scheme;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import okio.ByteString;
 
 public class LoadHarness {
 
-  @SuppressWarnings("InfiniteLoopStatement")
   public static void main(String[] args) throws Exception {
-    System.out.println("Press enter to begin");
-    new BufferedReader(new InputStreamReader(System.in)).readLine();
-    System.out.println("Running...");
-    final ByteString secret = ByteString.of(new byte[10 * 1024]);
+    final byte[] secret = new byte[10 * 1024];
     final Scheme scheme = Scheme.of(200, 20);
-    while (true) {
+    for (int i = 0; i < 100_000_000; i++) {
       scheme.join(scheme.split(secret));
     }
   }

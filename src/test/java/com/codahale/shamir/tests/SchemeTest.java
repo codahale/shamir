@@ -14,7 +14,8 @@
 
 package com.codahale.shamir.tests;
 
-import static com.codahale.shamir.Generators.byteStrings;
+import static com.codahale.shamir.Generators.byteArrays;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.quicktheories.quicktheories.QuickTheory.qt;
@@ -24,8 +25,9 @@ import com.codahale.shamir.Part;
 import com.codahale.shamir.Scheme;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Collections;
-import okio.ByteString;
 import org.junit.jupiter.api.Test;
 
 class SchemeTest {
@@ -39,16 +41,19 @@ class SchemeTest {
   }
 
   @Test
+  @SuppressWarnings("ResultOfMethodCallIgnored")
   void tooManyShares() throws Exception {
     assertThrows(IllegalArgumentException.class, () -> Scheme.of(2_000, 3));
   }
 
   @Test
+  @SuppressWarnings("ResultOfMethodCallIgnored")
   void thresholdTooLow() throws Exception {
     assertThrows(IllegalArgumentException.class, () -> Scheme.of(1, 1));
   }
 
   @Test
+  @SuppressWarnings("ResultOfMethodCallIgnored")
   void thresholdTooHigh() throws Exception {
     assertThrows(IllegalArgumentException.class, () -> Scheme.of(1, 2));
   }
@@ -61,8 +66,8 @@ class SchemeTest {
 
   @Test
   void joinIrregularParts() throws Exception {
-    final Part one = Part.of(1, ByteString.of((byte) 1));
-    final Part two = Part.of(2, ByteString.of((byte) 1, (byte) 2));
+    final Part one = Part.of(1, new byte[]{1});
+    final Part two = Part.of(2, new byte[]{1, 2});
 
     assertThrows(IllegalArgumentException.class,
         () -> Scheme.of(3, 2).join(ImmutableSet.of(one, two)));
@@ -71,40 +76,40 @@ class SchemeTest {
   @Test
   void splitAndJoinSingleByteSecret() throws Exception {
     final Scheme scheme = Scheme.of(8, 3);
-    final ByteString secret = ByteString.encodeUtf8("x");
+    final byte[] secret = "x".getBytes(StandardCharsets.UTF_8);
 
-    assertEquals(secret, scheme.join(scheme.split(secret)));
+    assertArrayEquals(secret, scheme.join(scheme.split(secret)));
   }
 
   @Test
   void splitAndJoinMoreThanByteMaxValueParts() throws Exception {
     final Scheme scheme = Scheme.of(200, 3);
-    final ByteString secret = ByteString.encodeUtf8("x");
+    final byte[] secret = "x".getBytes(StandardCharsets.UTF_8);
 
-    assertEquals(secret, scheme.join(scheme.split(secret)));
+    assertArrayEquals(secret, scheme.join(scheme.split(secret)));
   }
 
   @Test
   void splitAndJoinQuorate() throws Exception {
     // All distinct subsets of parts of cardinality greater than or equal to the threshold should
     // join to recover the original secret.
-    qt().forAll(integers().between(2, 5), integers().between(2, 5), byteStrings(1, 300))
+    qt().forAll(integers().between(2, 5), integers().between(2, 5), byteArrays(1, 300))
         .asWithPrecursor((k, extra, secret) -> Scheme.of(k + extra, k))
         .check((k, e, secret, scheme) -> Sets.powerSet(scheme.split(secret)).stream().parallel()
                                              .filter(s -> s.size() >= k)
                                              .map(scheme::join)
-                                             .allMatch(s -> s.equals(secret)));
+                                             .allMatch(s -> Arrays.equals(s, secret)));
   }
 
   @Test
   void splitAndJoinInquorate() throws Exception {
     // All distinct subsets of parts of cardinality less than the threshold should never join to
     // recover the original secret. Only check larger secrets to avoid false positives.
-    qt().forAll(integers().between(2, 5), integers().between(2, 5), byteStrings(3, 300))
+    qt().forAll(integers().between(2, 5), integers().between(2, 5), byteArrays(3, 300))
         .asWithPrecursor((k, extra, secret) -> Scheme.of(k + extra, k))
         .check((k, e, secret, scheme) -> Sets.powerSet(scheme.split(secret)).stream().parallel()
                                              .filter(s -> s.size() < k && !s.isEmpty())
                                              .map(scheme::join)
-                                             .noneMatch(s -> s.equals(secret)));
+                                             .noneMatch(s -> Arrays.equals(s, secret)));
   }
 }

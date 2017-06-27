@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-import okio.ByteString;
 import org.openjdk.jmh.Main;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
@@ -41,7 +40,7 @@ public class Benchmarks {
   private int secretSize = 1024;
   @Param({"2", "4", "8", "16", "32"})
   private int n = 2;
-  private ByteString secret;
+  private byte[] secret;
   private Scheme scheme;
   private Set<Part> parts;
 
@@ -51,7 +50,7 @@ public class Benchmarks {
 
   @Setup
   public void setup() {
-    this.secret = ByteString.of(new byte[secretSize]);
+    this.secret = new byte[secretSize];
     final int k = (n / 2) + 1;
     this.scheme = Scheme.of(n, k);
     this.parts = scheme.split(secret).stream().limit(k).collect(Collectors.toSet());
@@ -63,7 +62,7 @@ public class Benchmarks {
   }
 
   @Benchmark
-  public ByteString join() {
+  public byte[] join() {
     return scheme.join(parts);
   }
 }

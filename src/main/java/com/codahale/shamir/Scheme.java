@@ -19,9 +19,10 @@ import java.security.SecureRandom;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import javax.annotation.CheckReturnValue;
+import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
-import okio.ByteString;
 
 /**
  * {@link Scheme} implemented Shamir's Secret Sharing over {@code GF(256)} to securely split secrets
@@ -48,7 +49,8 @@ public abstract class Scheme {
    * @param k the threshold of joinable parts (must be {@code <= n})
    * @return an {@code N}/{@code K} {@link Scheme}
    */
-  public static Scheme of(int n, int k) {
+  @CheckReturnValue
+  public static Scheme of(@Nonnegative int n, @Nonnegative int k) {
     checkArgument(k > 1, "K must be > 1");
     checkArgument(n >= k, "N must be >= K");
     checkArgument(n <= 255, "N must be <= 255");
@@ -82,12 +84,13 @@ public abstract class Scheme {
    * @param secret the secret to split
    * @return a set of {@code n} {@link Part} instances
    */
-  public Set<Part> split(@Nonnull ByteString secret) {
+  @CheckReturnValue
+  public Set<Part> split(byte[] secret) {
     // generate part values
-    final byte[][] values = new byte[n()][secret.size()];
-    for (int i = 0; i < secret.size(); i++) {
+    final byte[][] values = new byte[n()][secret.length];
+    for (int i = 0; i < secret.length; i++) {
       // for each byte, generate a random polynomial, p
-      final byte[] p = GF256.generate(random, k() - 1, secret.getByte(i));
+      final byte[] p = GF256.generate(random, k() - 1, secret[i]);
       for (int x = 1; x <= n(); x++) {
         // each part's byte is p(partId)
         values[x - 1][i] = GF256.eval(p, (byte) x);
@@ -97,7 +100,7 @@ public abstract class Scheme {
     // return as a set of objects
     final Set<Part> parts = new HashSet<>(n());
     for (int i = 0; i < values.length; i++) {
-      parts.add(Part.of(i + 1, ByteString.of(values[i])));
+      parts.add(Part.of(i + 1, values[i]));
     }
     return Collections.unmodifiableSet(parts);
   }
@@ -114,7 +117,7 @@ public abstract class Scheme {
    * @throws IllegalArgumentException if {@code parts} is empty or contains values of varying
    * lengths
    */
-  public ByteString join(@Nonnull Set<Part> parts) {
+  public byte[] join(@Nonnull Set<Part> parts) {
     checkArgument(parts.size() > 0, "No parts provided");
     final int[] lengths = parts.stream().mapToInt(Part::valueLength).distinct().toArray();
     checkArgument(lengths.length == 1, "Varying lengths of part values");
@@ -124,11 +127,11 @@ public abstract class Scheme {
       int j = 0;
       for (Part part : parts) {
         points[j][0] = part.id();
-        points[j][1] = part.value().getByte(i);
+        points[j][1] = part.value()[i];
         j++;
       }
       secret[i] = GF256.interpolate(points);
     }
-    return ByteString.of(secret);
+    return secret;
   }
 }
