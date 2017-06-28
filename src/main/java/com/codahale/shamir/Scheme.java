@@ -23,8 +23,8 @@ import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnegative;
 
 /**
- * {@link Scheme} implemented Shamir's Secret Sharing over {@code GF(256)} to securely split secrets
- * into {@code N} parts, of which any {@code K} can be joined to recover the original secret.
+ * An implementation of Shamir's Secret Sharing over {@code GF(256)} to securely split secrets into
+ * {@code N} parts, of which any {@code K} can be joined to recover the original secret.
  * <p>
  * {@link Scheme} uses the same GF(256) field polynomial as the Advanced Encryption Standard (AES):
  * {@code 0x11b}, or {@code x}<sup>8</sup> + {@code x}<sup>4</sup> + {@code x}<sup>3</sup> +
