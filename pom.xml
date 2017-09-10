@@ -35,8 +35,8 @@
     <maven.compiler.source>1.8</maven.compiler.source>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <jmh.version>1.19</jmh.version>
-    <junit.jupiter.version>5.0.0-RC3</junit.jupiter.version>
-    <junit.platform.version>1.0.0-RC3</junit.platform.version>
+    <junit.jupiter.version>5.0.0</junit.jupiter.version>
+    <junit.platform.version>1.0.0</junit.platform.version>
   </properties>
 
   <dependencies>
