@@ -18,8 +18,6 @@ import static com.codahale.shamir.Generators.byteArrays;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.quicktheories.quicktheories.QuickTheory.qt;
-import static org.quicktheories.quicktheories.generators.SourceDSL.integers;
 
 import com.codahale.shamir.Scheme;
 import com.google.common.collect.ImmutableMap;
@@ -31,8 +29,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
+import org.quicktheories.WithQuickTheories;
 
-class SchemeTest {
+class SchemeTest implements WithQuickTheories {
 
   @Test
   void hasProperties() throws Exception {

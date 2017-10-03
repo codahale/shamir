@@ -15,25 +15,27 @@
 package com.codahale.shamir;
 
 import java.util.Arrays;
-import org.quicktheories.quicktheories.core.Source;
+import org.quicktheories.core.Gen;
+import org.quicktheories.impl.Constraint;
 
 public interface Generators {
 
-  static Source<Byte> bytes(int minValue, int maxValue) {
-    return Source.of((prng, step) -> ((byte) prng.nextInt(minValue, maxValue)));
+  static Gen<Byte> bytes(int minValue, int maxValue) {
+    return prng -> ((byte) prng.next(Constraint.between(minValue, maxValue)));
   }
 
-  static Source<Byte> bytes() {
+  static Gen<Byte> bytes() {
     return bytes(0, 255);
   }
 
-  static Source<byte[]> byteArrays(int minSize, int maxSize) {
-    return Source.of((prng, step) -> {
-      final byte[] bytes = new byte[prng.nextInt(minSize, maxSize)];
+  static Gen<byte[]> byteArrays(int minSize, int maxSize) {
+    final Gen<byte[]> gen = prng -> {
+      final byte[] bytes = new byte[(int) prng.next(Constraint.between(minSize, maxSize))];
       for (int i = 0; i < bytes.length; i++) {
-        bytes[i] = (byte) prng.nextInt(0, 255);
+        bytes[i] = (byte) prng.next(Constraint.between(0, 255));
       }
       return bytes;
-    }).describedAs(Arrays::toString);
+    };
+    return gen.describedAs(Arrays::toString);
   }
 }

@@ -17,12 +17,12 @@ package com.codahale.shamir;
 import static com.codahale.shamir.Generators.bytes;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.quicktheories.quicktheories.QuickTheory.qt;
 
 import java.security.SecureRandom;
 import org.junit.jupiter.api.Test;
+import org.quicktheories.WithQuickTheories;
 
-class GF256Test {
+class GF256Test implements WithQuickTheories {
 
   @Test
   void add() throws Exception {

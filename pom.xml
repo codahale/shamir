@@ -35,8 +35,8 @@
     <maven.compiler.source>1.8</maven.compiler.source>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <jmh.version>1.19</jmh.version>
-    <junit.jupiter.version>5.0.0</junit.jupiter.version>
-    <junit.platform.version>1.0.0</junit.platform.version>
+    <junit.jupiter.version>5.0.1</junit.jupiter.version>
+    <junit.platform.version>1.0.1</junit.platform.version>
   </properties>
 
   <dependencies>
@@ -68,13 +68,13 @@
     <dependency>
       <groupId>org.quicktheories</groupId>
       <artifactId>quicktheories</artifactId>
-      <version>0.14</version>
+      <version>0.21</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
-      <version>23.0</version>
+      <version>23.1-jre</version>
       <scope>test</scope>
     </dependency>
     <dependency>
