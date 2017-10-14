@@ -68,13 +68,13 @@
     <dependency>
       <groupId>org.quicktheories</groupId>
       <artifactId>quicktheories</artifactId>
-      <version>0.21</version>
+      <version>0.22</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
-      <version>23.1-jre</version>
+      <version>23.2-jre</version>
       <scope>test</scope>
     </dependency>
     <dependency>
