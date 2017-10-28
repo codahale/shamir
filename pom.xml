@@ -245,7 +245,7 @@
             <path>
               <groupId>com.uber.nullaway</groupId>
               <artifactId>nullaway</artifactId>
-              <version>0.1.6</version>
+              <version>0.1.7</version>
             </path>
             <!-- enable @AutoValue usage -->
             <path>
