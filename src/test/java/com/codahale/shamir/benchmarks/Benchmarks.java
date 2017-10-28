@@ -39,9 +39,10 @@ public class Benchmarks {
   private int secretSize = 1024;
   @Param({"2", "4", "8", "16", "32"})
   private int n = 2;
-  private byte[] secret;
-  private Scheme scheme;
-  private Map<Integer, byte[]> parts;
+  private final int k = (n / 2) + 1;
+  private byte[] secret = new byte[secretSize];
+  private Scheme scheme = Scheme.of(n, k);
+  private Map<Integer, byte[]> parts = new HashMap<>();
 
   public static void main(String[] args) throws IOException, RunnerException {
     Main.main(args);
@@ -49,10 +50,7 @@ public class Benchmarks {
 
   @Setup
   public void setup() {
-    this.secret = new byte[secretSize];
-    final int k = (n / 2) + 1;
-    this.scheme = Scheme.of(n, k);
-    this.parts = new HashMap<>(scheme.split(secret));
+    parts.putAll(scheme.split(secret));
     while (parts.size() > k) {
       parts.entrySet().iterator().remove();
     }

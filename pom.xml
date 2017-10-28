@@ -237,8 +237,27 @@
         <configuration>
           <compilerId>javac-with-errorprone</compilerId>
           <forceJavacCompilerUse>true</forceJavacCompilerUse>
-          <source>8</source>
-          <target>8</target>
+          <source>${maven.compiler.source}</source>
+          <target>${maven.compiler.target}</target>
+          <showWarnings>true</showWarnings>
+          <annotationProcessorPaths>
+            <!-- enable extended nullability checks -->
+            <path>
+              <groupId>com.uber.nullaway</groupId>
+              <artifactId>nullaway</artifactId>
+              <version>0.1.6</version>
+            </path>
+            <!-- enable @AutoValue usage -->
+            <path>
+              <groupId>com.google.auto.value</groupId>
+              <artifactId>auto-value</artifactId>
+              <version>1.5.2</version>
+            </path>
+          </annotationProcessorPaths>
+          <compilerArgs>
+            <arg>-Xep:NullAway:ERROR</arg>
+            <arg>-XepOpt:NullAway:AnnotatedPackages=com.codahale</arg>
+          </compilerArgs>
         </configuration>
         <dependencies>
           <dependency>
@@ -249,7 +268,7 @@
           <dependency>
             <groupId>com.google.errorprone</groupId>
             <artifactId>error_prone_core</artifactId>
-            <version>2.1.1</version>
+            <version>2.1.2</version>
           </dependency>
         </dependencies>
       </plugin>
