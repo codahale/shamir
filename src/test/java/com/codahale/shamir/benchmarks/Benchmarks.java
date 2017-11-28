@@ -37,8 +37,10 @@ public class Benchmarks {
 
   @Param({"100", "1024"})
   private int secretSize = 1024;
+
   @Param({"2", "4", "8", "16", "32"})
   private int n = 2;
+
   private final int k = (n / 2) + 1;
   private byte[] secret = new byte[secretSize];
   private Scheme scheme = Scheme.of(n, k);

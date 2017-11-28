@@ -29,13 +29,14 @@ public interface Generators {
   }
 
   static Gen<byte[]> byteArrays(int minSize, int maxSize) {
-    final Gen<byte[]> gen = prng -> {
-      final byte[] bytes = new byte[(int) prng.next(Constraint.between(minSize, maxSize))];
-      for (int i = 0; i < bytes.length; i++) {
-        bytes[i] = (byte) prng.next(Constraint.between(0, 255));
-      }
-      return bytes;
-    };
+    final Gen<byte[]> gen =
+        prng -> {
+          final byte[] bytes = new byte[(int) prng.next(Constraint.between(minSize, maxSize))];
+          for (int i = 0; i < bytes.length; i++) {
+            bytes[i] = (byte) prng.next(Constraint.between(0, 255));
+          }
+          return bytes;
+        };
     return gen.describedAs(Arrays::toString);
   }
 }

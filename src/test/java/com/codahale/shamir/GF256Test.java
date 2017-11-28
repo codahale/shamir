@@ -2,9 +2,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *  
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -52,45 +52,40 @@ class GF256Test implements WithQuickTheories {
 
   @Test
   void mulIsCommutative() {
-    qt().forAll(bytes(), bytes())
-        .check((x, y) -> GF256.mul(x, y) == GF256.mul(y, x));
+    qt().forAll(bytes(), bytes()).check((x, y) -> GF256.mul(x, y) == GF256.mul(y, x));
   }
 
   @Test
   void addIsCommutative() {
-    qt().forAll(bytes(), bytes())
-        .check((x, y) -> GF256.add(x, y) == GF256.add(y, x));
+    qt().forAll(bytes(), bytes()).check((x, y) -> GF256.add(x, y) == GF256.add(y, x));
   }
 
   @Test
   void subIsTheInverseOfAdd() {
-    qt().forAll(bytes(), bytes())
-        .check((x, y) -> GF256.sub(GF256.add(x, y), y) == x);
+    qt().forAll(bytes(), bytes()).check((x, y) -> GF256.sub(GF256.add(x, y), y) == x);
   }
 
   @Test
   void divIsTheInverseOfMul() {
-    qt().forAll(bytes(), bytes(1, 255))
-        .check((x, y) -> GF256.div(GF256.mul(x, y), y) == x);
+    qt().forAll(bytes(), bytes(1, 255)).check((x, y) -> GF256.div(GF256.mul(x, y), y) == x);
   }
 
   @Test
   void mulIsTheInverseOfDiv() {
-    qt().forAll(bytes(), bytes(1, 255))
-        .check((x, y) -> GF256.mul(GF256.div(x, y), y) == x);
+    qt().forAll(bytes(), bytes(1, 255)).check((x, y) -> GF256.mul(GF256.div(x, y), y) == x);
   }
 
   @Test
   void degree() throws Exception {
-    assertEquals(1, GF256.degree(new byte[]{1, 2}));
-    assertEquals(1, GF256.degree(new byte[]{1, 2, 0}));
-    assertEquals(2, GF256.degree(new byte[]{1, 2, 3}));
+    assertEquals(1, GF256.degree(new byte[] {1, 2}));
+    assertEquals(1, GF256.degree(new byte[] {1, 2, 0}));
+    assertEquals(2, GF256.degree(new byte[] {1, 2, 3}));
     assertEquals(0, GF256.degree(new byte[4]));
   }
 
   @Test
   void eval() throws Exception {
-    assertEquals(17, GF256.eval(new byte[]{1, 0, 2, 3}, (byte) 2));
+    assertEquals(17, GF256.eval(new byte[] {1, 0, 2, 3}, (byte) 2));
   }
 
   @Test
@@ -104,8 +99,8 @@ class GF256Test implements WithQuickTheories {
 
   @Test
   void interpolate() throws Exception {
-    assertEquals(0, GF256.interpolate(new byte[][]{{1, 1}, {2, 2}, {3, 3}}));
-    assertEquals(30, GF256.interpolate(new byte[][]{{1, 80}, {2, 90}, {3, 20}}));
-    assertEquals(107, GF256.interpolate(new byte[][]{{1, 43}, {2, 22}, {3, 86}}));
+    assertEquals(0, GF256.interpolate(new byte[][] {{1, 1}, {2, 2}, {3, 3}}));
+    assertEquals(30, GF256.interpolate(new byte[][] {{1, 80}, {2, 90}, {3, 20}}));
+    assertEquals(107, GF256.interpolate(new byte[][] {{1, 43}, {2, 22}, {3, 86}}));
   }
 }

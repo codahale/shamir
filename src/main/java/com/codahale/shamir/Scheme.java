@@ -25,13 +25,13 @@ import javax.annotation.Nonnegative;
 /**
  * An implementation of Shamir's Secret Sharing over {@code GF(256)} to securely split secrets into
  * {@code N} parts, of which any {@code K} can be joined to recover the original secret.
- * <p>
- * {@link Scheme} uses the same GF(256) field polynomial as the Advanced Encryption Standard (AES):
- * {@code 0x11b}, or {@code x}<sup>8</sup> + {@code x}<sup>4</sup> + {@code x}<sup>3</sup> +
+ *
+ * <p>{@link Scheme} uses the same GF(256) field polynomial as the Advanced Encryption Standard
+ * (AES): {@code 0x11b}, or {@code x}<sup>8</sup> + {@code x}<sup>4</sup> + {@code x}<sup>3</sup> +
  * {@code x} + 1.
  *
  * @see <a href="https://en.wikipedia.org/wiki/Shamir%27s_Secret_Sharing">Shamir's Secret
- * Sharing</a>
+ *     Sharing</a>
  * @see <a href="http://www.cs.utsa.edu/~wagner/laws/FFM.html">The Finite Field {@code GF(256)}</a>
  */
 @AutoValue
@@ -75,8 +75,8 @@ public abstract class Scheme {
   public abstract int k();
 
   /**
-   * Splits the given secret into {@code n} parts, of which any {@code k} or more can be combined
-   * to recover the original secret.
+   * Splits the given secret into {@code n} parts, of which any {@code k} or more can be combined to
+   * recover the original secret.
    *
    * @param secret the secret to split
    * @return a map of {@code n} part IDs and their values
@@ -104,15 +104,15 @@ public abstract class Scheme {
 
   /**
    * Joins the given parts to recover the original secret.
-   * <p>
-   * <b>N.B.:</b> There is no way to determine whether or not the returned value is actually the
-   * original secret. If the parts are incorrect, or are under the threshold value used to split
-   * the secret, a random value will be returned.
+   *
+   * <p><b>N.B.:</b> There is no way to determine whether or not the returned value is actually the
+   * original secret. If the parts are incorrect, or are under the threshold value used to split the
+   * secret, a random value will be returned.
    *
    * @param parts a map of part IDs to part values
    * @return the original secret
    * @throws IllegalArgumentException if {@code parts} is empty or contains values of varying
-   * lengths
+   *     lengths
    */
   @CheckReturnValue
   public byte[] join(Map<Integer, byte[]> parts) {

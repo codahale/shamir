@@ -2,9 +2,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *  
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -62,17 +62,18 @@ class SchemeTest implements WithQuickTheories {
   @SuppressWarnings("ResultOfMethodCallIgnored")
   @Test
   void joinEmptyParts() throws Exception {
-    assertThrows(IllegalArgumentException.class,
-        () -> Scheme.of(3, 2).join(Collections.emptyMap()));
+    assertThrows(
+        IllegalArgumentException.class, () -> Scheme.of(3, 2).join(Collections.emptyMap()));
   }
 
   @SuppressWarnings("ResultOfMethodCallIgnored")
   @Test
   void joinIrregularParts() throws Exception {
-    final byte[] one = new byte[]{1};
-    final byte[] two = new byte[]{1, 2};
+    final byte[] one = new byte[] {1};
+    final byte[] two = new byte[] {1, 2};
 
-    assertThrows(IllegalArgumentException.class,
+    assertThrows(
+        IllegalArgumentException.class,
         () -> Scheme.of(3, 2).join(ImmutableMap.of(1, one, 2, two)));
   }
 
@@ -98,15 +99,16 @@ class SchemeTest implements WithQuickTheories {
     // join to recover the original secret.
     qt().forAll(integers().between(2, 5), integers().between(2, 5), byteArrays(1, 300))
         .asWithPrecursor((k, extra, secret) -> Scheme.of(k + extra, k))
-        .check((k, e, secret, scheme) -> {
-          final Map<Integer, byte[]> parts = scheme.split(secret);
-          return Sets.powerSet(parts.entrySet())
-                     .stream()
-                     .parallel()
-                     .filter(s -> s.size() >= k)
-                     .map(entries -> join(scheme, entries))
-                     .allMatch(s -> Arrays.equals(s, secret));
-        });
+        .check(
+            (k, e, secret, scheme) -> {
+              final Map<Integer, byte[]> parts = scheme.split(secret);
+              return Sets.powerSet(parts.entrySet())
+                  .stream()
+                  .parallel()
+                  .filter(s -> s.size() >= k)
+                  .map(entries -> join(scheme, entries))
+                  .allMatch(s -> Arrays.equals(s, secret));
+            });
   }
 
   @Test
@@ -115,15 +117,16 @@ class SchemeTest implements WithQuickTheories {
     // recover the original secret. Only check larger secrets to avoid false positives.
     qt().forAll(integers().between(2, 5), integers().between(2, 5), byteArrays(3, 300))
         .asWithPrecursor((k, extra, secret) -> Scheme.of(k + extra, k))
-        .check((k, e, secret, scheme) -> {
-          final Map<Integer, byte[]> parts = scheme.split(secret);
-          return Sets.powerSet(parts.entrySet())
-                     .stream()
-                     .parallel()
-                     .filter(s -> s.size() < k && !s.isEmpty())
-                     .map(entries -> join(scheme, entries))
-                     .noneMatch(s -> Arrays.equals(s, secret));
-        });
+        .check(
+            (k, e, secret, scheme) -> {
+              final Map<Integer, byte[]> parts = scheme.split(secret);
+              return Sets.powerSet(parts.entrySet())
+                  .stream()
+                  .parallel()
+                  .filter(s -> s.size() < k && !s.isEmpty())
+                  .map(entries -> join(scheme, entries))
+                  .noneMatch(s -> Arrays.equals(s, secret));
+            });
   }
 
   private byte[] join(Scheme scheme, Set<Map.Entry<Integer, byte[]>> entries) {
