@@ -14,28 +14,29 @@
 
 package com.codahale.shamir;
 
+import org.junit.jupiter.api.Test;
+import org.quicktheories.WithQuickTheories;
+
+import java.security.SecureRandom;
+
 import static com.codahale.shamir.Generators.bytes;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.security.SecureRandom;
-import org.junit.jupiter.api.Test;
-import org.quicktheories.WithQuickTheories;
-
 class GF256Test implements WithQuickTheories {
 
   @Test
-  void add() throws Exception {
+  void add() {
     assertEquals((byte) 122, GF256.add((byte) 100, (byte) 30));
   }
 
   @Test
-  void sub() throws Exception {
+  void sub() {
     assertEquals((byte) 122, GF256.sub((byte) 100, (byte) 30));
   }
 
   @Test
-  void mul() throws Exception {
+  void mul() {
     assertEquals((byte) 254, GF256.mul((byte) 90, (byte) 21));
     assertEquals((byte) 167, GF256.mul((byte) 133, (byte) 5));
     assertEquals((byte) 0, GF256.mul((byte) 0, (byte) 21));
@@ -43,7 +44,7 @@ class GF256Test implements WithQuickTheories {
   }
 
   @Test
-  void div() throws Exception {
+  void div() {
     assertEquals((byte) 189, GF256.div((byte) 90, (byte) 21));
     assertEquals((byte) 151, GF256.div((byte) 6, (byte) 55));
     assertEquals((byte) 138, GF256.div((byte) 22, (byte) 192));
@@ -76,7 +77,7 @@ class GF256Test implements WithQuickTheories {
   }
 
   @Test
-  void degree() throws Exception {
+  void degree() {
     assertEquals(1, GF256.degree(new byte[] {1, 2}));
     assertEquals(1, GF256.degree(new byte[] {1, 2, 0}));
     assertEquals(2, GF256.degree(new byte[] {1, 2, 3}));
@@ -84,12 +85,12 @@ class GF256Test implements WithQuickTheories {
   }
 
   @Test
-  void eval() throws Exception {
+  void eval() {
     assertEquals(17, GF256.eval(new byte[] {1, 0, 2, 3}, (byte) 2));
   }
 
   @Test
-  void generate() throws Exception {
+  void generate() {
     final SecureRandom random = new SecureRandom();
     final byte[] p = GF256.generate(random, 5, (byte) 20);
     assertEquals(20, p[0]);
@@ -98,7 +99,7 @@ class GF256Test implements WithQuickTheories {
   }
 
   @Test
-  void interpolate() throws Exception {
+  void interpolate() {
     assertEquals(0, GF256.interpolate(new byte[][] {{1, 1}, {2, 2}, {3, 3}}));
     assertEquals(30, GF256.interpolate(new byte[][] {{1, 80}, {2, 90}, {3, 20}}));
     assertEquals(107, GF256.interpolate(new byte[][] {{1, 43}, {2, 22}, {3, 86}}));
