@@ -14,14 +14,13 @@
 
 package com.codahale.shamir;
 
-import org.junit.jupiter.api.Test;
-import org.quicktheories.WithQuickTheories;
-
-import java.security.SecureRandom;
-
 import static com.codahale.shamir.Generators.bytes;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.security.SecureRandom;
+import org.junit.jupiter.api.Test;
+import org.quicktheories.WithQuickTheories;
 
 class GF256Test implements WithQuickTheories {
 

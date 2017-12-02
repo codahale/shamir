@@ -14,9 +14,9 @@
 
 package com.codahale.shamir;
 
-import java.security.SecureRandom;
-
 import static java.lang.Byte.toUnsignedInt;
+
+import java.security.SecureRandom;
 
 /**
  * An implementation of polynomials over {@code GF(256)}. Uses the same field polynomial ({@code

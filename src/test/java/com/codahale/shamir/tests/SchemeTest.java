@@ -14,17 +14,16 @@
 
 package com.codahale.shamir.tests;
 
+import static com.codahale.shamir.Generators.byteArrays;
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.codahale.shamir.Scheme;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
-import org.junit.jupiter.api.Test;
-import org.quicktheories.WithQuickTheories;
-
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-
-import static com.codahale.shamir.Generators.byteArrays;
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+import org.quicktheories.WithQuickTheories;
 
 class SchemeTest implements WithQuickTheories {
 
