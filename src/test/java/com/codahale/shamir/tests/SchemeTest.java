@@ -15,64 +15,66 @@
 package com.codahale.shamir.tests;
 
 import static com.codahale.shamir.Generators.byteArrays;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 import com.codahale.shamir.Scheme;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
-import org.junit.jupiter.api.Test;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import org.junit.Test;
 import org.quicktheories.WithQuickTheories;
 
-class SchemeTest implements WithQuickTheories {
+public class SchemeTest implements WithQuickTheories {
 
   @Test
-  void hasProperties() {
+  public void hasProperties() {
     final Scheme scheme = Scheme.of(5, 3);
 
     assertEquals(5, scheme.n());
     assertEquals(3, scheme.k());
   }
 
-  @Test
+  @Test(expected = IllegalArgumentException.class)
   @SuppressWarnings("ResultOfMethodCallIgnored")
-  void tooManyShares() {
-    assertThrows(IllegalArgumentException.class, () -> Scheme.of(2_000, 3));
+  public void tooManyShares() {
+    Scheme.of(2_000, 3);
   }
 
-  @Test
+  @Test(expected = IllegalArgumentException.class)
   @SuppressWarnings("ResultOfMethodCallIgnored")
-  void thresholdTooLow() {
-    assertThrows(IllegalArgumentException.class, () -> Scheme.of(1, 1));
+  public void thresholdTooLow() {
+    Scheme.of(1, 1);
   }
 
-  @Test
+  @Test(expected = IllegalArgumentException.class)
   @SuppressWarnings("ResultOfMethodCallIgnored")
-  void thresholdTooHigh() {
-    assertThrows(IllegalArgumentException.class, () -> Scheme.of(1, 2));
-  }
-
-  @SuppressWarnings("ResultOfMethodCallIgnored")
-  @Test
-  void joinEmptyParts() {
-    assertThrows(
-        IllegalArgumentException.class, () -> Scheme.of(3, 2).join(Collections.emptyMap()));
+  public void thresholdTooHigh() {
+    Scheme.of(1, 2);
   }
 
   @SuppressWarnings("ResultOfMethodCallIgnored")
-  @Test
-  void joinIrregularParts() {
+  @Test(expected = IllegalArgumentException.class)
+  public void joinEmptyParts() {
+    Scheme.of(3, 2).join(Collections.emptyMap());
+  }
+
+  @SuppressWarnings("ResultOfMethodCallIgnored")
+  @Test(expected = IllegalArgumentException.class)
+  public void joinIrregularParts() {
     final byte[] one = new byte[] {1};
     final byte[] two = new byte[] {1, 2};
 
-    assertThrows(
-        IllegalArgumentException.class,
-        () -> Scheme.of(3, 2).join(ImmutableMap.of(1, one, 2, two)));
+    Scheme.of(3, 2).join(ImmutableMap.of(1, one, 2, two));
   }
 
   @Test
-  void splitAndJoinSingleByteSecret() {
+  public void splitAndJoinSingleByteSecret() {
     final Scheme scheme = Scheme.of(8, 3);
     final byte[] secret = "x".getBytes(StandardCharsets.UTF_8);
 
@@ -80,7 +82,7 @@ class SchemeTest implements WithQuickTheories {
   }
 
   @Test
-  void splitAndJoinMoreThanByteMaxValueParts() {
+  public void splitAndJoinMoreThanByteMaxValueParts() {
     final Scheme scheme = Scheme.of(200, 3);
     final byte[] secret = "x".getBytes(StandardCharsets.UTF_8);
 
@@ -88,7 +90,7 @@ class SchemeTest implements WithQuickTheories {
   }
 
   @Test
-  void splitAndJoinQuorate() {
+  public void splitAndJoinQuorate() {
     // All distinct subsets of parts of cardinality greater than or equal to the threshold should
     // join to recover the original secret.
     qt().forAll(integers().between(2, 5), integers().between(2, 5), byteArrays(1, 300))
@@ -106,7 +108,7 @@ class SchemeTest implements WithQuickTheories {
   }
 
   @Test
-  void splitAndJoinInquorate() {
+  public void splitAndJoinInquorate() {
     // All distinct subsets of parts of cardinality less than the threshold should never join to
     // recover the original secret. Only check larger secrets to avoid false positives.
     qt().forAll(integers().between(2, 5), integers().between(2, 5), byteArrays(3, 300))

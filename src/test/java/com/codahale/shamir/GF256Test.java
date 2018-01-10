@@ -15,27 +15,27 @@
 package com.codahale.shamir;
 
 import static com.codahale.shamir.Generators.bytes;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.security.SecureRandom;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.quicktheories.WithQuickTheories;
 
-class GF256Test implements WithQuickTheories {
+public class GF256Test implements WithQuickTheories {
 
   @Test
-  void add() {
+  public void add() {
     assertEquals((byte) 122, GF256.add((byte) 100, (byte) 30));
   }
 
   @Test
-  void sub() {
+  public void sub() {
     assertEquals((byte) 122, GF256.sub((byte) 100, (byte) 30));
   }
 
   @Test
-  void mul() {
+  public void mul() {
     assertEquals((byte) 254, GF256.mul((byte) 90, (byte) 21));
     assertEquals((byte) 167, GF256.mul((byte) 133, (byte) 5));
     assertEquals((byte) 0, GF256.mul((byte) 0, (byte) 21));
@@ -43,7 +43,7 @@ class GF256Test implements WithQuickTheories {
   }
 
   @Test
-  void div() {
+  public void div() {
     assertEquals((byte) 189, GF256.div((byte) 90, (byte) 21));
     assertEquals((byte) 151, GF256.div((byte) 6, (byte) 55));
     assertEquals((byte) 138, GF256.div((byte) 22, (byte) 192));
@@ -51,32 +51,32 @@ class GF256Test implements WithQuickTheories {
   }
 
   @Test
-  void mulIsCommutative() {
+  public void mulIsCommutative() {
     qt().forAll(bytes(), bytes()).check((x, y) -> GF256.mul(x, y) == GF256.mul(y, x));
   }
 
   @Test
-  void addIsCommutative() {
+  public void addIsCommutative() {
     qt().forAll(bytes(), bytes()).check((x, y) -> GF256.add(x, y) == GF256.add(y, x));
   }
 
   @Test
-  void subIsTheInverseOfAdd() {
+  public void subIsTheInverseOfAdd() {
     qt().forAll(bytes(), bytes()).check((x, y) -> GF256.sub(GF256.add(x, y), y) == x);
   }
 
   @Test
-  void divIsTheInverseOfMul() {
+  public void divIsTheInverseOfMul() {
     qt().forAll(bytes(), bytes(1, 255)).check((x, y) -> GF256.div(GF256.mul(x, y), y) == x);
   }
 
   @Test
-  void mulIsTheInverseOfDiv() {
+  public void mulIsTheInverseOfDiv() {
     qt().forAll(bytes(), bytes(1, 255)).check((x, y) -> GF256.mul(GF256.div(x, y), y) == x);
   }
 
   @Test
-  void degree() {
+  public void degree() {
     assertEquals(1, GF256.degree(new byte[] {1, 2}));
     assertEquals(1, GF256.degree(new byte[] {1, 2, 0}));
     assertEquals(2, GF256.degree(new byte[] {1, 2, 3}));
@@ -84,12 +84,12 @@ class GF256Test implements WithQuickTheories {
   }
 
   @Test
-  void eval() {
+  public void eval() {
     assertEquals(17, GF256.eval(new byte[] {1, 0, 2, 3}, (byte) 2));
   }
 
   @Test
-  void generate() {
+  public void generate() {
     final SecureRandom random = new SecureRandom();
     final byte[] p = GF256.generate(random, 5, (byte) 20);
     assertEquals(20, p[0]);
@@ -98,7 +98,7 @@ class GF256Test implements WithQuickTheories {
   }
 
   @Test
-  void interpolate() {
+  public void interpolate() {
     assertEquals(0, GF256.interpolate(new byte[][] {{1, 1}, {2, 2}, {3, 3}}));
     assertEquals(30, GF256.interpolate(new byte[][] {{1, 80}, {2, 90}, {3, 20}}));
     assertEquals(107, GF256.interpolate(new byte[][] {{1, 43}, {2, 22}, {3, 86}}));
