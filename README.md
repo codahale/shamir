@@ -24,9 +24,9 @@ import java.util.Map;
 
 class Example {
   void doIt() {
-    final Scheme scheme = new Scheme(5, 3);
+    final Scheme scheme = Scheme.of(5, 3);
     final byte[] secret = "hello there".getBytes(StandardCharsets.UTF_8);
-    final Map<Integer, byte[]> parts = scheme.split(5, 3, secret);
+    final Map<Integer, byte[]> parts = scheme.split(secret);
     final byte[] recovered = scheme.join(parts);
     System.out.println(new String(recovered, StandardCharsets.UTF_8));
   } 
