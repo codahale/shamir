@@ -94,7 +94,7 @@ public class SchemeTest implements WithQuickTheories {
   public void splitAndJoinQuorate() {
     // All distinct subsets of parts of cardinality greater than or equal to the threshold should
     // join to recover the original secret.
-    qt().forAll(integers().between(2, 5), integers().between(2, 5), byteArrays(1, 300))
+    qt().forAll(integers().between(2, 5), integers().between(1, 5), byteArrays(1, 300))
         .asWithPrecursor((k, extra, secret) -> Scheme.of(k + extra, k))
         .check(
             (k, e, secret, scheme) -> {
@@ -112,7 +112,7 @@ public class SchemeTest implements WithQuickTheories {
   public void splitAndJoinInquorate() {
     // All distinct subsets of parts of cardinality less than the threshold should never join to
     // recover the original secret. Only check larger secrets to avoid false positives.
-    qt().forAll(integers().between(2, 5), integers().between(2, 5), byteArrays(3, 300))
+    qt().forAll(integers().between(2, 5), integers().between(1, 5), byteArrays(3, 300))
         .asWithPrecursor((k, extra, secret) -> Scheme.of(k + extra, k))
         .check(
             (k, e, secret, scheme) -> {
