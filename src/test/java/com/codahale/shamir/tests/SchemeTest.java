@@ -16,8 +16,8 @@
 package com.codahale.shamir.tests;
 
 import static com.codahale.shamir.Generators.byteArrays;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.codahale.shamir.Scheme;
 import com.google.common.collect.ImmutableMap;
@@ -28,70 +28,72 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.quicktheories.WithQuickTheories;
 
-public class SchemeTest implements WithQuickTheories {
+class SchemeTest implements WithQuickTheories {
 
   @Test
-  public void hasProperties() {
+  void hasProperties() {
     final Scheme scheme = Scheme.of(5, 3);
 
-    assertEquals(5, scheme.n());
-    assertEquals(3, scheme.k());
+    assertThat(scheme.n()).isEqualTo(5);
+    assertThat(scheme.k()).isEqualTo(3);
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   @SuppressWarnings("ResultOfMethodCallIgnored")
-  public void tooManyShares() {
-    Scheme.of(2_000, 3);
+  void tooManyShares() {
+    assertThatThrownBy(() -> Scheme.of(2_000, 3)).isInstanceOf(IllegalArgumentException.class);
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   @SuppressWarnings("ResultOfMethodCallIgnored")
-  public void thresholdTooLow() {
-    Scheme.of(1, 1);
+  void thresholdTooLow() {
+    assertThatThrownBy(() -> Scheme.of(1, 1)).isInstanceOf(IllegalArgumentException.class);
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   @SuppressWarnings("ResultOfMethodCallIgnored")
-  public void thresholdTooHigh() {
-    Scheme.of(1, 2);
+  void thresholdTooHigh() {
+    assertThatThrownBy(() -> Scheme.of(1, 2)).isInstanceOf(IllegalArgumentException.class);
   }
 
+  @Test
   @SuppressWarnings("ResultOfMethodCallIgnored")
-  @Test(expected = IllegalArgumentException.class)
-  public void joinEmptyParts() {
-    Scheme.of(3, 2).join(Collections.emptyMap());
+  void joinEmptyParts() {
+    assertThatThrownBy(() -> Scheme.of(3, 2).join(Collections.emptyMap()))
+        .isInstanceOf(IllegalArgumentException.class);
   }
 
+  @Test
   @SuppressWarnings("ResultOfMethodCallIgnored")
-  @Test(expected = IllegalArgumentException.class)
-  public void joinIrregularParts() {
+  void joinIrregularParts() {
     final byte[] one = new byte[] {1};
     final byte[] two = new byte[] {1, 2};
 
-    Scheme.of(3, 2).join(ImmutableMap.of(1, one, 2, two));
+    assertThatThrownBy(() -> Scheme.of(3, 2).join(ImmutableMap.of(1, one, 2, two)))
+        .isInstanceOf(IllegalArgumentException.class);
   }
 
   @Test
-  public void splitAndJoinSingleByteSecret() {
+  void splitAndJoinSingleByteSecret() {
     final Scheme scheme = Scheme.of(8, 3);
     final byte[] secret = "x".getBytes(StandardCharsets.UTF_8);
 
-    assertArrayEquals(secret, scheme.join(scheme.split(secret)));
+    assertThat(scheme.join(scheme.split(secret))).containsExactly(secret);
   }
 
   @Test
-  public void splitAndJoinMoreThanByteMaxValueParts() {
+  void splitAndJoinMoreThanByteMaxValueParts() {
     final Scheme scheme = Scheme.of(200, 3);
     final byte[] secret = "x".getBytes(StandardCharsets.UTF_8);
 
-    assertArrayEquals(secret, scheme.join(scheme.split(secret)));
+    assertThat(scheme.join(scheme.split(secret))).containsExactly(secret);
   }
 
   @Test
-  public void splitAndJoinQuorate() {
+  void splitAndJoinQuorate() {
     // All distinct subsets of parts of cardinality greater than or equal to the threshold should
     // join to recover the original secret.
     qt().forAll(integers().between(2, 5), integers().between(1, 5), byteArrays(1, 300))
@@ -109,7 +111,7 @@ public class SchemeTest implements WithQuickTheories {
   }
 
   @Test
-  public void splitAndJoinInquorate() {
+  void splitAndJoinInquorate() {
     // All distinct subsets of parts of cardinality less than the threshold should never join to
     // recover the original secret. Only check larger secrets to avoid false positives.
     qt().forAll(integers().between(2, 5), integers().between(1, 5), byteArrays(3, 300))
