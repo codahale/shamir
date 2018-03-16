@@ -67,7 +67,7 @@
     <dependency>
       <groupId>com.google.auto.value</groupId>
       <artifactId>auto-value</artifactId>
-      <version>1.5.3</version>
+      <version>1.5.4</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -98,7 +98,7 @@
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
-      <version>24.0-jre</version>
+      <version>24.1-jre</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -263,13 +263,13 @@
             <path>
               <groupId>com.uber.nullaway</groupId>
               <artifactId>nullaway</artifactId>
-              <version>0.3.2</version>
+              <version>0.3.5</version>
             </path>
             <!-- enable @AutoValue usage -->
             <path>
               <groupId>com.google.auto.value</groupId>
               <artifactId>auto-value</artifactId>
-              <version>1.5.2</version>
+              <version>1.5.4</version>
             </path>
           </annotationProcessorPaths>
           <compilerArgs>
