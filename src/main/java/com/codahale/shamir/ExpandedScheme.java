@@ -17,6 +17,7 @@ package com.codahale.shamir;
 
 import com.google.auto.value.AutoValue;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -44,10 +45,16 @@ public abstract class ExpandedScheme {
 
   public abstract int k();
 
-  private Map<Integer, byte[]> collectParts(
+  private Map<Integer, byte[]> collectAllParts(
       Map<Integer, byte[]> mParts, Map<Integer, byte[]> kParts) {
     return Stream.concat(mParts.entrySet().stream(), kParts.entrySet().stream())
         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (mPart, kPart) -> kPart));
+  }
+
+  private Map<Integer, byte[]> collectMandatoryParts(Map<Integer, byte[]> mParts, byte[] lastPart) {
+    Map<Integer, byte[]> allParts = new HashMap<>(mParts);
+    allParts.put(m() + 1, lastPart);
+    return Collections.unmodifiableMap(allParts);
   }
 
   private boolean mPartsPresent(Map<Integer, byte[]> parts) {
@@ -67,7 +74,7 @@ public abstract class ExpandedScheme {
     final Optional<byte[]> kSecret = Optional.of(mParts.get(m() + 1));
     if (kSecret.isPresent()) {
       final Map<Integer, byte[]> kParts = kScheme.split(kSecret.get(), m());
-      return Collections.unmodifiableMap(collectParts(mParts, kParts));
+      return Collections.unmodifiableMap(collectAllParts(mParts, kParts));
     }
     throw new NullPointerException("Error calculating mParts split");
   }
@@ -86,13 +93,13 @@ public abstract class ExpandedScheme {
             .stream()
             .filter(entry -> entry.getKey() > m())
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-    parts.put(m() + 1, kScheme.join(kParts));
     final Map<Integer, byte[]> mParts =
         parts
             .entrySet()
             .stream()
             .filter(entry -> entry.getKey() <= m())
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-    return mScheme.join(mParts);
+    final Map<Integer, byte[]> allParts = collectMandatoryParts(mParts, kScheme.join(kParts));
+    return mScheme.join(allParts);
   }
 }

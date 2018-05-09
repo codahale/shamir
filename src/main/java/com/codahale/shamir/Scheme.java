@@ -94,16 +94,16 @@ public abstract class Scheme {
     for (int i = 0; i < secret.length; i++) {
       // for each byte, generate a random polynomial, p
       final byte[] p = GF256.generate(random, k() - 1, secret[i]);
-      for (int x = initX + 1; x <= n() + initX; x++) {
+      for (int x = 1; x <= n(); x++) {
         // each part's byte is p(partId)
-        values[x - 1][i] = GF256.eval(p, (byte) x);
+        values[x - 1][i] = GF256.eval(p, (byte) (x + initX));
       }
     }
 
     // return as a set of objects
     final Map<Integer, byte[]> parts = new HashMap<>(n());
-    for (int i = initX; i < values.length + initX; i++) {
-      parts.put(i + 1, values[i]);
+    for (int i = 0; i < values.length; i++) {
+      parts.put(i + 1 + initX, values[i]);
     }
     return Collections.unmodifiableMap(parts);
   }
