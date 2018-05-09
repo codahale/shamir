@@ -16,13 +16,14 @@
 package com.codahale.shamir;
 
 import com.google.auto.value.AutoValue;
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnegative;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+import javax.annotation.CheckReturnValue;
+import javax.annotation.Nonnegative;
 
 @AutoValue
 public abstract class ExpandedScheme {
@@ -43,19 +44,19 @@ public abstract class ExpandedScheme {
 
   public abstract int k();
 
-  private Map<Integer, byte[]> collectParts(Map<Integer, byte[]> mParts, Map<Integer, byte[]> kParts) {
+  private Map<Integer, byte[]> collectParts(
+      Map<Integer, byte[]> mParts, Map<Integer, byte[]> kParts) {
     return Stream.concat(mParts.entrySet().stream(), kParts.entrySet().stream())
-            .collect(Collectors.toMap(
-                    Map.Entry::getKey,
-                    Map.Entry::getValue,
-                    (mPart, kPart) -> kPart
-            ));
+        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (mPart, kPart) -> kPart));
   }
 
   private boolean mPartsPresent(Map<Integer, byte[]> parts) {
-    return parts.entrySet().stream()
-            .map(Map.Entry::getKey).collect(Collectors.toSet())
-            .containsAll(IntStream.rangeClosed(1, m()).boxed().collect(Collectors.toSet()));
+    return parts
+        .entrySet()
+        .stream()
+        .map(Map.Entry::getKey)
+        .collect(Collectors.toSet())
+        .containsAll(IntStream.rangeClosed(1, m()).boxed().collect(Collectors.toSet()));
   }
 
   @CheckReturnValue
@@ -63,8 +64,12 @@ public abstract class ExpandedScheme {
     final Scheme mScheme = Scheme.of(m() + 1, m() + 1);
     final Scheme kScheme = Scheme.of(n() - m(), k() - m());
     final Map<Integer, byte[]> mParts = mScheme.split(secret);
-    final Map<Integer, byte[]> kParts = kScheme.split(mParts.get(m() + 1), m());
-    return Collections.unmodifiableMap(collectParts(mParts, kParts));
+    final Optional<byte[]> kSecret = Optional.of(mParts.get(m() + 1));
+    if (kSecret.isPresent()) {
+      final Map<Integer, byte[]> kParts = kScheme.split(kSecret.get(), m());
+      return Collections.unmodifiableMap(collectParts(mParts, kParts));
+    }
+    throw new NullPointerException("Error calculating mParts split");
   }
 
   @CheckReturnValue
@@ -73,7 +78,21 @@ public abstract class ExpandedScheme {
     final int[] lengths = parts.values().stream().mapToInt(v -> v.length).distinct().toArray();
     Scheme.checkArgument(lengths.length == 1, "Varying lengths of part values");
     Scheme.checkArgument(mPartsPresent(parts), "Missing mandatory parts");
-    return new byte[1];
+    final Scheme mScheme = Scheme.of(m() + 1, m() + 1);
+    final Scheme kScheme = Scheme.of(n() - m(), k() - m());
+    final Map<Integer, byte[]> kParts =
+        parts
+            .entrySet()
+            .stream()
+            .filter(entry -> entry.getKey() > m())
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    parts.put(m() + 1, kScheme.join(kParts));
+    final Map<Integer, byte[]> mParts =
+        parts
+            .entrySet()
+            .stream()
+            .filter(entry -> entry.getKey() <= m())
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    return mScheme.join(mParts);
   }
-
 }
