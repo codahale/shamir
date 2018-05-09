@@ -29,6 +29,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 import org.junit.jupiter.api.Test;
 import org.quicktheories.WithQuickTheories;
 
@@ -113,39 +116,64 @@ class ExpandedSchemeTest implements WithQuickTheories {
 
 //    @Test
 //    void splitAndJoinQuorate() {
-//        // All distinct subsets of parts of cardinality greater than or equal to the threshold should
-//        // join to recover the original secret.
-//        qt().forAll(integers().between(3, 10), integers().between(1, 5), byteArrays(1, 300))
-//                .asWithPrecursor((k, extra, secret) -> ExpandedScheme.of(k + extra, 1, k))
+//        // All distinct subsets of parts of cardinality greater than or equal to the threshold
+//        // and mandatory parts cardinality between one and threshold minus two
+//        // should join to recover the original secret.
+//        qt().forAll(integers().between(1, 8), integers().between(3, 10), integers().between(0, 5), byteArrays(1, 300))
+//                .asWithPrecursor((m, k, extra, secret) -> {
+//                    if (m < k - 1) {
+//                        return ExpandedScheme.of(k + extra, m, k);
+//                    }
+//                    return ExpandedScheme.of(20, 1, 3);
+//                })
 //                .check(
-//                        (k, e, secret, scheme) -> {
+//                        (m, k, e, secret, scheme) -> {
+//                            if (scheme.n() == 20) {
+//                                return true;
+//                            }
 //                            final Map<Integer, byte[]> parts = scheme.split(secret);
 //                            return Sets.powerSet(parts.entrySet())
 //                                    .stream()
 //                                    .parallel()
-//                                    .filter(s -> s.size() >= k)
+//                                    .filter(s -> s.size() >= k && mPartsPresent(s, scheme.m()))
 //                                    .map(entries -> join(scheme, entries))
 //                                    .allMatch(s -> Arrays.equals(s, secret));
 //                        });
 //    }
 
-//    @Test
-//    void splitAndJoinInquorate() {
-//        // All distinct subsets of parts of cardinality less than the threshold should never join to
-//        // recover the original secret. Only check larger secrets to avoid false positives.
-//        qt().forAll(integers().between(2, 5), integers().between(1, 5), byteArrays(3, 300))
-//                .asWithPrecursor((k, extra, secret) -> Scheme.of(k + extra, k))
-//                .check(
-//                        (k, e, secret, scheme) -> {
-//                            final Map<Integer, byte[]> parts = scheme.split(secret);
-//                            return Sets.powerSet(parts.entrySet())
-//                                    .stream()
-//                                    .parallel()
-//                                    .filter(s -> s.size() < k && !s.isEmpty())
-//                                    .map(entries -> join(scheme, entries))
-//                                    .noneMatch(s -> Arrays.equals(s, secret));
-//                        });
-//    }
+    @Test
+    void splitAndJoinInquorate() {
+        // All distinct subsets of parts of cardinality less than the threshold should never join to
+        // recover the original secret. Only check larger secrets to avoid false positives.
+        qt().forAll(integers().between(1, 8), integers().between(3, 10), integers().between(0, 5), byteArrays(3, 300))
+                .asWithPrecursor((m, k, extra, secret) -> {
+                    if (m < k - 1) {
+                        return ExpandedScheme.of(k + extra, m, k);
+                    }
+                    return ExpandedScheme.of(20, 1, 3);
+                })
+                .check(
+                        (m, k, e, secret, scheme) -> {
+                            if (scheme.n() == 20) {
+                                return true;
+                            }
+                            final Map<Integer, byte[]> parts = scheme.split(secret);
+                            return Sets.powerSet(parts.entrySet())
+                                    .stream()
+                                    .parallel()
+                                    .filter(s -> s.size() < k && !s.isEmpty() && mPartsPresent(s, scheme.m()))
+                                    .map(entries -> join(scheme, entries))
+                                    .noneMatch(s -> Arrays.equals(s, secret));
+                        });
+    }
+
+    private boolean mPartsPresent(Set<Map.Entry<Integer, byte[]>> parts, int m) {
+        return parts
+                .stream()
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toSet())
+                .containsAll(IntStream.rangeClosed(1, m).boxed().collect(Collectors.toSet()));
+    }
 
     private byte[] join(ExpandedScheme scheme, Set<Map.Entry<Integer, byte[]>> entries) {
         final Map<Integer, byte[]> m = new HashMap<>();
