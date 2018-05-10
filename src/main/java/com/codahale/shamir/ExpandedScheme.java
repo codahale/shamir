@@ -85,15 +85,6 @@ public abstract class ExpandedScheme {
     return Collections.unmodifiableMap(allParts);
   }
 
-  private boolean mPartsPresent(Map<Integer, byte[]> parts) {
-    return parts
-        .entrySet()
-        .stream()
-        .map(Map.Entry::getKey)
-        .collect(Collectors.toSet())
-        .containsAll(IntStream.rangeClosed(1, m()).boxed().collect(Collectors.toSet()));
-  }
-
   /**
    * Splits the given secret into {@code N} parts, of which {@code k} or more containing
    * {@code M} mandatory parts can be combined to recover the original secret.
@@ -137,14 +128,14 @@ public abstract class ExpandedScheme {
    * @param parts a map of part IDs to part values
    * @return the original secret
    * @throws IllegalArgumentException if {@code parts} is empty or contains values of varying
-   *     lengths or mandatory parts are missing
+   *     lengths
    */
   @CheckReturnValue
   public byte[] join(Map<Integer, byte[]> parts) {
     Scheme.checkArgument(parts.size() > 0, "No parts provided");
+    Scheme.checkArgument(parts.size() > 2, "Less than minimum number of parts provided");
     final int[] lengths = parts.values().stream().mapToInt(v -> v.length).distinct().toArray();
     Scheme.checkArgument(lengths.length == 1, "Varying lengths of part values");
-    Scheme.checkArgument(mPartsPresent(parts), "Missing mandatory parts");
     final Scheme mScheme = Scheme.of(m() + 1, m() + 1);
     final Scheme kScheme = Scheme.of(n() - m(), k() - m());
     // extract parts from the second split
