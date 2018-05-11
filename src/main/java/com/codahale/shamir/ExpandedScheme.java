@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnegative;
@@ -133,7 +132,6 @@ public abstract class ExpandedScheme {
   @CheckReturnValue
   public byte[] join(Map<Integer, byte[]> parts) {
     Scheme.checkArgument(parts.size() > 0, "No parts provided");
-    Scheme.checkArgument(parts.size() > 2, "Less than minimum number of parts provided");
     final int[] lengths = parts.values().stream().mapToInt(v -> v.length).distinct().toArray();
     Scheme.checkArgument(lengths.length == 1, "Varying lengths of part values");
     final Scheme mScheme = Scheme.of(m() + 1, m() + 1);
@@ -153,7 +151,10 @@ public abstract class ExpandedScheme {
             .filter(entry -> entry.getKey() <= m())
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     // recover all initial split parts
-    final Map<Integer, byte[]> allParts = collectMandatoryParts(mParts, kScheme.join(kParts));
+    final Map<Integer, byte[]> allParts = (kParts.size() == 0) ? (mParts.size() == 0 ? new HashMap<>() : mParts) : (mParts.size() == 0 ? kParts : collectMandatoryParts(mParts, kScheme.join(kParts)));
+    if (allParts.isEmpty()) {
+      throw new IllegalStateException("No parts found before join");
+    }
     // join to recover the original secret
     return mScheme.join(allParts);
   }

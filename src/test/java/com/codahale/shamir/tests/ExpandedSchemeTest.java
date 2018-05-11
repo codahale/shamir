@@ -20,7 +20,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.codahale.shamir.ExpandedScheme;
-import com.codahale.shamir.Scheme;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import java.nio.charset.StandardCharsets;
@@ -104,7 +103,7 @@ class ExpandedSchemeTest implements WithQuickTheories {
     }
 
     @Test
-    void splitAndJoinQuorateWithAllMandatories() {
+    void splitAndJoinQuorateWithAllMandatoryParts() {
         // All distinct subsets of parts of cardinality greater than or equal to the threshold
         // and all mandatory parts should join to recover the original secret.
         qt().forAll(integers().between(1, 8), integers().between(3, 10), integers().between(0, 5), byteArrays(1, 300))
@@ -130,7 +129,7 @@ class ExpandedSchemeTest implements WithQuickTheories {
     }
 
     @Test
-    void splitAndJoinQuorateWithoutMandatories() {
+    void splitAndJoinQuorateWithoutMandatoryParts() {
         // All distinct subsets of parts of cardinality greater than or equal to the threshold
         // and without all mandatory parts should never join to recover the original secret.
         qt().forAll(integers().between(1, 8), integers().between(3, 10), integers().between(0, 5), byteArrays(1, 300))
@@ -175,7 +174,7 @@ class ExpandedSchemeTest implements WithQuickTheories {
                             return Sets.powerSet(parts.entrySet())
                                     .stream()
                                     .parallel()
-                                    .filter(s -> s.size() < k && s.size() > 2)
+                                    .filter(s -> s.size() < k && !s.isEmpty())
                                     .map(entries -> join(scheme, entries))
                                     .noneMatch(s -> Arrays.equals(s, secret));
                         });
