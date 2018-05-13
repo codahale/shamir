@@ -1,5 +1,7 @@
 # Expanded Shamir's Secret Sharing
 
+[![Build Status](https://travis-ci.org/ba1ciu/shamir.svg?branch=master)](https://travis-ci.org/ba1ciu/shamir)
+
 ## Use the thing
 
 ```java
