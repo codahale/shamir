@@ -33,7 +33,7 @@ between users.
 
 ### Implementation details
 
-Expanded Secret Sharing uses original Coda Hale's implementation, just twice. Firstly, secret is
+Expanded Secret Sharing uses original Coda Hale's split and join operations implementations, just twice. Firstly, secret is
 splited into `M+1` parts, of which all are needed for reconstruction process. Parts with ID from `1` to `M` are the mandatory parts. Secondly, `M+1` part
 is splited into `M-K` optional parts with IDs between `M+1` and `K`. `K-M` optional parts are needed to reconstruct a part from previous split.
 This approach ensures that any `K` or more parts must include all of `M` mandatory parts to
