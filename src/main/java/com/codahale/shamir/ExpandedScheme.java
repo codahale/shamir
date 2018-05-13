@@ -120,14 +120,14 @@ public abstract class ExpandedScheme {
    * Joins the given parts to recover the original secret.
    *
    * <p><b>N.B.:</b> There is no way to determine whether or not the returned value is actually the
-   * original secret. If not all mandatory parts are given, exception will be thrown.
-   * If the parts are incorrect, or are under the threshold value used to split the
+   * original secret. If the parts are incorrect, or are under the threshold value used to split the
    * secret, a random value will be returned.
    *
    * @param parts a map of part IDs to part values
    * @return the original secret
    * @throws IllegalArgumentException if {@code parts} is empty or contains values of varying
    *     lengths
+   * @throws IllegalStateException if splitting to {@code mParts} and {@code kParts} fails
    */
   @CheckReturnValue
   public byte[] join(Map<Integer, byte[]> parts) {
