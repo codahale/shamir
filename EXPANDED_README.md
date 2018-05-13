@@ -31,7 +31,7 @@ two of users must combine their parts. In this particular case, `ExpandedScheme[
 is needed. Part with ID `1` should be given to admin and the rest can be randomly distributed
 between users.
 
-### Implementation details
+## Implementation details
 
 Expanded Secret Sharing uses original Coda Hale's split and join operations implementations, just twice. Firstly, secret is
 splited into `M+1` parts, of which all are needed for reconstruction process. Parts with ID from `1` to `M` are the mandatory parts. Secondly, `M+1` part
