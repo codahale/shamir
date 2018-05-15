@@ -132,10 +132,10 @@ class BuildTree {
     System.out.printf("%d = %s\n", 2, Arrays.toString(admins.get(2)));
 
     System.out.println("User shares:");
-    System.out.printf("%d = %s\n", 1, Arrays.toString(users.get(4).get(1)));
-    System.out.printf("%d = %s\n", 2, Arrays.toString(users.get(4).get(2)));
-    System.out.printf("%d = %s\n", 3, Arrays.toString(users.get(4).get(3)));
-    System.out.printf("%d = %s\n", 4, Arrays.toString(users.get(4).get(4)));
+    System.out.printf("%d = %s\n", 1, Arrays.toString(users.get(3).get(1)));
+    System.out.printf("%d = %s\n", 2, Arrays.toString(users.get(3).get(2)));
+    System.out.printf("%d = %s\n", 3, Arrays.toString(users.get(3).get(3)));
+    System.out.printf("%d = %s\n", 4, Arrays.toString(users.get(3).get(4)));
   }
 }
 ```
