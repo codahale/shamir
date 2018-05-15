@@ -105,6 +105,45 @@ Benchmarks.split    4          1024  avgt  200   396.708 ±  1.520  us/op
 
 **N.B.:** `split` is quadratic with respect to the number of shares being combined.
 
+## Tiered sharing
+
+Some usages of secret sharing involve levels of access: e.g. recovering a secret requires two admin
+shares and three user shares. As @ba1ciu discovered, these can be implemented by building a tree of
+shares:
+
+```java
+class BuildTree {
+  public static void shareTree(String... args) {
+    final byte[] secret = "this is a secret".getBytes(StandardCharsets.UTF_8);
+    
+    // tier 1 of the tree
+    final Scheme adminScheme = Scheme.of(3, 2);
+    final Map<Integer, byte[]> admins = adminScheme.of(3, 2).split(secret);
+
+    // tier 2 of the tree
+    final Scheme userScheme = Scheme.of(4, 3);
+    final Map<Integer, Map<Integer, byte[]>> admins =
+        users.entrySet()
+            .stream()
+            .collect(Collectors.toMap(Map.Entry::getKey, e -> userScheme.split(e.getValue())));
+    
+    System.out.println("Admin shares:");
+    System.out.printf("%d = %s\n", 1, Arrays.toString(admins.get(1)));
+    System.out.printf("%d = %s\n", 2, Arrays.toString(admins.get(2)));
+
+    System.out.println("User shares:");
+    System.out.printf("%d = %s\n", 1, Arrays.toString(users.get(4).get(1)));
+    System.out.printf("%d = %s\n", 2, Arrays.toString(users.get(4).get(2)));
+    System.out.printf("%d = %s\n", 3, Arrays.toString(users.get(4).get(3)));
+    System.out.printf("%d = %s\n", 4, Arrays.toString(users.get(4).get(4)));
+  }
+}
+```
+
+By discarding the third admin share and the first two sets of user shares, we have a set of shares
+which can be used to recover the original secret as long as either two admins or one admin and three
+users agree.
+
 ## License
 
 Copyright © 2017 Coda Hale
