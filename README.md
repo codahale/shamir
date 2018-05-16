@@ -118,7 +118,7 @@ class BuildTree {
     
     // tier 1 of the tree
     final Scheme adminScheme = Scheme.of(3, 2);
-    final Map<Integer, byte[]> admins = adminScheme.of(3, 2).split(secret);
+    final Map<Integer, byte[]> admins = adminScheme.split(secret);
 
     // tier 2 of the tree
     final Scheme userScheme = Scheme.of(4, 3);
