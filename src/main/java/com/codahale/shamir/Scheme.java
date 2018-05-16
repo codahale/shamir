@@ -55,7 +55,7 @@ public abstract class Scheme {
     return new AutoValue_Scheme(n, k);
   }
 
-  static void checkArgument(boolean condition, String message) {
+  private static void checkArgument(boolean condition, String message) {
     if (!condition) {
       throw new IllegalArgumentException(message);
     }
@@ -84,11 +84,6 @@ public abstract class Scheme {
    */
   @CheckReturnValue
   public Map<Integer, byte[]> split(byte[] secret) {
-    return split(secret, 0);
-  }
-
-  @CheckReturnValue
-  Map<Integer, byte[]> split(byte[] secret, int initX) {
     // generate part values
     final byte[][] values = new byte[n()][secret.length];
     for (int i = 0; i < secret.length; i++) {
@@ -96,14 +91,14 @@ public abstract class Scheme {
       final byte[] p = GF256.generate(random, k() - 1, secret[i]);
       for (int x = 1; x <= n(); x++) {
         // each part's byte is p(partId)
-        values[x - 1][i] = GF256.eval(p, (byte) (x + initX));
+        values[x - 1][i] = GF256.eval(p, (byte) x);
       }
     }
 
     // return as a set of objects
     final Map<Integer, byte[]> parts = new HashMap<>(n());
     for (int i = 0; i < values.length; i++) {
-      parts.put(i + 1 + initX, values[i]);
+      parts.put(i + 1, values[i]);
     }
     return Collections.unmodifiableMap(parts);
   }

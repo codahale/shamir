@@ -105,6 +105,53 @@ Benchmarks.split    4          1024  avgt  200   396.708 ±  1.520  us/op
 
 **N.B.:** `split` is quadratic with respect to the number of shares being combined.
 
+## Tiered sharing
+
+Some usages of secret sharing involve levels of access: e.g. recovering a secret requires two admin
+shares and three user shares. As @ba1ciu discovered, these can be implemented by building a tree of
+shares:
+
+```java
+class BuildTree {
+  public static void shareTree(String... args) {
+    final byte[] secret = "this is a secret".getBytes(StandardCharsets.UTF_8);
+    
+    // tier 1 of the tree
+    final Scheme adminScheme = Scheme.of(3, 2);
+    final Map<Integer, byte[]> admins = adminScheme.split(secret);
+
+    // tier 2 of the tree
+    final Scheme userScheme = Scheme.of(4, 3);
+    final Map<Integer, byte[]> users = userScheme.split(admins.get(3));
+    
+    System.out.println("Admin shares:");
+    System.out.printf("%d = %s\n", 1, Arrays.toString(admins.get(1)));
+    System.out.printf("%d = %s\n", 2, Arrays.toString(admins.get(2)));
+
+    System.out.println("User shares:");
+    System.out.printf("%d = %s\n", 1, Arrays.toString(users.get(1)));
+    System.out.printf("%d = %s\n", 2, Arrays.toString(users.get(2)));
+    System.out.printf("%d = %s\n", 3, Arrays.toString(users.get(3)));
+    System.out.printf("%d = %s\n", 4, Arrays.toString(users.get(4)));
+	
+    System.out.println("Secret recovered with two admin shares:");
+    System.out.println(new String(adminScheme.join(ImmutableMap.of(
+      1, admins.get(1),
+      2, admins.get(2)
+    ))));
+  
+    System.out.println("Secret recovered with one admin and all user shares:");
+    System.out.println(new String(adminScheme.join(ImmutableMap.of(
+      1, admins.get(1),
+      3, userScheme.join(users)
+    ))));
+  }
+}
+```
+
+By discarding the third admin share, we have a set of shares which can be used to recover the original
+secret as long as either two admins or one admin and three users agree.
+
 ## License
 
 Copyright © 2017 Coda Hale
