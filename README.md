@@ -118,31 +118,39 @@ class BuildTree {
     
     // tier 1 of the tree
     final Scheme adminScheme = Scheme.of(3, 2);
-    final Map<Integer, byte[]> admins = adminScheme.of(3, 2).split(secret);
+    final Map<Integer, byte[]> admins = adminScheme.split(secret);
 
     // tier 2 of the tree
     final Scheme userScheme = Scheme.of(4, 3);
-    final Map<Integer, Map<Integer, byte[]>> admins =
-        users.entrySet()
-            .stream()
-            .collect(Collectors.toMap(Map.Entry::getKey, e -> userScheme.split(e.getValue())));
+    final Map<Integer, byte[]> users = userScheme.split(admins.get(3));
     
     System.out.println("Admin shares:");
     System.out.printf("%d = %s\n", 1, Arrays.toString(admins.get(1)));
     System.out.printf("%d = %s\n", 2, Arrays.toString(admins.get(2)));
 
     System.out.println("User shares:");
-    System.out.printf("%d = %s\n", 1, Arrays.toString(users.get(3).get(1)));
-    System.out.printf("%d = %s\n", 2, Arrays.toString(users.get(3).get(2)));
-    System.out.printf("%d = %s\n", 3, Arrays.toString(users.get(3).get(3)));
-    System.out.printf("%d = %s\n", 4, Arrays.toString(users.get(3).get(4)));
+    System.out.printf("%d = %s\n", 1, Arrays.toString(users.get(1)));
+    System.out.printf("%d = %s\n", 2, Arrays.toString(users.get(2)));
+    System.out.printf("%d = %s\n", 3, Arrays.toString(users.get(3)));
+    System.out.printf("%d = %s\n", 4, Arrays.toString(users.get(4)));
+	
+    System.out.println("Secret recovered with two admin shares:");
+    System.out.println(new String(adminScheme.join(ImmutableMap.of(
+      1, admins.get(1),
+      2, admins.get(2)
+    ))));
+  
+    System.out.println("Secret recovered with one admin and all user shares:");
+    System.out.println(new String(adminScheme.join(ImmutableMap.of(
+      1, admins.get(1),
+      3, userScheme.join(users)
+    ))));
   }
 }
 ```
 
-By discarding the third admin share and the first two sets of user shares, we have a set of shares
-which can be used to recover the original secret as long as either two admins or one admin and three
-users agree.
+By discarding the third admin share, we have a set of shares which can be used to recover the original
+secret as long as either two admins or one admin and three users agree.
 
 ## License
 
