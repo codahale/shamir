@@ -57,7 +57,7 @@
     <jmh.version>1.21</jmh.version>
     <junit.jupiter.version>5.2.0</junit.jupiter.version>
     <junit.platform.version>1.2.0</junit.platform.version>
-    <auto-value.version>1.6</auto-value.version>
+    <auto-value.version>1.6.1</auto-value.version>
   </properties>
 
   <dependencies>
