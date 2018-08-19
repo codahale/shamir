@@ -20,8 +20,8 @@ import java.security.SecureRandom;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnegative;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * An implementation of Shamir's Secret Sharing over {@code GF(256)} to securely split secrets into
@@ -47,14 +47,16 @@ public abstract class Scheme {
    * @param k the threshold of joinable parts (must be {@code <= n})
    * @return an {@code N}/{@code K} {@link Scheme}
    */
-  @CheckReturnValue
-  public static Scheme of(@Nonnegative int n, @Nonnegative int k) {
+  @NotNull
+  @Contract("_, _ -> new")
+  public static Scheme of(int n, int k) {
     checkArgument(k > 1, "K must be > 1");
     checkArgument(n >= k, "N must be >= K");
     checkArgument(n <= 255, "N must be <= 255");
     return new AutoValue_Scheme(n, k);
   }
 
+  @Contract("false, _ -> fail")
   private static void checkArgument(boolean condition, String message) {
     if (!condition) {
       throw new IllegalArgumentException(message);
@@ -82,7 +84,6 @@ public abstract class Scheme {
    * @param secret the secret to split
    * @return a map of {@code n} part IDs and their values
    */
-  @CheckReturnValue
   public Map<Integer, byte[]> split(byte[] secret) {
     // generate part values
     final byte[][] values = new byte[n()][secret.length];
@@ -115,7 +116,7 @@ public abstract class Scheme {
    * @throws IllegalArgumentException if {@code parts} is empty or contains values of varying
    *     lengths
    */
-  @CheckReturnValue
+  @Contract(pure = true)
   public byte[] join(Map<Integer, byte[]> parts) {
     checkArgument(parts.size() > 0, "No parts provided");
     final int[] lengths = parts.values().stream().mapToInt(v -> v.length).distinct().toArray();

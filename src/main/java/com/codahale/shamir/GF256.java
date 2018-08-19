@@ -18,6 +18,8 @@ package com.codahale.shamir;
 import static java.lang.Byte.toUnsignedInt;
 
 import java.security.SecureRandom;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * An implementation of polynomials over {@code GF(256)}. Uses the same field polynomial ({@code
@@ -147,10 +149,12 @@ class GF256 {
     (byte) 0x00
   };
 
+  @Contract(pure = true)
   static byte add(byte a, byte b) {
     return (byte) (a ^ b);
   }
 
+  @Contract(pure = true)
   static byte sub(byte a, byte b) {
     return add(a, b);
   }
@@ -167,7 +171,8 @@ class GF256 {
     return mul(a, EXP[255 - toUnsignedInt(LOG[toUnsignedInt(b)])]);
   }
 
-  static byte eval(byte[] p, byte x) {
+  @Contract(pure = true)
+  static byte eval(@NotNull byte[] p, byte x) {
     // Horner's method
     byte result = 0;
     for (int i = p.length - 1; i >= 0; i--) {
@@ -176,7 +181,8 @@ class GF256 {
     return result;
   }
 
-  static int degree(byte[] p) {
+  @Contract(pure = true)
+  static int degree(@NotNull byte[] p) {
     for (int i = p.length - 1; i >= 1; i--) {
       if (p[i] != 0) {
         return i;
@@ -185,7 +191,7 @@ class GF256 {
     return 0;
   }
 
-  static byte[] generate(SecureRandom random, int degree, byte x) {
+  static byte[] generate(@NotNull SecureRandom random, int degree, byte x) {
     final byte[] p = new byte[degree + 1];
 
     // generate random polynomials until we find one of the given degree
@@ -199,7 +205,8 @@ class GF256 {
     return p;
   }
 
-  static byte interpolate(byte[][] points) {
+  @Contract(pure = true)
+  static byte interpolate(@NotNull byte[][] points) {
     // calculate f(0) of the given points using Lagrangian interpolation
     final byte x = 0;
     byte y = 0;
