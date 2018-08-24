@@ -1,5 +1,10 @@
 # Change Log
 
+## v0.6.1: 2018-08-23
+
+* Updated dependencies.
+* JAR now specifies an automatic module name of `com.codahale.shamir`.
+
 ## v0.6.0: 2017-06-27
 
 * Moved to a `Map`-based API.
