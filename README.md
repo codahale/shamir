@@ -15,6 +15,8 @@ algorithm](http://en.wikipedia.org/wiki/Shamir's_Secret_Sharing) over GF(256).
 </dependency>
 ```
 
+*Note: module name for Java 9+ is `com.codahale.shamir`.*
+
 ## Use the thing
 
 ```java
