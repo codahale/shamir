@@ -2,7 +2,7 @@ dist: trusty
 sudo: false
 language: java
 jdk:
-- oraclejdk10
+- oraclejdk11
 install: true
 script: mvn -B verify
 cache:

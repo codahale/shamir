@@ -16,6 +16,7 @@
 package com.codahale.shamir.benchmarks;
 
 import com.codahale.shamir.Scheme;
+import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -41,7 +42,7 @@ public class Benchmarks {
 
   private final int k = (n / 2) + 1;
   private byte[] secret = new byte[secretSize];
-  private Scheme scheme = Scheme.of(n, k);
+  private Scheme scheme = new Scheme(new SecureRandom(), n, k);
   private Map<Integer, byte[]> parts = new HashMap<>();
 
   @Setup

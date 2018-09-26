@@ -23,6 +23,7 @@ import com.codahale.shamir.Scheme;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -35,7 +36,7 @@ class SchemeTest implements WithQuickTheories {
 
   @Test
   void hasProperties() {
-    final Scheme scheme = Scheme.of(5, 3);
+    final Scheme scheme = new Scheme(new SecureRandom(), 5, 3);
 
     assertThat(scheme.n()).isEqualTo(5);
     assertThat(scheme.k()).isEqualTo(3);
@@ -44,25 +45,28 @@ class SchemeTest implements WithQuickTheories {
   @Test
   @SuppressWarnings("ResultOfMethodCallIgnored")
   void tooManyShares() {
-    assertThatThrownBy(() -> Scheme.of(2_000, 3)).isInstanceOf(IllegalArgumentException.class);
+    assertThatThrownBy(() -> new Scheme(new SecureRandom(), 2_000, 3))
+        .isInstanceOf(IllegalArgumentException.class);
   }
 
   @Test
   @SuppressWarnings("ResultOfMethodCallIgnored")
   void thresholdTooLow() {
-    assertThatThrownBy(() -> Scheme.of(1, 1)).isInstanceOf(IllegalArgumentException.class);
+    assertThatThrownBy(() -> new Scheme(new SecureRandom(), 1, 1))
+        .isInstanceOf(IllegalArgumentException.class);
   }
 
   @Test
   @SuppressWarnings("ResultOfMethodCallIgnored")
   void thresholdTooHigh() {
-    assertThatThrownBy(() -> Scheme.of(1, 2)).isInstanceOf(IllegalArgumentException.class);
+    assertThatThrownBy(() -> new Scheme(new SecureRandom(), 1, 2))
+        .isInstanceOf(IllegalArgumentException.class);
   }
 
   @Test
   @SuppressWarnings("ResultOfMethodCallIgnored")
   void joinEmptyParts() {
-    assertThatThrownBy(() -> Scheme.of(3, 2).join(Collections.emptyMap()))
+    assertThatThrownBy(() -> new Scheme(new SecureRandom(), 3, 2).join(Collections.emptyMap()))
         .isInstanceOf(IllegalArgumentException.class);
   }
 
@@ -72,13 +76,14 @@ class SchemeTest implements WithQuickTheories {
     final byte[] one = new byte[] {1};
     final byte[] two = new byte[] {1, 2};
 
-    assertThatThrownBy(() -> Scheme.of(3, 2).join(ImmutableMap.of(1, one, 2, two)))
+    assertThatThrownBy(
+            () -> new Scheme(new SecureRandom(), 3, 2).join(ImmutableMap.of(1, one, 2, two)))
         .isInstanceOf(IllegalArgumentException.class);
   }
 
   @Test
   void splitAndJoinSingleByteSecret() {
-    final Scheme scheme = Scheme.of(8, 3);
+    final Scheme scheme = new Scheme(new SecureRandom(), 8, 3);
     final byte[] secret = "x".getBytes(StandardCharsets.UTF_8);
 
     assertThat(scheme.join(scheme.split(secret))).containsExactly(secret);
@@ -86,7 +91,7 @@ class SchemeTest implements WithQuickTheories {
 
   @Test
   void splitAndJoinMoreThanByteMaxValueParts() {
-    final Scheme scheme = Scheme.of(200, 3);
+    final Scheme scheme = new Scheme(new SecureRandom(), 200, 3);
     final byte[] secret = "x".getBytes(StandardCharsets.UTF_8);
 
     assertThat(scheme.join(scheme.split(secret))).containsExactly(secret);
@@ -97,7 +102,7 @@ class SchemeTest implements WithQuickTheories {
     // All distinct subsets of parts of cardinality greater than or equal to the threshold should
     // join to recover the original secret.
     qt().forAll(integers().between(2, 5), integers().between(1, 5), byteArrays(1, 300))
-        .asWithPrecursor((k, extra, secret) -> Scheme.of(k + extra, k))
+        .asWithPrecursor((k, extra, secret) -> new Scheme(new SecureRandom(), k + extra, k))
         .check(
             (k, e, secret, scheme) -> {
               final Map<Integer, byte[]> parts = scheme.split(secret);
@@ -115,7 +120,7 @@ class SchemeTest implements WithQuickTheories {
     // All distinct subsets of parts of cardinality less than the threshold should never join to
     // recover the original secret. Only check larger secrets to avoid false positives.
     qt().forAll(integers().between(2, 5), integers().between(1, 5), byteArrays(3, 300))
-        .asWithPrecursor((k, extra, secret) -> Scheme.of(k + extra, k))
+        .asWithPrecursor((k, extra, secret) -> new Scheme(new SecureRandom(), k + extra, k))
         .check(
             (k, e, secret, scheme) -> {
               final Map<Integer, byte[]> parts = scheme.split(secret);

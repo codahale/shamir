@@ -11,7 +11,7 @@ algorithm](http://en.wikipedia.org/wiki/Shamir's_Secret_Sharing) over GF(256).
 <dependency>
   <groupId>com.codahale</groupId>
   <artifactId>shamir</artifactId>
-  <version>0.6.1</version>
+  <version>0.7.0</version>
 </dependency>
 ```
 
@@ -22,11 +22,12 @@ algorithm](http://en.wikipedia.org/wiki/Shamir's_Secret_Sharing) over GF(256).
 ```java
 import com.codahale.shamir.Scheme;
 import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
 import java.util.Map;
 
 class Example {
   void doIt() {
-    final Scheme scheme = Scheme.of(5, 3);
+    final Scheme scheme = new Scheme(new SecureRandom(), 5, 3);
     final byte[] secret = "hello there".getBytes(StandardCharsets.UTF_8);
     final Map<Integer, byte[]> parts = scheme.split(secret);
     final byte[] recovered = scheme.join(parts);
@@ -119,7 +120,7 @@ class BuildTree {
     final byte[] secret = "this is a secret".getBytes(StandardCharsets.UTF_8);
     
     // tier 1 of the tree
-    final Scheme adminScheme = Scheme.of(3, 2);
+    final Scheme adminScheme = new Scheme(new SecureRandom(), 5, 2);
     final Map<Integer, byte[]> admins = adminScheme.split(secret);
 
     // tier 2 of the tree
