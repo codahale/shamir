@@ -1,6 +1,6 @@
 # Shamir's Secret Sharing
 
-[![Build Status](https://secure.travis-ci.org/codahale/shamir.svg)](http://travis-ci.org/codahale/shamir)
+[![CircleCI](https://circleci.com/gh/codahale/shamir.svg?style=svg)](https://circleci.com/gh/codahale/shamir)
 
 A Java implementation of [Shamir's Secret Sharing
 algorithm](http://en.wikipedia.org/wiki/Shamir's_Secret_Sharing) over GF(256).
