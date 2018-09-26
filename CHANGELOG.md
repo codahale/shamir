@@ -1,5 +1,10 @@
 # Change Log
 
+## v0.7.0: 2018-09-25
+
+* Removed Jetbrains annotations.
+* Moved away from AutoValue classes to more regular API.
+
 ## v0.6.1: 2018-08-23
 
 * Updated dependencies.
