@@ -136,7 +136,7 @@ public class Scheme {
     if (this == o) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if (!(o instanceof Scheme)) {
       return false;
     }
     Scheme scheme = (Scheme) o;
