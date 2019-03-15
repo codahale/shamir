@@ -49,7 +49,7 @@ class SchemeTest implements WithQuickTheories {
   }
 
   @Test
-  private void thresholdTooLow() {
+  void thresholdTooLow() {
     assertThatThrownBy(() -> new Scheme(new SecureRandom(), 1, 1))
         .isInstanceOf(IllegalArgumentException.class);
   }
