@@ -44,7 +44,7 @@ people, and if three or more of them combine their parts, they can recover the r
 
 ### Splitting secrets
 
-Splitting a secret woparts encoding the secret as the constant in a random polynomial of `K`
+Splitting a secret works by encoding the secret as the constant in a random polynomial of `K`
 degree. For example, if we're splitting the secret number `42` among five people with a threshold of
 three (`N=5,K=3`), we might end up with the polynomial:
 
