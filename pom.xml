@@ -21,7 +21,7 @@
   <parent>
     <groupId>com.codahale</groupId>
     <artifactId>common-pom</artifactId>
-    <version>0.0.15</version>
+    <version>0.0.19</version>
   </parent>
 
   <artifactId>shamir</artifactId>

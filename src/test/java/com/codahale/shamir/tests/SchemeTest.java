@@ -43,35 +43,30 @@ class SchemeTest implements WithQuickTheories {
   }
 
   @Test
-  @SuppressWarnings("ResultOfMethodCallIgnored")
   void tooManyShares() {
     assertThatThrownBy(() -> new Scheme(new SecureRandom(), 2_000, 3))
         .isInstanceOf(IllegalArgumentException.class);
   }
 
   @Test
-  @SuppressWarnings("ResultOfMethodCallIgnored")
-  void thresholdTooLow() {
+  private void thresholdTooLow() {
     assertThatThrownBy(() -> new Scheme(new SecureRandom(), 1, 1))
         .isInstanceOf(IllegalArgumentException.class);
   }
 
   @Test
-  @SuppressWarnings("ResultOfMethodCallIgnored")
   void thresholdTooHigh() {
     assertThatThrownBy(() -> new Scheme(new SecureRandom(), 1, 2))
         .isInstanceOf(IllegalArgumentException.class);
   }
 
   @Test
-  @SuppressWarnings("ResultOfMethodCallIgnored")
   void joinEmptyParts() {
     assertThatThrownBy(() -> new Scheme(new SecureRandom(), 3, 2).join(Collections.emptyMap()))
         .isInstanceOf(IllegalArgumentException.class);
   }
 
   @Test
-  @SuppressWarnings("ResultOfMethodCallIgnored")
   void joinIrregularParts() {
     final byte[] one = new byte[] {1};
     final byte[] two = new byte[] {1, 2};
@@ -106,8 +101,7 @@ class SchemeTest implements WithQuickTheories {
         .check(
             (k, e, secret, scheme) -> {
               final Map<Integer, byte[]> parts = scheme.split(secret);
-              return Sets.powerSet(parts.entrySet())
-                  .stream()
+              return Sets.powerSet(parts.entrySet()).stream()
                   .parallel()
                   .filter(s -> s.size() >= k)
                   .map(entries -> join(scheme, entries))
@@ -124,8 +118,7 @@ class SchemeTest implements WithQuickTheories {
         .check(
             (k, e, secret, scheme) -> {
               final Map<Integer, byte[]> parts = scheme.split(secret);
-              return Sets.powerSet(parts.entrySet())
-                  .stream()
+              return Sets.powerSet(parts.entrySet()).stream()
                   .parallel()
                   .filter(s -> s.size() < k && !s.isEmpty())
                   .map(entries -> join(scheme, entries))
