@@ -139,7 +139,7 @@ public class Scheme {
     if (!(o instanceof Scheme)) {
       return false;
     }
-    Scheme scheme = (Scheme) o;
+    final Scheme scheme = (Scheme) o;
     return n == scheme.n && k == scheme.k && Objects.equals(random, scheme.random);
   }
 
