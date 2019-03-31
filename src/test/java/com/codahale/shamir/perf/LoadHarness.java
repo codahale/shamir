@@ -20,7 +20,6 @@ import java.security.SecureRandom;
 
 public class LoadHarness {
 
-  @SuppressWarnings("ResultOfMethodCallIgnored")
   public static void main(String[] args) {
     final byte[] secret = new byte[10 * 1024];
     final Scheme scheme = new Scheme(new SecureRandom(), 200, 20);
