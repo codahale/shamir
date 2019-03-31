@@ -1,5 +1,5 @@
 #
-# Copyright © 2018 Coda Hale (coda.hale@gmail.com)
+# Copyright © 2017 Coda Hale (coda.hale@gmail.com)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: maven:3-jdk-12
+      - image: maven:3-jdk-12-alpine
     working_directory: ~/repo
     environment:
       MAVEN_OPTS: -Xmx3200m
