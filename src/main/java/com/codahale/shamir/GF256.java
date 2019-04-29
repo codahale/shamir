@@ -185,7 +185,7 @@ class GF256 {
     return 0;
   }
 
-  static byte[] generate(SecureRandom random, int degree, byte x) {
+  static byte[] generate(SecureRandom random, int degree, byte y0) {
     final byte[] p = new byte[degree + 1];
 
     // generate random polynomials until we find one of the given degree
@@ -194,14 +194,13 @@ class GF256 {
     } while (degree(p) != degree);
 
     // set y intercept
-    p[0] = x;
+    p[0] = y0;
 
     return p;
   }
 
-  static byte interpolate(byte[][] points) {
-    // calculate f(0) of the given points using Lagrangian interpolation
-    final byte x = 0;
+  static byte interpolate(byte[][] points, final byte x) {
+    // calculate f(x) of the given points using Lagrangian interpolation
     byte y = 0;
     for (int i = 0; i < points.length; i++) {
       final byte aX = points[i][0];
@@ -211,6 +210,24 @@ class GF256 {
         final byte bX = points[j][0];
         if (i != j) {
           li = mul(li, div(sub(x, bX), sub(aX, bX)));
+        }
+      }
+      y = add(y, mul(li, aY));
+    }
+    return y;
+  }
+
+  static byte interpolate(byte[][] points) {
+    // calculate f(0) of the given points using Lagrangian interpolation
+    byte y = 0;
+    for (int i = 0; i < points.length; i++) {
+      final byte aX = points[i][0];
+      final byte aY = points[i][1];
+      byte li = 1;
+      for (int j = 0; j < points.length; j++) {
+        final byte bX = points[j][0];
+        if (i != j) {
+          li = mul(li, div(bX, sub(aX, bX)));
         }
       }
       y = add(y, mul(li, aY));
