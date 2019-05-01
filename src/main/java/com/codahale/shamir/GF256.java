@@ -27,11 +27,12 @@ import java.security.SecureRandom;
  *     Coding</a>
  */
 class GF256 {
+
   private GF256() {
     // a singleton
   }
 
-  private static final byte[] LOG = {
+  static final byte[] LOG = {
     (byte) 0xff, (byte) 0x00, (byte) 0x19, (byte) 0x01, (byte) 0x32, (byte) 0x02, (byte) 0x1a,
     (byte) 0xc6, (byte) 0x4b, (byte) 0xc7, (byte) 0x1b, (byte) 0x68, (byte) 0x33, (byte) 0xee,
     (byte) 0xdf, (byte) 0x03, (byte) 0x64, (byte) 0x04, (byte) 0xe0, (byte) 0x0e, (byte) 0x34,
@@ -70,7 +71,7 @@ class GF256 {
     (byte) 0x31, (byte) 0xfe, (byte) 0x18, (byte) 0x0d, (byte) 0x63, (byte) 0x8c, (byte) 0x80,
     (byte) 0xc0, (byte) 0xf7, (byte) 0x70, (byte) 0x07,
   };
-  private static final byte[] EXP = {
+  static final byte[] EXP = {
     (byte) 0x01, (byte) 0x03, (byte) 0x05, (byte) 0x0f, (byte) 0x11, (byte) 0x33, (byte) 0x55,
     (byte) 0xff, (byte) 0x1a, (byte) 0x2e, (byte) 0x72, (byte) 0x96, (byte) 0xa1, (byte) 0xf8,
     (byte) 0x13, (byte) 0x35, (byte) 0x5f, (byte) 0xe1, (byte) 0x38, (byte) 0x48, (byte) 0xd8,
@@ -184,7 +185,7 @@ class GF256 {
     return 0;
   }
 
-  static byte[] generate(SecureRandom random, int degree, byte x) {
+  static byte[] generate(SecureRandom random, int degree, byte y0) {
     final byte[] p = new byte[degree + 1];
 
     // generate random polynomials until we find one of the given degree
@@ -193,8 +194,92 @@ class GF256 {
     } while (degree(p) != degree);
 
     // set y intercept
-    p[0] = x;
+    p[0] = y0;
 
+    return p;
+  }
+
+  static byte[] generate(SecureRandom random, int degree) {
+    final byte[] p = new byte[degree + 1];
+    do {
+      random.nextBytes(p);
+    } while (degree(p) != degree);
+    return p;
+  }
+
+  static byte[] mul(byte a, byte[] p) {
+    final byte[] result = new byte[p.length];
+    for (int i = p.length - 1; i >= 0; i--) {
+      result[i] = mul(a, p[i]);
+    }
+    return result;
+  }
+
+  static byte[] div(byte a, byte[] p) {
+    final byte[] result = new byte[p.length];
+    for (int i = p.length - 1; i >= 0; i--) {
+      result[i] = div(p[i], a);
+    }
+    return result;
+  }
+
+  static byte coefficient(int idx, byte[] p) {
+    if (idx >= p.length) {
+      return 0;
+    }
+    return p[idx];
+  }
+
+  static byte[] add(byte[] p1, byte[] p2) {
+    final byte[] result = new byte[Integer.max(p1.length, p2.length)];
+    for (int i = result.length - 1; i >= 0; i--) {
+      byte a = coefficient(i, p1);
+      byte b = coefficient(i, p2);
+      result[i] = add(a, b);
+    }
+    return result;
+  }
+
+  static byte[] mul(byte[] p1, byte[] p2) {
+    final byte[] result = new byte[p1.length + p2.length - 1];
+    for (int i = p1.length - 1; i >= 0; i--) {
+      for (int j = p2.length - 1; j >= 0; j--) {
+        byte a = coefficient(i, p1);
+        byte b = coefficient(j, p2);
+        result[i + j] = add(result[i + j], mul(a, b));
+      }
+    }
+    return result;
+  }
+
+  static byte[] generate(SecureRandom random, int degree, byte[][] inputPoints) {
+    byte[] p = new byte[degree + 1];
+    final byte[][] points = new byte[degree + 1][2];
+    for (int idx = 0; idx < inputPoints.length; idx++) {
+      points[idx][0] = inputPoints[idx][0];
+      points[idx][1] = inputPoints[idx][1];
+    }
+    for (int idx = inputPoints.length; idx < points.length; idx++) {
+      // check for same x values here?
+      points[idx][0] = (byte) idx;
+      points[idx][1] = (byte) random.nextInt();
+    }
+    for (int i = 0; i < points.length; i++) {
+      byte[] li = new byte[] {1};
+      byte denom = 1;
+      for (int j = 0; j < points.length; j++) {
+        if (i == j) {
+          continue;
+        }
+        final byte xj = points[j][0];
+        li = GF256.mul(li, new byte[] {GF256.sub((byte) 0, xj), 1});
+        final byte xi = points[i][0];
+        denom = GF256.mul(denom, GF256.sub(xi, xj));
+      }
+      li = GF256.div(denom, li);
+      final byte yi = points[i][1];
+      p = GF256.add(p, GF256.mul(yi, li));
+    }
     return p;
   }
 

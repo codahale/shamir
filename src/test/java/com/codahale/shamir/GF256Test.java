@@ -15,7 +15,9 @@
  */
 package com.codahale.shamir;
 
+import static com.codahale.shamir.GF256.EXP;
 import static com.codahale.shamir.Generators.bytes;
+import static java.lang.Byte.toUnsignedInt;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.security.SecureRandom;
@@ -102,5 +104,106 @@ class GF256Test implements WithQuickTheories {
     assertThat(GF256.interpolate(new byte[][] {{1, 1}, {2, 2}, {3, 3}})).isEqualTo((byte) 0);
     assertThat(GF256.interpolate(new byte[][] {{1, 80}, {2, 90}, {3, 20}})).isEqualTo((byte) 30);
     assertThat(GF256.interpolate(new byte[][] {{1, 43}, {2, 22}, {3, 86}})).isEqualTo((byte) 107);
+  }
+
+  private byte ffMul(byte a, byte b) {
+    byte aa = a, bb = b, r = 0, t;
+    while (aa != 0) {
+      if ((aa & 1) != 0) {
+        r = (byte) (r ^ bb);
+      }
+      t = (byte) (bb & 0x80);
+      bb = (byte) (bb << 1);
+      if (t != 0) {
+        bb = (byte) (bb ^ 0x1b);
+      }
+      aa = (byte) ((aa & 0xff) >> 1);
+    }
+    return r;
+  }
+
+  @Test
+  void expTable() {
+    byte r = 1;
+    final byte G = 3;
+    for (int idx = 1; idx < GF256.EXP.length; idx++) {
+      r = ffMul(r, G);
+      assertThat(GF256.EXP[idx]).isEqualTo(r);
+    }
+  }
+
+  @Test
+  void logTable() {
+    for (int idx = 1; idx < GF256.LOG.length; idx++) {
+      assertThat(toUnsignedInt(EXP[toUnsignedInt(GF256.LOG[idx])])).isEqualTo(idx);
+    }
+  }
+
+  @Test
+  void polyMulScalar() {
+    final SecureRandom random = new SecureRandom();
+    final byte[] p = GF256.generate(random, 10);
+    final byte x = (byte) random.nextInt();
+    final byte px = GF256.eval(p, x);
+    final byte a = (byte) random.nextInt();
+    final byte[] ap = GF256.mul(a, p);
+    final byte apx = GF256.eval(ap, x);
+    assertThat(apx).isEqualTo(GF256.mul(px, a));
+  }
+
+  @Test
+  void polyDivScalar() {
+    final SecureRandom random = new SecureRandom();
+    final byte[] p = GF256.generate(random, 10);
+    final byte x = (byte) random.nextInt();
+    final byte px = GF256.eval(p, x);
+    final byte a = (byte) random.nextInt();
+    final byte[] ap = GF256.div(a, p);
+    final byte apx = GF256.eval(ap, x);
+    assertThat(apx).isEqualTo(GF256.div(px, a));
+  }
+
+  @Test
+  void polyAdd() {
+    final SecureRandom random = new SecureRandom();
+    final byte[] p1 = GF256.generate(random, 10);
+    final byte[] p2 = GF256.generate(random, 15);
+    final byte[] p = GF256.add(p1, p2);
+    assertThat(p.length).isEqualTo(p2.length);
+    final byte x = (byte) random.nextInt();
+    final byte p1x = GF256.eval(p1, x);
+    final byte p2x = GF256.eval(p2, x);
+    final byte px = GF256.eval(p, x);
+    assertThat(px).isEqualTo(GF256.add(p1x, p2x));
+  }
+
+  @Test
+  void polyMul() {
+    final SecureRandom random = new SecureRandom();
+    final byte[] p1 = GF256.generate(random, 10);
+    final byte[] p2 = GF256.generate(random, 15);
+    final byte[] p = GF256.mul(p1, p2);
+    assertThat(p.length).isEqualTo(p2.length + p1.length - 1);
+    final byte x = (byte) random.nextInt();
+    final byte p1x = GF256.eval(p1, x);
+    final byte p2x = GF256.eval(p2, x);
+    final byte px = GF256.eval(p, x);
+    assertThat(px).isEqualTo(GF256.mul(p1x, p2x));
+  }
+
+  @Test
+  void testInterpolation() {
+    final byte[][] points = new byte[10][2];
+    final SecureRandom random = new SecureRandom();
+    for (int idx = 0; idx < points.length; idx++) {
+      points[idx][0] = (byte) idx;
+      points[idx][1] = (byte) random.nextInt();
+    }
+    final byte[] p = GF256.generate(random, points.length - 1, points);
+    for (int idx = 0; idx < points.length; idx++) {
+      byte x = (byte) idx;
+      byte px = GF256.eval(p, x);
+      assertThat(px).isEqualTo(points[idx][1]);
+    }
   }
 }
