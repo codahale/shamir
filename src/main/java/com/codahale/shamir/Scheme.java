@@ -83,6 +83,34 @@ public class Scheme {
     return Collections.unmodifiableMap(parts);
   }
 
+  public Map<Integer, byte[]> split(byte[] secret, Map<Integer, byte[]> points) {
+    final byte[][] values = new byte[n][secret.length];
+    for (int i = 0; i < secret.length; i++) {
+      // for each byte, generate a random polynomial, p
+      byte[][] inputPoints = new byte[points.size() + 1][2];
+      inputPoints[0][0] = 0;
+      inputPoints[0][1] = secret[i];
+      for (Map.Entry<Integer, byte[]> point : points.entrySet()) {
+        byte x = point.getKey().byteValue();
+        byte y = point.getValue()[i];
+        inputPoints[x][0] = x;
+        inputPoints[x][1] = y;
+      }
+      final byte[] p = GF256.generate(random, k - 1, inputPoints);
+      for (int x = 1; x <= n; x++) {
+        // each part's byte is p(partId)
+        values[x - 1][i] = GF256.eval(p, (byte) x);
+      }
+    }
+
+    // return as a set of objects
+    final Map<Integer, byte[]> parts = new HashMap<>(n());
+    for (int i = 0; i < values.length; i++) {
+      parts.put(i + 1, values[i]);
+    }
+    return Collections.unmodifiableMap(parts);
+  }
+
   /**
    * Joins the given parts to recover the original secret.
    *

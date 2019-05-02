@@ -126,6 +126,37 @@ class SchemeTest implements WithQuickTheories {
             });
   }
 
+  @Test
+  void splitAndJoinSingleByteSecretPredefinedPoints() {
+    final Scheme scheme = new Scheme(new SecureRandom(), 8, 3);
+    final byte[] secret = "x".getBytes(StandardCharsets.UTF_8);
+    final Map<Integer, byte[]> points = new HashMap<>();
+    final byte[] point1 = new byte[] {0x12};
+    points.put(1, point1);
+    final byte[] point2 = new byte[] {0x34};
+    points.put(2, point2);
+
+    Map<Integer, byte[]> shares = scheme.split(secret, points);
+    assertThat(shares.size()).isEqualTo(8);
+    assertThat(shares.get(1)).isEqualTo(point1);
+    assertThat(shares.get(2)).isEqualTo(point2);
+    assertThat(scheme.join(shares)).containsExactly(secret);
+  }
+
+  @Test
+  void tooManyPredefinedPoints() {
+    final byte[] secret = "x".getBytes(StandardCharsets.UTF_8);
+    final Map<Integer, byte[]> points = new HashMap<>();
+    final byte[] point1 = new byte[] {0x12};
+    points.put(1, point1);
+    final byte[] point2 = new byte[] {0x34};
+    points.put(2, point2);
+
+    assertThatThrownBy(
+            () -> new Scheme(new SecureRandom(), 2, 2).split(secret, points))
+        .isInstanceOf(IllegalArgumentException.class);
+  }
+
   private byte[] join(Scheme scheme, Set<Map.Entry<Integer, byte[]>> entries) {
     final Map<Integer, byte[]> m = new HashMap<>();
     entries.forEach(v -> m.put(v.getKey(), v.getValue()));

@@ -255,6 +255,9 @@ class GF256 {
   static byte[] generate(SecureRandom random, int degree, byte[][] inputPoints) {
     byte[] p = new byte[degree + 1];
     final byte[][] points = new byte[degree + 1][2];
+    if (inputPoints.length > degree + 1) {
+        throw new IllegalArgumentException("too many predefined points given");
+    }
     for (int idx = 0; idx < inputPoints.length; idx++) {
       points[idx][0] = inputPoints[idx][0];
       points[idx][1] = inputPoints[idx][1];
