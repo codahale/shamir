@@ -128,19 +128,29 @@ class SchemeTest implements WithQuickTheories {
 
   @Test
   void splitAndJoinSingleByteSecretPredefinedPoints() {
-    final Scheme scheme = new Scheme(new SecureRandom(), 8, 3);
-    final byte[] secret = "x".getBytes(StandardCharsets.UTF_8);
+    final SecureRandom random = new SecureRandom();
+    final Scheme scheme = new Scheme(random, 8, 3);
+    final byte[] secret = new byte[32];
+    random.nextBytes(secret);
     final Map<Integer, byte[]> points = new HashMap<>();
-    final byte[] point1 = new byte[] {0x12};
+    final byte[] point1 = new byte[32];
+    random.nextBytes(point1);
     points.put(1, point1);
-    final byte[] point2 = new byte[] {0x34};
+    final byte[] point2 = new byte[32];
+    random.nextBytes(point2);
     points.put(2, point2);
 
     Map<Integer, byte[]> shares = scheme.split(secret, points);
     assertThat(shares.size()).isEqualTo(8);
     assertThat(shares.get(1)).isEqualTo(point1);
     assertThat(shares.get(2)).isEqualTo(point2);
-    assertThat(scheme.join(shares)).containsExactly(secret);
+
+    Map<Integer, byte[]> joinShares = new HashMap<>();
+    joinShares.put(1, shares.get(1));
+    joinShares.put(2, shares.get(2));
+    joinShares.put(5, shares.get(5));
+
+    assertThat(scheme.join(joinShares)).containsExactly(secret);
   }
 
   @Test
@@ -152,8 +162,7 @@ class SchemeTest implements WithQuickTheories {
     final byte[] point2 = new byte[] {0x34};
     points.put(2, point2);
 
-    assertThatThrownBy(
-            () -> new Scheme(new SecureRandom(), 2, 2).split(secret, points))
+    assertThatThrownBy(() -> new Scheme(new SecureRandom(), 2, 2).split(secret, points))
         .isInstanceOf(IllegalArgumentException.class);
   }
 

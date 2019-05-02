@@ -83,6 +83,14 @@ public class Scheme {
     return Collections.unmodifiableMap(parts);
   }
 
+  /**
+   * Splits the given secret into {@code n} parts, of which any {@code k} or more can be combined to
+   * recover the original secret. This variant allows to feed predefined parts.
+   *
+   * @param secret the secret to split
+   * @param points some predefined points that should be used
+   * @return a map of {@code n} part IDs and their values
+   */
   public Map<Integer, byte[]> split(byte[] secret, Map<Integer, byte[]> points) {
     final byte[][] values = new byte[n][secret.length];
     for (int i = 0; i < secret.length; i++) {

@@ -256,7 +256,7 @@ class GF256 {
     byte[] p = new byte[degree + 1];
     final byte[][] points = new byte[degree + 1][2];
     if (inputPoints.length > degree + 1) {
-        throw new IllegalArgumentException("too many predefined points given");
+      throw new IllegalArgumentException("too many predefined points given");
     }
     for (int idx = 0; idx < inputPoints.length; idx++) {
       points[idx][0] = inputPoints[idx][0];
