@@ -1,16 +1,20 @@
 
-exports.add = function(a, b) {
+const add = function(a, b) {
     return a ^ b;
 };
+
+exports.add = add;
 
 /* The Laws of Cryptograhy with Java Code by Neal R. Wagner
 Page 120 (134) section "20.3 Addition in GP(2^n)" is equal 
 to subtraction. 
 */
+const sub = add;
+
 exports.sub = exports.add;
 
 
- const LOG = [
+const LOG = [
     parseInt("0xff"), parseInt("0x00"), parseInt("0x19"), parseInt("0x01"), parseInt("0x32"), parseInt("0x02"), parseInt("0x1a"),
     parseInt("0xc6"), parseInt("0x4b"), parseInt("0xc7"), parseInt("0x1b"), parseInt("0x68"), parseInt("0x33"), parseInt("0xee"),
     parseInt("0xdf"), parseInt("0x03"), parseInt("0x64"), parseInt("0x04"), parseInt("0xe0"), parseInt("0x0e"), parseInt("0x34"),
@@ -135,10 +139,12 @@ const mul = function(a, b) {
 
 exports.mul = mul;
 
-exports.div = function(a, b) {
+const div = function(a, b) {
     // multiply by the inverse of b
     return mul(a, EXP[255 - LOG[b]]);
 };
+
+exports.div = div;
 
 exports.degree = function(p) {
     for (i = p.length - 1; i >= 1; i--) {
@@ -148,3 +154,12 @@ exports.degree = function(p) {
     }
     return 0;
 };
+
+exports.eval = function(p, x) {
+    // Horner's method
+    result = 0;
+    for (i = p.length - 1; i >= 0; i--) {
+      result = add(mul(result, x), p[i]);
+    }
+    return result;
+  }
