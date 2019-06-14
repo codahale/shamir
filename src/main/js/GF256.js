@@ -132,3 +132,10 @@ exports.mul = function(a, b) {
     }
     return EXP[LOG[a] + LOG[b]];
 };
+
+const mul = exports.mul;
+
+exports.div = function(a, b) {
+    // multiply by the inverse of b
+    return mul(a, EXP[255 - LOG[b]]);
+};
