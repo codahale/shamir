@@ -49,6 +49,7 @@ exports.sub = exports.add;
     parseInt("0x31"), parseInt("0xfe"), parseInt("0x18"), parseInt("0x0d"), parseInt("0x63"), parseInt("0x8c"), parseInt("0x80"),
     parseInt("0xc0"), parseInt("0xf7"), parseInt("0x70"), parseInt("0x07"),
   ];
+
   const EXP = [
     parseInt("0x01"), parseInt("0x03"), parseInt("0x05"), parseInt("0x0f"), parseInt("0x11"), parseInt("0x33"), parseInt("0x55"),
     parseInt("0xff"), parseInt("0x1a"), parseInt("0x2e"), parseInt("0x72"), parseInt("0x96"), parseInt("0xa1"), parseInt("0xf8"),
@@ -125,17 +126,25 @@ exports.sub = exports.add;
     parseInt("0x24"), parseInt("0x6c"), parseInt("0xb4"), parseInt("0xc7"), parseInt("0x52"), parseInt("0xf6"),
   ];
 
-
-exports.mul = function(a, b) {
+const mul = function(a, b) {
     if (a == 0 || b == 0) {
         return 0;
     }
     return EXP[LOG[a] + LOG[b]];
 };
 
-const mul = exports.mul;
+exports.mul = mul;
 
 exports.div = function(a, b) {
     // multiply by the inverse of b
     return mul(a, EXP[255 - LOG[b]]);
+};
+
+exports.degree = function(p) {
+    for (i = p.length - 1; i >= 1; i--) {
+      if (p[i] != 0) {
+        return i;
+      }
+    }
+    return 0;
 };
