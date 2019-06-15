@@ -88,7 +88,7 @@ class GF256Test implements WithQuickTheories {
     assertThat(GF256.eval(new byte[] {1, 0, 2, 3}, (byte) 2)).isEqualTo((byte) 17);
   }
 
-  private static class ZeroLastByteFirstAttemptRandom extends SecureRandom {
+  private static class ZeroLastByteFirstTWoAttemptsSecureRandom extends SecureRandom {
     private int counter = 2;
 
     @Override
@@ -103,7 +103,7 @@ class GF256Test implements WithQuickTheories {
 
   @Test
   void generate() {
-    final SecureRandom random = new ZeroLastByteFirstAttemptRandom();
+    final SecureRandom random = new ZeroLastByteFirstTWoAttemptsSecureRandom();
     final byte[] p = GF256.generate(random, 5, (byte) 20);
     assertThat(p[0]).isEqualTo((byte) 20);
     assertThat(p.length).isEqualTo(6);
