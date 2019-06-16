@@ -205,13 +205,12 @@ exports.interpolate = function(points) {
 
 /**
  * Generates a random polynomal of the correct degree and sets x.  
- * @param  {function int -> array[Uint8Array]} randomBytes Takes a lenght and returns a Uint8Array of that length
+ * @param  {function int -> array[Uint8Array]} randomBytes Takes a length and returns a Uint8Array of that length
  * @param  {Number} d The degree of the polynomial driven by the number shares and join threshold. 
  * @return {Number} x The point to hide.
  */
 exports.generate = function(randomBytes, d, x){
     var p = null;
-
     // generate random polynomials until we find one of the given degree
     do {
       p = randomBytes(d + 1);
