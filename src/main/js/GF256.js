@@ -205,9 +205,9 @@ exports.interpolate = function(points) {
 
 /**
  * Generates a random polynomal of the correct degree and sets x.  
- * @param  {function int -> array[byte]} randomBytes Takes a lenght and returns a Uint8Array of that length
+ * @param  {function int -> array[Uint8Array]} randomBytes Takes a lenght and returns a Uint8Array of that length
  * @param  {Number} d The degree of the polynomial driven by the number shares and join threshold. 
- * @return {Number} x     The point to hide.
+ * @return {Number} x The point to hide.
  */
 exports.generate = function(randomBytes, d, x){
     var p = null;
@@ -223,3 +223,15 @@ exports.generate = function(randomBytes, d, x){
     return p;
   }
 
+/**
+ * Evaluates a polynomal at point x using Horner's method.  
+ * @param  {array[Uint8Array]} p The polynomial
+ * @return {Number} x The point to evaluate.
+ */
+exports.eval = function(p, x){
+    var result = 0
+    for( var i = p.length -1; i >=0; i--){
+        result = add(mul(result, x), p[i]);
+    }
+    return result;
+  }

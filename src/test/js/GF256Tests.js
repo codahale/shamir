@@ -1,5 +1,5 @@
 /*
- * Copyright © 2017 Coda Hale (coda.hale@gmail.com)
+ * Copyright © 2019 Simon Massey (massey1905@gmail.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,10 +15,9 @@
  */
 const test = require('tape');
 
-// Returns a Uint8Array of the given length containing random bytes of cryptographic quality.
-const randomBytes = require('tweetnacl').randomBytes;
-
 const GF256 = require('../../main/js/GF256.js');
+
+const randomBytes = require('tweetnacl').randomBytes;
 
 test('GF256Tests add', function (t) {
     t.plan(1);
@@ -143,4 +142,10 @@ test('GF256Tests generate', function (t) {
     t.equal( p.length, 6 );
     t.notOk( p[p.length-1] == 0 );
     t.end();
+});
+
+test('GF256Tests eval', function (t) {
+    t.plan(1);
+    const v = GF256.eval([1, 0, 2, 3], 2);
+    t.equal( v, 17 );
 });
