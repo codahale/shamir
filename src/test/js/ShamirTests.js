@@ -1,4 +1,22 @@
-var test = require('tape');
+/*
+ * Copyright © 2017 Coda Hale (coda.hale@gmail.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+const test = require('tape');
+
+// Returns a Uint8Array of the given length containing random bytes of cryptographic quality.
+const randomBytes = require('tweetnacl').randomBytes;
 
 const GF256 = require('../../main/js/GF256.js');
 
@@ -51,16 +69,16 @@ function makePairs(arr) {
 
 const pairs = makePairs(bytes);
 
-test('GF256Tests mul is commutitive', function (t) {
+test('GF256Tests mul is commutative', function (t) {
     pairs.forEach(function(pair){
         if( GF256.mul(pair[0], pair[1]) != GF256.mul(pair[1], pair[0]) ){
-            throw "mul not commutitive for pair "+pair;
+            throw "mul not commutative for pair "+pair;
         }
     });
     t.end();
 });
 
-test('GF256Tests add is commutitive', function (t) {
+test('GF256Tests add is commutative', function (t) {
     pairs.forEach(function(pair){
         if( GF256.add(pair[0], pair[1]) != GF256.add(pair[1], pair[0]) ){
             throw "add not commutitive for pair "+pair;
@@ -98,5 +116,31 @@ test('GF256Tests mul is the inverse of div', function (t) {
 
 test('GF256Tests eval', function (t) {
     t.equal( GF256.eval([1, 0, 2, 3], 2), 17 );
+    t.end();
+});
+
+test('GF256Tests interpolate', function (t) {
+    t.equal( GF256.interpolate([[1, 1], [2, 2], [3, 3]]), 0 );
+    t.equal( GF256.interpolate([[1, 80], [2, 90], [3, 20]]), 30 );
+    t.equal( GF256.interpolate([[1, 43], [2, 22], [3, 86]]), 107 );
+    t.end();
+});
+
+var countDownFrom2 =2;
+
+const zeroLastByteFirstTWoAttemptsRandomBytes = function (length) {
+    const p = randomBytes(length);
+    if( countDownFrom2 >= 0 ){
+        p[p.length-1] = 0;
+        countDownFrom2--;
+    }
+    return p;
+}
+
+test('GF256Tests generate', function (t) {
+    const p = GF256.generate(zeroLastByteFirstTWoAttemptsRandomBytes, 5, 20);
+    t.equal( p[0], 20 );
+    t.equal( p.length, 6 );
+    t.notOk( p[p.length-1] == 0 );
     t.end();
 });

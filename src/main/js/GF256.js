@@ -1,3 +1,18 @@
+/*
+ * Copyright © 2017 Coda Hale (coda.hale@gmail.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 const add = function(a, b) {
     return a ^ b;
@@ -6,6 +21,7 @@ const add = function(a, b) {
 exports.add = add;
 
 /* The Laws of Cryptograhy with Java Code by Neal R. Wagner
+http://www.cs.utsa.edu/~wagner/lawsbookcolor/laws.pdf
 Page 120 (134) section "20.3 Addition in GP(2^n)" is equal 
 to subtraction. 
 */
@@ -54,7 +70,9 @@ const LOG = [
     parseInt("0xc0"), parseInt("0xf7"), parseInt("0x70"), parseInt("0x07"),
   ];
 
-  const EXP = [
+/* https://crypto.stackexchange.com/a/21174/13860 
+*/
+const EXP = [
     parseInt("0x01"), parseInt("0x03"), parseInt("0x05"), parseInt("0x0f"), parseInt("0x11"), parseInt("0x33"), parseInt("0x55"),
     parseInt("0xff"), parseInt("0x1a"), parseInt("0x2e"), parseInt("0x72"), parseInt("0x96"), parseInt("0xa1"), parseInt("0xf8"),
     parseInt("0x13"), parseInt("0x35"), parseInt("0x5f"), parseInt("0xe1"), parseInt("0x38"), parseInt("0x48"), parseInt("0xd8"),
@@ -146,7 +164,7 @@ const div = function(a, b) {
 
 exports.div = div;
 
-exports.degree = function(p) {
+const degree = function(p) {
     for (i = p.length - 1; i >= 1; i--) {
       if (p[i] != 0) {
         return i;
@@ -154,6 +172,8 @@ exports.degree = function(p) {
     }
     return 0;
 };
+
+exports.degree = degree;
 
 exports.eval = function(p, x) {
     // Horner's method
@@ -163,3 +183,43 @@ exports.eval = function(p, x) {
     }
     return result;
   }
+
+exports.interpolate = function(points) {
+    // calculate f(0) of the given points using Lagrangian interpolation
+    const x = 0;
+    var y = 0;
+    for (i = 0; i < points.length; i++) {
+      const aX = points[i][0];
+      const aY = points[i][1];
+      var li = 1;
+      for (j = 0; j < points.length; j++) {
+        const bX = points[j][0];
+        if (i != j) {
+          li = mul(li, div(sub(x, bX), sub(aX, bX)));
+        }
+      }
+      y = add(y, mul(li, aY));
+    }
+    return y;
+  }
+
+/**
+ * Generates a random polynomal of the correct degree and sets x.  
+ * @param  {function int -> array[byte]} randomBytes Takes a lenght and returns a Uint8Array of that length
+ * @param  {Number} d The degree of the polynomial driven by the number shares and join threshold. 
+ * @return {Number} x     The point to hide.
+ */
+exports.generate = function(randomBytes, d, x){
+    var p = null;
+
+    // generate random polynomials until we find one of the given degree
+    do {
+      p = randomBytes(d + 1);
+    } while (degree(p) != d);
+
+    // set y intercept
+    p[0] = x;
+
+    return p;
+  }
+

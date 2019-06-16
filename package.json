@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/codahale/shamir#readme",
   "devDependencies": {
-    "tape": "^4.10.2"
+    "tape": "^4.10.2",
+    "tweetnacl": "^1.0.1"
   }
 }
