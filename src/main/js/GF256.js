@@ -188,7 +188,7 @@ exports.interpolate = function(points) {
     // calculate f(0) of the given points using Lagrangian interpolation
     const x = 0;
     var y = 0;
-    for (i = 0; i < points.length; i++) {
+    for (var i = 0; i < points.length; i++) {
       const aX = points[i][0];
       const aY = points[i][1];
       var li = 1;
