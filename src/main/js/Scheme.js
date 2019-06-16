@@ -48,7 +48,7 @@ exports.split = function (randomBytes, n, k, secret) {
   for ( i = 0; i < secret.length; i++ ){
     console.log("before i:"+ i + " "+  secret.length);
     const p = GF256.generate(randomBytes, k - 1, secret[0]);
-    console.log("after i:"+ i + " "+ secret.length);
+    console.log("after  i:"+ i + " "+ secret.length);
     // const parts = [];
     // for ( x = 1; x <= n; x++ ) {
     //   parts.push(GF256.eval(p, x))
