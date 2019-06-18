@@ -39,32 +39,32 @@ class GF256Test implements WithQuickTheories {
     }
   }
 
-  @Test
-  void log() {
-    // https://crypto.stackexchange.com/a/21174/13860
-    final byte[] LOG = GF256.LOG();
-    final byte[] EXP = GF256.EXP();
-    final byte[] log = new byte[255];
-
-    for (int i = 0; i < log.length - 1; i++) {
-      int index = toUnsignedInt(EXP[i]) % 255;
-      log[index] = (byte) (i & 0xFF);
-      //log[index] = (byte) ((i & 0xFF) % 255);
-//      if( index < 255 ) {
-//        log[index] = (byte) (i & 0xFF);
-//      } else {
-//        System.out.println(String.format("i=%d index=%d", i, index));
-//      }
-    }
-
-    for (int i = 1; i < LOG.length; i++) {
-      int expected = toUnsignedInt(log[i]);
-      int actual = toUnsignedInt(LOG[i]);
-      if( expected != actual)
-        System.out.println(String.format("i=%d expected=%d actual=%d", i, expected, actual));
-      assertThat(actual).isEqualTo(expected);
-    }
-  }
+//  @Test
+//  void log() {
+//    // https://crypto.stackexchange.com/a/21174/13860
+//    final byte[] LOG = GF256.LOG();
+//    final byte[] EXP = GF256.EXP();
+//    final byte[] log = new byte[255];
+//
+//    for (int i = 0; i < log.length - 1; i++) {
+//      int index = toUnsignedInt(EXP[i]) % 255;
+//      log[index] = (byte) (i & 0xFF);
+//      //log[index] = (byte) ((i & 0xFF) % 255);
+////      if( index < 255 ) {
+////        log[index] = (byte) (i & 0xFF);
+////      } else {
+////        System.out.println(String.format("i=%d index=%d", i, index));
+////      }
+//    }
+//
+//    for (int i = 1; i < LOG.length; i++) {
+//      int expected = toUnsignedInt(log[i]);
+//      int actual = toUnsignedInt(LOG[i]);
+//      if( expected != actual)
+//        System.out.println(String.format("i=%d expected=%d actual=%d", i, expected, actual));
+//      assertThat(actual).isEqualTo(expected);
+//    }
+//  }
 
 
 

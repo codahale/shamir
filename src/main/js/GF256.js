@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+"use strict";
+
 const add = function(a, b) {
     return a ^ b;
 };
@@ -165,7 +167,7 @@ const div = function(a, b) {
 exports.div = div;
 
 const degree = function(p) {
-    for (i = p.length - 1; i >= 1; i--) {
+    for (var i = p.length - 1; i >= 1; i--) {
       if (p[i] != 0) {
         return i;
       }
@@ -178,7 +180,7 @@ exports.degree = degree;
 exports.eval = function(p, x) {
     // Horner's method
     result = 0;
-    for (i = p.length - 1; i >= 0; i--) {
+    for (var i = p.length - 1; i >= 0; i--) {
       result = add(mul(result, x), p[i]);
     }
     return result;
@@ -192,7 +194,7 @@ exports.interpolate = function(points) {
       const aX = points[i][0];
       const aY = points[i][1];
       var li = 1;
-      for (j = 0; j < points.length; j++) {
+      for (var j = 0; j < points.length; j++) {
         const bX = points[j][0];
         if (i != j) {
           li = mul(li, div(sub(x, bX), sub(aX, bX)));
