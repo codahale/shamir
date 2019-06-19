@@ -28,9 +28,9 @@ const GF256 = require('./GF256.js');
  * @return {map[Number,Uint8Array[byte]]} an map of {@code n} parts that are arrays of bytes of the secret length
  */
 exports.split = function (randomBytes, n, k, secret) {
-  if (k < 1) throw "K must be > 1";
-  if (n <= k) throw "N must be >= K";
-  if (n >= 255) throw "N must be <= 255";
+  if (k <= 1) throw "K must be > 1";
+  if (n < k) throw "N must be >= K";
+  if (n > 255) throw "N must be <= 255";
   
   const values = new Array(n).fill(0).map(() => new Uint8Array(secret.length).fill(0));
   for ( var i = 0; i < secret.length; i++ ){
