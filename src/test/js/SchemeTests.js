@@ -49,13 +49,14 @@ test('SchemeTests roundtrip', function (t) {
 ᛋᚳᛖᚪᛚ᛫ᚦᛖᚪᚻ᛫ᛗᚪᚾᚾᚪ᛫ᚷᛖᚻᚹᛦᛚᚳ᛫ᛗᛁᚳᛚᚢᚾ᛫ᚻᛦᛏ᛫ᛞᚫᛚᚪᚾ
 ᚷᛁᚠ᛫ᚻᛖ᛫ᚹᛁᛚᛖ᛫ᚠᚩᚱ᛫ᛞᚱᛁᚻᛏᚾᛖ᛫ᛞᚩᛗᛖᛋ᛫ᚻᛚᛇᛏᚪᚾ᛬`;
 
+    // string length is only 117 characters but the byte length is 234.
     var secret = stringToBytes(secretUtf8);
 
     const splits = split(randomBytes, parts, quorum, secret);
     t.equal(Object.keys(splits).length, parts);
     const joined = join(splits);
-    t.equal( joined[0], secret[0] );
-    t.equal( joined[1], secret[1] );
+    t.equal( joined[200], secret[200] );
+    t.equal( joined[201], secret[201] );
     const joinedUtf8 = bytesToSring(joined);
     t.equal( secretUtf8, joinedUtf8 );
     // console.log("The secret is: "+secretUtf8);
