@@ -81,7 +81,7 @@ test('SchemeTests roundtrip two parts', function (t) {
     t.end();
 });
 
-test('SchemeTests check input validation', function (t) {
+test('SchemeTests split input validation', function (t) {
     const secretUtf8 = `ᚠᛇᚻ`;
     const secret = stringToBytes(secretUtf8);
 
@@ -108,5 +108,21 @@ test('SchemeTests check input validation', function (t) {
         t.ok(e.toString().includes('N must be >= K'), e);
     }
 
+    t.end();
+});
+
+test('SchemeTests join input validation', function (t) {
+    
+//    const splits = split(randomBytes, 3, 2, stringToBytes(`ᚠᛇᚻ`));
+
+    try {
+        join({});
+        t.notOk(true);
+    } catch (e) {
+        t.ok(e.toString().includes('No parts provided'), e);
+    }
+
+    
+    
     t.end();
 });

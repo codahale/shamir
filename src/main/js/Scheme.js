@@ -62,7 +62,7 @@ exports.split = function (randomBytes, n, k, secret) {
    * 
  */
 exports.join = function(parts){
-  if( parts.length == 0 ) throw "No parts provided"
+  if( Object.keys(parts).length == 0 ) throw "No parts provided"
   const lengths = Object.values(parts).map(x => x.length);
   const max = Math.max.apply(null, lengths)
   const min = Math.min.apply(null, lengths)
