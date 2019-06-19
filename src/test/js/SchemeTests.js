@@ -124,10 +124,11 @@ test('SchemeTests join input validation', function (t) {
 
     try {
         const splits = split(randomBytes, 3, 2, stringToBytes(`ᚠᛇᚻ`));
-        join(splits["2"].pop());
+        splits["2"] = Uint8Array.of(216, 30, 190, 102)
+        join(splits);
         t.notOk(true);
     } catch (e) {
-        t.ok(e.toString().includes('No parts provided'), e);
+        t.ok(e.toString().includes('Varying lengths of part values'), e);
     }
     
     t.end();
