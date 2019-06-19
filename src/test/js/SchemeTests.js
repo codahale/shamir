@@ -64,3 +64,19 @@ test('SchemeTests roundtrip', function (t) {
     t.end();
 });
 
+test('SchemeTests roundtrip two parts', function (t) {
+    const parts = 3;
+    const quorum = 2;
+
+    const secretUtf8 = `ᚠᛇᚻ`;
+    const secret = stringToBytes(secretUtf8);
+
+    for( var i = 1; i <=3; i++) {
+        const splits = split(randomBytes, parts, quorum, secret);
+        delete splits[""+i];
+        const joinedUtf8 = bytesToSring(join(splits));
+        t.equal( secretUtf8, joinedUtf8 );
+    }
+    
+    t.end();
+});
