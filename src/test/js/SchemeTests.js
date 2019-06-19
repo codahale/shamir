@@ -84,7 +84,8 @@ test('SchemeTests roundtrip two parts', function (t) {
 test('SchemeTests check input validation', function (t) {
     const secretUtf8 = `ᚠᛇᚻ`;
     const secret = stringToBytes(secretUtf8);
-    t.plan(2);
+
+    t.plan(3);
 
     try {
         const splits = split(randomBytes, 256, 2, secret);
@@ -98,6 +99,13 @@ test('SchemeTests check input validation', function (t) {
         t.notOk(true);
     } catch (e) {
         t.ok(e.toString().includes('K must be > 1'), e);
+    }
+
+    try {
+        const splits = split(randomBytes, 2, 3, secret);
+        t.notOk(true);
+    } catch (e) {
+        t.ok(e.toString().includes('N must be >= K'), e);
     }
 
     t.end();
