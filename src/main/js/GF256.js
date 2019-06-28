@@ -1,5 +1,5 @@
 /*
- * Copyright © 2017 Coda Hale (coda.hale@gmail.com)
+ * Copyright © 2019 Simon Massey (massey1905@gmail.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -177,15 +177,6 @@ const degree = function(p) {
 
 exports.degree = degree;
 
-exports.eval = function(p, x) {
-    // Horner's method
-    result = 0;
-    for (var i = p.length - 1; i >= 0; i--) {
-      result = add(mul(result, x), p[i]);
-    }
-    return result;
-  }
-
 exports.interpolate = function(points) {
     // calculate f(0) of the given points using Lagrangian interpolation
     const x = 0;
@@ -223,6 +214,7 @@ exports.generate = function(randomBytes, d, x){
 
     return p;
   }
+
 
 /**
  * Evaluates a polynomal at point x using Horner's method.  

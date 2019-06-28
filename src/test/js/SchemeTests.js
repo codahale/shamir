@@ -112,8 +112,6 @@ test('SchemeTests split input validation', function (t) {
 });
 
 test('SchemeTests join input validation', function (t) {
-    
-//    
 
     try {
         join({});
