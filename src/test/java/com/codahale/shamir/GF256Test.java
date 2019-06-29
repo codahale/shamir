@@ -21,52 +21,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.security.SecureRandom;
 import org.junit.jupiter.api.Test;
 import org.quicktheories.WithQuickTheories;
-import static java.lang.Byte.toUnsignedInt;
 
 class GF256Test implements WithQuickTheories {
-
-  @Test
-  void exp() {
-    // https://crypto.stackexchange.com/a/21174/13860
-    final byte[] EXP = GF256.EXP();
-    final byte g = 0x03;
-    int t = 0x01;
-    for (int i = 0; i < EXP.length; i++) {
-      int expected = t;
-      int actual = toUnsignedInt(EXP[i]);
-      assertThat(actual).isEqualTo(expected);
-      t = toUnsignedInt(GF256.mul(g, (byte) (t & 0xFF)));
-    }
-  }
-
-//  @Test
-//  void log() {
-//    // https://crypto.stackexchange.com/a/21174/13860
-//    final byte[] LOG = GF256.LOG();
-//    final byte[] EXP = GF256.EXP();
-//    final byte[] log = new byte[255];
-//
-//    for (int i = 0; i < log.length - 1; i++) {
-//      int index = toUnsignedInt(EXP[i]) % 255;
-//      log[index] = (byte) (i & 0xFF);
-//      //log[index] = (byte) ((i & 0xFF) % 255);
-////      if( index < 255 ) {
-////        log[index] = (byte) (i & 0xFF);
-////      } else {
-////        System.out.println(String.format("i=%d index=%d", i, index));
-////      }
-//    }
-//
-//    for (int i = 1; i < LOG.length; i++) {
-//      int expected = toUnsignedInt(log[i]);
-//      int actual = toUnsignedInt(LOG[i]);
-//      if( expected != actual)
-//        System.out.println(String.format("i=%d expected=%d actual=%d", i, expected, actual));
-//      assertThat(actual).isEqualTo(expected);
-//    }
-//  }
-
-
 
   @Test
   void add() {
@@ -132,12 +88,9 @@ class GF256Test implements WithQuickTheories {
     assertThat(GF256.eval(new byte[] {1, 0, 2, 3}, (byte) 2)).isEqualTo((byte) 17);
   }
 
-  static class NotRandom extends SecureRandom {}
-
   @Test
   void generate() {
-
-    final NotRandom random = new NotRandom();
+    final SecureRandom random = new SecureRandom();
     final byte[] p = GF256.generate(random, 5, (byte) 20);
     assertThat(p[0]).isEqualTo((byte) 20);
     assertThat(p.length).isEqualTo(6);

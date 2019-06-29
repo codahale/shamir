@@ -70,13 +70,6 @@ class GF256 {
     (byte) 0x31, (byte) 0xfe, (byte) 0x18, (byte) 0x0d, (byte) 0x63, (byte) 0x8c, (byte) 0x80,
     (byte) 0xc0, (byte) 0xf7, (byte) 0x70, (byte) 0x07,
   };
-
-  static byte[] LOG() {
-    byte[] logs = new byte[LOG.length];
-    System.arraycopy(LOG, 0, logs, 0, logs.length);
-    return logs;
-  }
-
   private static final byte[] EXP = {
     (byte) 0x01, (byte) 0x03, (byte) 0x05, (byte) 0x0f, (byte) 0x11, (byte) 0x33, (byte) 0x55,
     (byte) 0xff, (byte) 0x1a, (byte) 0x2e, (byte) 0x72, (byte) 0x96, (byte) 0xa1, (byte) 0xf8,
@@ -152,12 +145,6 @@ class GF256 {
     (byte) 0xdd, (byte) 0x7c, (byte) 0x84, (byte) 0x97, (byte) 0xa2, (byte) 0xfd, (byte) 0x1c,
     (byte) 0x24, (byte) 0x6c, (byte) 0xb4, (byte) 0xc7, (byte) 0x52, (byte) 0xf6,
   };
-
-  static byte[] EXP() {
-    byte[] exp = new byte[EXP.length];
-    System.arraycopy(EXP, 0, exp, 0, exp.length);
-    return exp;
-  }
 
   static byte add(byte a, byte b) {
     return (byte) (a ^ b);
