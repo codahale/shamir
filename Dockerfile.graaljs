@@ -1,0 +1,10 @@
+FROM maven:3-jdk-12-alpine AS build
+COPY . src
+WORKDIR src
+RUN mvn package
+
+FROM oracle/graalvm-ce:latest AS graal
+COPY --from=build /src /src
+WORKDIR src
+RUN npm test && npm run testwithjava
+
