@@ -29,7 +29,7 @@ to subtraction.
 */
 const sub = add;
 
-exports.sub = exports.sub;
+exports.sub = exports.add;
 
 
 const LOG = [
