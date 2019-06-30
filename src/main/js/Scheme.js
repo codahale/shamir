@@ -21,7 +21,7 @@ const GF256 = require('./GF256.js');
 /**
  * Splits the given secret into {@code n} parts, of which any {@code k} or more can be combined to
  * recover the original secret.
- * @param  {function int -> array[Uint8Array]} randomBytes Takes a length and returns a Uint8Array of that length
+ * @param  {function int -> Uint8Array} randomBytes Takes a length and returns a random Uint8Array of that length
  * @param  {Number} n the number of parts to produce (must be {@code >1})
  * @param  {Number} k the threshold of joinable parts (must be {@code <= n})
  * @param  {array[Uint8Array]} secret The secret to split as an array of bytes
@@ -58,7 +58,7 @@ exports.split = function (randomBytes, n, k, secret) {
    * secret, a random value will be returned.
    * 
    * @param {Object.<string, Uint8Array>} parts an map of {@code n} parts that are arrays of bytes of the secret length
-   * @return {array[Uint8Array]} the original secret
+   * @return {Uint8Array} the original secret
    * 
  */
 exports.join = function(parts){
