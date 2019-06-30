@@ -47,17 +47,18 @@ jobs:
       - persist_to_workspace:
           # Must be an absolute path, or relative path from working_directory. This is a directory on the container which is 
           # taken to be the root directory of the workspace.
-          root: target
+          root: ~/repo
           # Must be relative path from root
           paths:
-            - classes
-            - test-classes
+            - src
+            - target
   testjs:
     docker:
       - image: oracle/graalvm-ce:latest
     working_directory: ~/repo
     steps:
       - checkout
+      - run: npm install tape --save-dev
       - run: npm test && npm run testwithjava
 workflows:
   version: 2
