@@ -5,7 +5,8 @@
   "main": "src/main/js/Scheme.js",
   "scripts": {
     "test": "tape src/test/js/GF256Tests.js src/test/js/SchemeTests.js",
-    "testwithjava": "node --jvm --vm.cp=./target/classes:./target/test-classes src/test/js/PolygotTests.js"
+    "testwithjava": "node --jvm --vm.cp=./target/classes:./target/test-classes src/test/js/PolygotTests.js",
+    "lint": "eslint --fix ./src/main/js/GF256.js ./src/main/js/Scheme.js && echo 'Lint complete.'"
   },
   "repository": {
     "type": "git",
@@ -26,6 +27,10 @@
   },
   "homepage": "https://github.com/codahale/shamir#readme",
   "devDependencies": {
+    "eslint": "^6.0.1",
+    "eslint-config-prettier": "^6.0.0",
+    "eslint-plugin-prettier": "^3.1.0",
+    "prettier": "^1.18.2",
     "tape": "^4.10.2",
     "tape-catch": "^1.0.6",
     "tweetnacl": "^1.0.1"
