@@ -2,10 +2,10 @@
 
 [![CircleCI](https://circleci.com/gh/codahale/shamir.svg?style=svg)](https://circleci.com/gh/codahale/shamir)
 
-A Java implementation of [Shamir's Secret Sharing
-algorithm](http://en.wikipedia.org/wiki/Shamir's_Secret_Sharing) over GF(256).
+A implementation of [Shamir's Secret Sharing
+algorithm](http://en.wikipedia.org/wiki/Shamir's_Secret_Sharing) over GF(256) in both Java and JavaScript. 
 
-## Add to your project
+## Add to your Java project
 
 ```xml
 <dependency>
@@ -17,7 +17,7 @@ algorithm](http://en.wikipedia.org/wiki/Shamir's_Secret_Sharing) over GF(256).
 
 *Note: module name for Java 9+ is `com.codahale.shamir`.*
 
-## Use the thing
+## Use the thing in Java
 
 ```java
 import com.codahale.shamir.Scheme;
@@ -33,6 +33,22 @@ class Example {
     final byte[] recovered = scheme.join(parts);
     System.out.println(new String(recovered, StandardCharsets.UTF_8));
   } 
+}
+```
+
+## Use the thing in JavaScript
+
+```JavaScript
+const { split, join } = require('shamir');
+const { randomBytes } = require('tweetnacl');
+
+function doIt() {
+    const utf8Encoder = new TextEncoder();
+    const utf8Decoder = new TextDecoder();
+    const secret = utf8Encoder.encode('hello there');
+    const parts = split(randomBytes, 5, 3 secret);
+    const recovered = join(parts);
+    console.log(utf8Decoder.decode());
 }
 ```
 
@@ -94,7 +110,7 @@ performing the same operation over `GF(Q)` takes several seconds, even using per
 Treating the secret as a single `y` coordinate over `GF(Q)` is even slower, and requires a modulus
 larger than the secret.
 
-## Performance
+## Java Performance
 
 It's fast. Plenty fast.
 
@@ -150,5 +166,6 @@ users agree.
 ## License
 
 Copyright © 2017 Coda Hale
+Copyright © 2019 Simon Massey
 
 Distributed under the Apache License 2.0.
