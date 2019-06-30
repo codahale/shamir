@@ -59,8 +59,6 @@ test('SchemeTests roundtrip', function (t) {
     t.equal( joined[201], secret[201] );
     const joinedUtf8 = bytesToSring(joined);
     t.equal( secretUtf8, joinedUtf8 );
-    // console.log("The secret is: "+secretUtf8);
-    // console.log("The decoded secret is: "+joinedUtf8);
     t.end();
 });
 

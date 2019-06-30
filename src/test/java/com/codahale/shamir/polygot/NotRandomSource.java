@@ -17,6 +17,10 @@ package com.codahale.shamir.polygot;
 
 import java.security.SecureRandom;
 
+/**
+ * This class ensures that unit tests can repeatedly initalise with 
+ * the same polynomial. 
+ */
 public class NotRandomSource extends SecureRandom {
 
   @Override

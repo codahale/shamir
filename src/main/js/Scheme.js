@@ -1,5 +1,5 @@
 /*
- * Copyright © 2017 Coda Hale (coda.hale@gmail.com)
+ * Copyright © 2019 Simon Massey (massey1905@gmail.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ const GF256 = require('./GF256.js');
  * @param  {Number} n the number of parts to produce (must be {@code >1})
  * @param  {Number} k the threshold of joinable parts (must be {@code <= n})
  * @param  {array[Uint8Array]} secret The secret to split as an array of bytes
- * @return {map[Number,Uint8Array[byte]]} an map of {@code n} parts that are arrays of bytes of the secret length
+ * @return {Object.<string, Uint8Array>} an map of {@code n} parts that are arrays of bytes of the secret length
  */
 exports.split = function (randomBytes, n, k, secret) {
   if (k <= 1) throw "K must be > 1";
@@ -57,7 +57,7 @@ exports.split = function (randomBytes, n, k, secret) {
    * original secret. If the parts are incorrect, or are under the threshold value used to split the
    * secret, a random value will be returned.
    * 
-   * @param {array[array[byte]]} parts an array of {@code n} parts
+   * @param {Object.<string, Uint8Array>} parts an map of {@code n} parts that are arrays of bytes of the secret length
    * @return {array[Uint8Array]} the original secret
    * 
  */

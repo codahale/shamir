@@ -29,7 +29,7 @@ to subtraction.
 */
 const sub = add;
 
-exports.sub = exports.add;
+exports.sub = exports.sub;
 
 
 const LOG = [
@@ -177,8 +177,11 @@ const degree = function(p) {
 
 exports.degree = degree;
 
+/**
+ * Calculates f(0) of the given points using Lagrangian interpolation. 
+ * @param  {array[array[Uint8Array]]} points The supplied point. 
+ */
 exports.interpolate = function(points) {
-    // calculate f(0) of the given points using Lagrangian interpolation
     const x = 0;
     var y = 0;
     for (var i = 0; i < points.length; i++) {
@@ -197,10 +200,11 @@ exports.interpolate = function(points) {
   }
 
 /**
- * Generates a random polynomal of the correct degree and sets x.  
- * @param  {function int -> array[Uint8Array]} randomBytes Takes a length and returns a Uint8Array of that length
+ * Generates a random polynomal of the correct degree and sets x as the first coefficient.  
+ * @param  {function int -> array[Uint8Array]} randomBytes Takes a length and returns a Uint8Array of that length.
  * @param  {Number} d The degree of the polynomial driven by the number shares and join threshold. 
- * @return {Number} x The point to hide.
+ * @param {Number} x The point to hide.
+ * @return { array[Uint8Array]} The random polynomial with x as the fist coefficient.
  */
 exports.generate = function(randomBytes, d, x){
     var p = null;
