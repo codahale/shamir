@@ -6,7 +6,7 @@
   "scripts": {
     "test": "tape src/test/js/GF256Tests.js src/test/js/SchemeTests.js",
     "testwithjava": "node --jvm --vm.cp=./target/classes:./target/test-classes src/test/js/PolygotTests.js",
-    "lint": "eslint ./src/main/js/GF256.js ./src/main/js/Scheme.js && echo 'Lint complete.'"
+    "lint": "eslint ./src/main/js/GF256.js ./src/main/js/Scheme.js  ./src/test/js/GF256Tests.js ./src/test/js/SchemeTests.js ./src/test/js/PolygotTests.js && echo 'Lint complete.'"
   },
   "repository": {
     "type": "git",
