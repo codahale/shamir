@@ -64,6 +64,6 @@ workflows:
   build_and_test:
     jobs:
       - build
-      - testjs
+      - testjs:
         requires:
           - build
