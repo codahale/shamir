@@ -44,3 +44,26 @@ jobs:
           path: ~/junit
       - store_artifacts:
           path: ~/junit
+      - persist_to_workspace:
+          # Must be an absolute path, or relative path from working_directory. This is a directory on the container which is 
+          # taken to be the root directory of the workspace.
+          root: target
+          # Must be relative path from root
+          paths:
+            - classes
+            - test-classes
+  testjs:
+    docker:
+      - image: oracle/graalvm-ce:latest
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - run: npm test && npm run testwithjava
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build
+      - testjs
+        requires:
+          - build
