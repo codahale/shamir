@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/* eslint-disable import/no-extraneous-dependencies */
 const test = require('tape');
 
 const { split } = require('../../main/js/Scheme.js');
@@ -20,14 +21,20 @@ const { join } = require('../../main/js/Scheme.js');
 
 const { randomBytes } = require('tweetnacl');
 
+/* eslint-disable prefer-arrow-callback */
+/* eslint-disable func-names */
+/* eslint-disable no-plusplus */
+/* eslint-disable no-bitwise */
+
 // https://codereview.stackexchange.com/a/3589/75693
 function bytesToSring(bytes) {
   const chars = [];
-  for (let i = 0, n = bytes.length; i < n; ) {
+  for (let i = 0, n = bytes.length; i < n;) {
     chars.push(((bytes[i++] & 0xff) << 8) | (bytes[i++] & 0xff));
   }
   return String.fromCharCode.apply(null, chars);
 }
+
 
 // https://codereview.stackexchange.com/a/3589/75693
 function stringToBytes(str) {
@@ -39,7 +46,7 @@ function stringToBytes(str) {
   return bytes;
 }
 
-test('SchemeTests roundtrip', function(t) {
+test('SchemeTests roundtrip', function (t) {
   const parts = 3;
   const quorum = 2;
 
@@ -62,11 +69,11 @@ test('SchemeTests roundtrip', function(t) {
   t.end();
 });
 
-test('SchemeTests roundtrip two parts', function(t) {
+test('SchemeTests roundtrip two parts', function (t) {
   const parts = 3;
   const quorum = 2;
 
-  const secretUtf8 = `ᚠᛇᚻ`;
+  const secretUtf8 = 'ᚠᛇᚻ';
   const secret = stringToBytes(secretUtf8);
 
   for (let i = 1; i <= 3; i++) {
@@ -79,28 +86,28 @@ test('SchemeTests roundtrip two parts', function(t) {
   t.end();
 });
 
-test('SchemeTests split input validation', function(t) {
-  const secretUtf8 = `ᚠᛇᚻ`;
+test('SchemeTests split input validation', function (t) {
+  const secretUtf8 = 'ᚠᛇᚻ';
   const secret = stringToBytes(secretUtf8);
 
   t.plan(3);
 
   try {
-    const splits = split(randomBytes, 256, 2, secret);
+    split(randomBytes, 256, 2, secret);
     t.notOk(true);
   } catch (e) {
     t.ok(e.toString().includes('N must be <= 255'), e);
   }
 
   try {
-    const splits = split(randomBytes, 3, 1, secret);
+    split(randomBytes, 3, 1, secret);
     t.notOk(true);
   } catch (e) {
     t.ok(e.toString().includes('K must be > 1'), e);
   }
 
   try {
-    const splits = split(randomBytes, 2, 3, secret);
+    split(randomBytes, 2, 3, secret);
     t.notOk(true);
   } catch (e) {
     t.ok(e.toString().includes('N must be >= K'), e);
@@ -109,7 +116,7 @@ test('SchemeTests split input validation', function(t) {
   t.end();
 });
 
-test('SchemeTests join input validation', function(t) {
+test('SchemeTests join input validation', function (t) {
   try {
     join({});
     t.notOk(true);
@@ -118,7 +125,7 @@ test('SchemeTests join input validation', function(t) {
   }
 
   try {
-    const splits = split(randomBytes, 3, 2, stringToBytes(`ᚠᛇᚻ`));
+    const splits = split(randomBytes, 3, 2, stringToBytes('ᚠᛇᚻ'));
     splits['2'] = Uint8Array.of(216, 30, 190, 102);
     join(splits);
     t.notOk(true);

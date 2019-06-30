@@ -13,14 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/* eslint-disable import/no-extraneous-dependencies */
 const test = require('tape-catch');
-
 const { randomBytes } = require('tweetnacl');
+
+/* eslint-disable prefer-arrow-callback */
+/* eslint-disable func-names */
+/* eslint-disable no-plusplus */
+/* eslint-disable no-bitwise */
 
 // https://codereview.stackexchange.com/a/3589/75693
 function bytesToSring(bytes) {
   const chars = [];
-  for (let i = 0, n = bytes.length; i < n; ) {
+  for (let i = 0, n = bytes.length; i < n;) {
     chars.push(((bytes[i++] & 0xff) << 8) | (bytes[i++] & 0xff));
   }
   return String.fromCharCode.apply(null, chars);
@@ -36,33 +41,10 @@ function stringToBytes(str) {
   return bytes;
 }
 
+// eslint-disable-next-line no-undef
 const ByteArray = Java.type('byte[]');
-const Byte = Java.type('java.lang.Byte');
-const JavaScriptUtils = Java.type(
-  'com.codahale.shamir.polygot.JavaScriptUtils'
-);
-
-const hexChar = [
-  '0',
-  '1',
-  '2',
-  '3',
-  '4',
-  '5',
-  '6',
-  '7',
-  '8',
-  '9',
-  'A',
-  'B',
-  'C',
-  'D',
-  'E',
-  'F'
-];
-function byteToHex(b) {
-  return hexChar[(b >> 4) & 0x0f] + hexChar[b & 0x0f];
-}
+// eslint-disable-next-line no-undef
+const JavaScriptUtils = Java.type('com.codahale.shamir.polygot.JavaScriptUtils');
 
 function jsByteArrayToJavaByteArray(jsarray) {
   const jbarray = new ByteArray(jsarray.length);
@@ -80,27 +62,27 @@ function jBytesArrayToJavaScriptByteArray(barray) {
   return jsarray;
 }
 
-test('PolygotTests Java and JavaScript byte array roundtrip', function(t) {
+test('PolygotTests Java and JavaScript byte array roundtrip', function (t) {
   t.plan(1);
-  const secretUtf8 = `ᚠᛇᚻ`;
+  const secretUtf8 = 'ᚠᛇᚻ';
   const jsBytes = stringToBytes(secretUtf8);
   const jbytes = jsByteArrayToJavaByteArray(jsBytes);
   const jsRoundTripBytes = jBytesArrayToJavaScriptByteArray(jbytes);
   t.equal(secretUtf8, bytesToSring(jsRoundTripBytes));
 });
 
+// eslint-disable-next-line no-undef
 const Scheme = Java.type('com.codahale.shamir.Scheme');
+// eslint-disable-next-line no-undef
 const SecureRandom = Java.type('java.security.SecureRandom');
 const secureRandom = new SecureRandom();
 
-test('PolygotTests JavaScript strings with all Java logic', function(t) {
+test('PolygotTests JavaScript strings with all Java logic', function (t) {
   t.plan(1);
   const scheme = new Scheme(secureRandom, 5, 3);
-  const secretUtf8 = `ᚠᛇᚻ`;
+  const secretUtf8 = 'ᚠᛇᚻ';
 
-  const parts = scheme.split(
-    jsByteArrayToJavaByteArray(stringToBytes(secretUtf8))
-  );
+  const parts = scheme.split(jsByteArrayToJavaByteArray(stringToBytes(secretUtf8)));
   const joined = scheme.join(parts);
 
   t.equal(secretUtf8, bytesToSring(jBytesArrayToJavaScriptByteArray(joined)));
@@ -108,12 +90,15 @@ test('PolygotTests JavaScript strings with all Java logic', function(t) {
 
 const { split } = require('../../main/js/Scheme.js');
 
+// eslint-disable-next-line no-undef
+const HashMap = Java.type('java.util.HashMap');
+
 function javaScriptToJavaParts(parts) {
-  const HashMap = Java.type('java.util.HashMap');
   const map = new HashMap();
+  // eslint-disable-next-line no-restricted-syntax, guard-for-in
   for (const key in parts) {
     const bytes = parts[key];
-    const jbarr = new jsByteArrayToJavaByteArray(bytes);
+    const jbarr = jsByteArrayToJavaByteArray(bytes);
     map.put(Number(key), jbarr);
   }
   return map;
@@ -131,6 +116,7 @@ function javaToJavaScriptParts(javaMap) {
   return result;
 }
 
+// eslint-disable-next-line no-undef
 const Collectors = Java.type('java.util.stream.Collectors');
 
 function equalParts(jParts, jsParts) {
@@ -144,28 +130,31 @@ function equalParts(jParts, jsParts) {
     .collect(Collectors.toList());
 
   // check that all js keys are in the j keys
+  // eslint-disable-next-line no-restricted-syntax
   for (const jsk of jsKeysNumbers) {
     if (!jKeysSet.contains(jsk)) {
-      throw `jKeysSet ${jKeysSet} does not contain jsk ${jsk}`;
+      throw new Error(`jKeysSet ${jKeysSet} does not contain jsk ${jsk}`);
     }
   }
 
   // check that all j keys are in the js keys
+  // eslint-disable-next-line no-restricted-syntax
   for (const jk of jKeysSet) {
     if (!jsKeysNumbers.includes(jk)) {
-      throw `jsKeysNumbers ${jsKeysNumbers} does not contain jk ${jk}`;
+      throw new Error(`jsKeysNumbers ${jsKeysNumbers} does not contain jk ${jk}`);
     }
   }
 
+  // eslint-disable-next-line no-restricted-syntax
   for (const k of Object.keys(jsParts)) {
     const jArray = jBytesArrayToJavaScriptByteArray(jParts.get(Number(k)));
     const jsArray = jsParts[k];
-    if (jArray.length != jsArray.length) {
-      throw `unequal lengths ${jArray.length} != ${jsArray.length}`;
+    if (jArray.length !== jsArray.length) {
+      throw new Error(`unequal lengths ${jArray.length} != ${jsArray.length}`);
     }
     for (let l = 0; l < jArray.length; l++) {
-      if (jArray[l] != jsArray[l]) {
-        throw `at index ${l}: ${jArray[l]} != ${jsArray[l]}`;
+      if (jArray[l] !== jsArray[l]) {
+        throw new Error(`at index ${l}: ${jArray[l]} != ${jsArray[l]}`);
       }
     }
   }
@@ -173,19 +162,18 @@ function equalParts(jParts, jsParts) {
   return true;
 }
 
-test('PolygotTests roundrip parts between JavaScript and Java', function(t) {
+test('PolygotTests roundrip parts between JavaScript and Java', function (t) {
   t.plan(1);
-  const secretUtf8 = `ᚠᛇᚻ`;
+  const secretUtf8 = 'ᚠᛇᚻ';
   const secret = stringToBytes(secretUtf8);
   const parts = split(randomBytes, 3, 2, secret);
   const jParts = javaScriptToJavaParts(parts);
   const jsParts = javaToJavaScriptParts(jParts);
-  t.ok(equalParts(jParts, jsParts), `roundtrip parts`);
+  t.ok(equalParts(jParts, jsParts), 'roundtrip parts');
 });
 
-const NotRandomSource = Java.type(
-  'com.codahale.shamir.polygot.NotRandomSource'
-);
+// eslint-disable-next-line no-undef
+const NotRandomSource = Java.type('com.codahale.shamir.polygot.NotRandomSource');
 const notRandomSource = new NotRandomSource();
 function notRandomSourceJavaScript(len) {
   const bytes = [];
@@ -195,21 +183,21 @@ function notRandomSourceJavaScript(len) {
   return bytes;
 }
 
-test('PolygotTests compare Java and JavaScript split', function(t) {
+test('PolygotTests compare Java and JavaScript split', function (t) {
   t.plan(1);
-  const secretUtf8 = `ᚠᛇᚻ`;
+  const secretUtf8 = 'ᚠᛇᚻ';
   const secret = stringToBytes(secretUtf8);
 
   const jsParts = split(notRandomSourceJavaScript, 3, 2, secret);
 
   const jscheme = new Scheme(notRandomSource, 3, 2);
   const jParts = jscheme.split(jsByteArrayToJavaByteArray(secret));
-  t.ok(equalParts(jParts, jsParts), `splits match`);
+  t.ok(equalParts(jParts, jsParts), 'splits match');
 });
 
-test('PolygotTests JavaScript split with Java join', function(t) {
+test('PolygotTests JavaScript split with Java join', function (t) {
   t.plan(1);
-  const secretUtf8 = `ᚠᛇᚻ`;
+  const secretUtf8 = 'ᚠᛇᚻ';
 
   const secret = stringToBytes(secretUtf8);
   const jsParts = split(randomBytes, 3, 2, secret);
@@ -219,20 +207,20 @@ test('PolygotTests JavaScript split with Java join', function(t) {
   t.equal(
     bytesToSring(jBytesArrayToJavaScriptByteArray(joined)),
     secretUtf8,
-    `java joined js parts`
+    'java joined js parts',
   );
 });
 
 const { join } = require('../../main/js/Scheme.js');
 
-test('PolygotTests Java split with JavaScript join', function(t) {
+test('PolygotTests Java split with JavaScript join', function (t) {
   t.plan(1);
-  const secretUtf8 = `ᚠᛇᚻ`;
+  const secretUtf8 = 'ᚠᛇᚻ';
 
   const secret = stringToBytes(secretUtf8);
   const jscheme = new Scheme(secureRandom, 3, 2);
   const jParts = jscheme.split(jsByteArrayToJavaByteArray(secret));
   const joined = join(javaToJavaScriptParts(jParts));
 
-  t.equal(bytesToSring(joined), secretUtf8, `java joined js parts`);
+  t.equal(bytesToSring(joined), secretUtf8, 'java joined js parts');
 });
