@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-const add = function(a, b) {
+function add(a, b) {
   return a ^ b;
 };
 
@@ -147,7 +147,7 @@ const EXP = new Uint8Array([
     0x24, 0x6c, 0xb4, 0xc7, 0x52, 0xf6,
   ]);
 
-const mul = function(a, b) {
+function mul(a, b) {
   if (a == 0 || b == 0) {
     return 0;
   }
@@ -156,14 +156,14 @@ const mul = function(a, b) {
 
 exports.mul = mul;
 
-const div = function(a, b) {
+function div(a, b) {
   // multiply by the inverse of b
   return mul(a, EXP[255 - LOG[b]]);
 };
 
 exports.div = div;
 
-const degree = function(p) {
+function degree(p) {
   for (let i = p.length - 1; i >= 1; i--) {
     if (p[i] != 0) {
       return i;
