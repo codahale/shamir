@@ -5,14 +5,12 @@
     "es6": true,
     "node": true
   },
-  "extends": ["eslint:recommended", "plugin:prettier/recommended"],
+  "extends": ["eslint:recommended"],
   "parserOptions": {
     "sourceType": "module",
     "ecmaVersion": 2018
   },
   "rules": {
-    "linebreak-style": ["error", "unix"],
-    "react-hooks/rules-of-hooks": "error",
-    "react-hooks/exhaustive-deps": "warn"
+    "linebreak-style": ["error", "unix"]
   }
 }
