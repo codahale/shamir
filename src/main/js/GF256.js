@@ -179,7 +179,7 @@ exports.degree = degree;
 
 /**
  * Calculates f(0) of the given points using Lagrangian interpolation. 
- * @param  {array[array[Uint8Array]]} points The supplied point. 
+ * @param  {array[Uint8Array]} points The supplied point. 
  */
 exports.interpolate = function(points) {
     const x = 0;
@@ -204,7 +204,7 @@ exports.interpolate = function(points) {
  * @param  {function int -> array[Uint8Array]} randomBytes Takes a length and returns a Uint8Array of that length.
  * @param  {Number} d The degree of the polynomial driven by the number shares and join threshold. 
  * @param {Number} x The point to hide.
- * @return { array[Uint8Array]} The random polynomial with x as the fist coefficient.
+ * @return {Uint8Array} The random polynomial with x as the fist coefficient.
  */
 exports.generate = function(randomBytes, d, x){
     var p = null;
@@ -222,7 +222,7 @@ exports.generate = function(randomBytes, d, x){
 
 /**
  * Evaluates a polynomal at point x using Horner's method.  
- * @param  {array[Uint8Array]} p The polynomial
+ * @param  {Uint8Array} p The polynomial
  * @return {Number} x The point to evaluate.
  */
 exports.eval = function(p, x){
