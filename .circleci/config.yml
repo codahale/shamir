@@ -57,7 +57,8 @@ jobs:
       - image: oracle/graalvm-ce:latest
     working_directory: ~/repo
     steps:
-      - checkout
+      - attach_workspace:
+          at: ~/repo
       - run: npm install tape --save-dev
       - run: npm test && npm run testwithjava
 workflows:
