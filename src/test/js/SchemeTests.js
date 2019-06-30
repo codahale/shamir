@@ -16,8 +16,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 const test = require('tape');
 
-const { split } = require('../../main/js/Scheme.js');
-const { join } = require('../../main/js/Scheme.js');
+const { split, join } = require('../../main/js/Scheme.js');
 
 const { randomBytes } = require('tweetnacl');
 
