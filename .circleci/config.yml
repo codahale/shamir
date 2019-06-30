@@ -52,6 +52,9 @@ jobs:
           paths:
             - src
             - target
+            - package.json
+            - package-lock.json
+
   testjs:
     docker:
       - image: oracle/graalvm-ce:latest
