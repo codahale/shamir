@@ -17,6 +17,12 @@ algorithm](http://en.wikipedia.org/wiki/Shamir's_Secret_Sharing) over GF(256) in
 
 *Note: module name for Java 9+ is `com.codahale.shamir`.*
 
+## Add to your JavaScript project
+
+```sh
+npm i shamir
+```
+
 ## Use the thing in Java
 
 ```java
@@ -47,11 +53,11 @@ const QUORUM = 3;
 
 function doIt() {
     const secret = 'hello there';
-    // you can use any polyfill to covert string to Uint8Array
+    // you can use any polyfill to covert between strings and Uint8Array
     const utf8Encoder = new TextEncoder();
     const utf8Decoder = new TextDecoder();
     const secretBytes = utf8Encoder.encode('hello there');
-    // parts is a object whos keys are the part number and values are an Uint8Array
+    // parts is a map of part numbers to Uint8Array
     const parts = split(randomBytes, PARTS, QUORUM, secretBytes);
     // we only need QUORUM of the parts to recover the secret
     delete parts[2];
