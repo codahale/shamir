@@ -46,8 +46,8 @@ function stringToBytes(str) {
 }
 
 test('SchemeTests roundtrip', function (t) {
-  const parts = 3;
-  const quorum = 2;
+  const parts = 5;
+  const quorum = 3;
 
   // http://kermitproject.org/utf8.html
   // From the Anglo-Saxon Rune Poem (Rune version)
@@ -59,6 +59,9 @@ test('SchemeTests roundtrip', function (t) {
   const secret = stringToBytes(secretUtf8);
 
   const splits = split(randomBytes, parts, quorum, secret);
+  // only quorum parts are necessary
+  delete parts[2];
+  delete parts[3];
   t.equal(Object.keys(splits).length, parts);
   const joined = join(splits);
   t.equal(joined[200], secret[200]);

@@ -38,17 +38,28 @@ class Example {
 
 ## Use the thing in JavaScript
 
-```JavaScript
+```javascript
 const { split, join } = require('shamir');
 const { randomBytes } = require('crypto');
 
+const PARTS = 5;
+const QUORUM = 3;
+
 function doIt() {
+    const secret = 'hello there';
+    // you can use any polyfill to covert string to Uint8Array
     const utf8Encoder = new TextEncoder();
     const utf8Decoder = new TextDecoder();
-    const secret = utf8Encoder.encode('hello there');
-    const parts = split(randomBytes, 5, 3 secret);
+    const secretBytes = utf8Encoder.encode('hello there');
+    // parts is a object whos keys are the part number and values are an Uint8Array
+    const parts = split(randomBytes, PARTS, QUORUM, secretBytes);
+    // we only need QUORUM of the parts to recover the secret
+    delete parts[2];
+    delete parts[3];
+    // recovered is an Unit8Array
     const recovered = join(parts);
-    console.log(utf8Decoder.decode());
+    // prints 'hello there'
+    console.log(utf8Decoder.decode(recovered));
 }
 ```
 
