@@ -60,9 +60,10 @@ test('SchemeTests roundtrip', function (t) {
 
   const splits = split(randomBytes, parts, quorum, secret);
   // only quorum parts are necessary
-  delete parts[2];
-  delete parts[3];
-  t.equal(Object.keys(splits).length, parts);
+
+  delete splits['2'];
+  delete splits['3'];
+  
   const joined = join(splits);
   t.equal(joined[200], secret[200]);
   t.equal(joined[201], secret[201]);
