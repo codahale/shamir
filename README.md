@@ -135,6 +135,24 @@ Benchmarks.split    4          1024  avgt  200   396.708 ±  1.520  us/op
 
 **N.B.:** `split` is quadratic with respect to the number of shares being combined.
 
+## JavaScript Performance
+
+For a 1KiB secret split with a `n=4,k=3` scheme running on NodeJS v10.16.0:
+
+```
+Benchmark         (n)  (secretSize)  Cnt   Score   Units
+Benchmarks.join     4          1024  200   2.08    ms/op
+Benchmarks.split    4          1024  200   2.78    ms/op
+```
+
+Split is dominated by the calls to get random polynomials per byte of the secet. Using a more realistic 128 bit secret with `n=4,k=3` scheme running on NodeJS v10.16.0:
+
+```
+Benchmark         (n)  (secretSize)  Cnt   Score   Units
+Benchmarks.join     5          1024  200   0.083    ms/op
+Benchmarks.split    5          1024  200   0.081    ms/op
+```
+
 ## Tiered sharing
 
 Some usages of secret sharing involve levels of access: e.g. recovering a secret requires two admin
@@ -177,6 +195,7 @@ users agree.
 ## License
 
 Copyright © 2017 Coda Hale
+
 Copyright © 2019 Simon Massey
 
 Distributed under the Apache License 2.0.
