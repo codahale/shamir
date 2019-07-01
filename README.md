@@ -56,7 +56,7 @@ function doIt() {
     // you can use any polyfill to covert between strings and Uint8Array
     const utf8Encoder = new TextEncoder();
     const utf8Decoder = new TextDecoder();
-    const secretBytes = utf8Encoder.encode('hello there');
+    const secretBytes = utf8Encoder.encode(secret);
     // parts is a map of part numbers to Uint8Array
     const parts = split(randomBytes, PARTS, QUORUM, secretBytes);
     // we only need QUORUM of the parts to recover the secret
