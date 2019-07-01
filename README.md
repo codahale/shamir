@@ -1,6 +1,6 @@
 # Shamir's Secret Sharing
 
-[![CircleCI](https://circleci.com/gh/codahale/shamir.svg?style=svg)](https://circleci.com/gh/codahale/shamir)
+[![CircleCI](https://circleci.com/gh/simbo1905/shamir.svg?style=svg)](https://circleci.com/gh/simbo1905/shamir)
 
 A implementation of [Shamir's Secret Sharing
 algorithm](http://en.wikipedia.org/wiki/Shamir's_Secret_Sharing) over GF(256) in both Java and JavaScript. 
