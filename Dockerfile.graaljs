@@ -8,5 +8,4 @@ RUN mvn package
 FROM oracle/graalvm-ce:latest AS graal
 COPY --from=build /src /src
 WORKDIR src
-#RUN npm test && npm run testwithjava && npm run lint
-CMD /bin/bash
+RUN npm test && npm run testwithjava && npm run lint
