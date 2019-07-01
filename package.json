@@ -1,6 +1,6 @@
 {
   "name": "shamir",
-  "version": "0.7.0.1",
+  "version": "0.7.1",
   "description": "A JavaScript implementation of Shamir's Secret Sharing algorithm over GF(256).",
   "main": "src/main/js/Scheme.js",
   "scripts": {
