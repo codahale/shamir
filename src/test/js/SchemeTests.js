@@ -18,7 +18,7 @@ const test = require('tape');
 
 const { split, join } = require('../../main/js/Scheme.js');
 
-const { randomBytes } = require('tweetnacl');
+const { randomBytes } = require('crypto');
 
 /* eslint-disable prefer-arrow-callback */
 /* eslint-disable func-names */

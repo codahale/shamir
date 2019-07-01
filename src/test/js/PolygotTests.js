@@ -15,7 +15,7 @@
  */
 /* eslint-disable import/no-extraneous-dependencies */
 const test = require('tape-catch');
-const { randomBytes } = require('tweetnacl');
+const { randomBytes } = require('crypto');
 
 /* eslint-disable prefer-arrow-callback */
 /* eslint-disable func-names */

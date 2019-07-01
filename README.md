@@ -40,7 +40,7 @@ class Example {
 
 ```JavaScript
 const { split, join } = require('shamir');
-const { randomBytes } = require('tweetnacl');
+const { randomBytes } = require('crypto');
 
 function doIt() {
     const utf8Encoder = new TextEncoder();

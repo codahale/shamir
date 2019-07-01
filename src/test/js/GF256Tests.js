@@ -15,7 +15,7 @@
  */
 /* eslint-disable import/no-extraneous-dependencies */
 const test = require('tape');
-const { randomBytes } = require('tweetnacl');
+const { randomBytes } = require('crypto');
 
 const GF256 = require('../../main/js/GF256.js');
 
