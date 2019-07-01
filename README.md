@@ -60,8 +60,8 @@ function doIt() {
     // parts is a map of part numbers to Uint8Array
     const parts = split(randomBytes, PARTS, QUORUM, secretBytes);
     // we only need QUORUM of the parts to recover the secret
-    delete parts[2];
-    delete parts[3];
+    delete parts['2'];
+    delete parts['3'];
     // recovered is an Unit8Array
     const recovered = join(parts);
     // prints 'hello there'
