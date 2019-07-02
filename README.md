@@ -200,7 +200,7 @@ users agree.
 
 ## Tiered Sharing JavaScript
 
-Recovering a secret requires two admin shares and three user shares: 
+Sharing a secret requiring either two admins or one admin and three users to recover:
 
 ```javascript
   const secret = new Unit8Array([1, 2, 3]);
