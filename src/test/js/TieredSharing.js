@@ -61,16 +61,6 @@ test('TieredSharing roundtrip', function (t) {
   // throw away third share that is split into 4 user parts
   delete adminSplits['3'];
 
-  console.log('Admin Shares:');
-  console.log(`1 = ${adminSplits['1']}`);
-  console.log(`2 = ${adminSplits['2']}`);
-
-  console.log('User Shares:');
-  console.log(`1 = ${usersSplits['1']}`);
-  console.log(`2 = ${usersSplits['2']}`);
-  console.log(`3 = ${usersSplits['3']}`);
-  console.log(`4 = ${usersSplits['4']}`);
-
   // reconstruct the secret with two admin shares
   const joinedAdminShares = join(adminSplits);
   t.equal(secretUtf8, bytesToSring(joinedAdminShares));

@@ -236,6 +236,8 @@ Recovering a secret requires two admin shares and three user shares:
   const recoverdSecret = join({ '1': adminSplits['1'], '3': joinedUserShares } );
 ```
 
+There is a unit test for this in `src/test/js/TieredSharing.js`. 
+
 ## License
 
 Copyright © 2017 Coda Hale
