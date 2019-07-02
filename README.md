@@ -125,7 +125,7 @@ class BuildTree {
 
     // tier 2 of the tree
     final Scheme userScheme = Scheme.of(4, 3);
-    final Map<Integer, Map<Integer, byte[]>> admins =
+    final Map<Integer, Map<Integer, byte[]>> users =
         users.entrySet()
             .stream()
             .collect(Collectors.toMap(Map.Entry::getKey, e -> userScheme.split(e.getValue())));
