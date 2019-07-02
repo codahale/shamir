@@ -159,7 +159,7 @@ Benchmarks.join     5            16  200   0.083    ms/op
 Benchmarks.split    5            16  200   0.081    ms/op
 ```
 
-## Tiered sharing
+## Tiered Sharing Java
 
 Some usages of secret sharing involve levels of access: e.g. recovering a secret requires two admin
 shares and three user shares. As @ba1ciu discovered, these can be implemented by building a tree of
@@ -171,7 +171,7 @@ class BuildTree {
     final byte[] secret = "this is a secret".getBytes(StandardCharsets.UTF_8);
     
     // tier 1 of the tree
-    final Scheme adminScheme = new Scheme(new SecureRandom(), 5, 2);
+    final Scheme adminScheme = new Scheme(new SecureRandom(), 3, 2);
     final Map<Integer, byte[]> admins = adminScheme.split(secret);
 
     // tier 2 of the tree
@@ -197,6 +197,44 @@ class BuildTree {
 By discarding the third admin share and the first two sets of user shares, we have a set of shares
 which can be used to recover the original secret as long as either two admins or one admin and three
 users agree.
+
+## Tiered Sharing JavaScript
+
+Recovering a secret requires two admin shares and three user shares: 
+
+```javascript
+  const secret = new Unit8Array([1, 2, 3]);
+
+  const adminParts = 3;
+  const adminQuorum = 2;
+  const adminSplits = split(randomBytes, adminParts, adminQuorum, secret);
+
+  const userParts = 4;
+  const userQuorum = 3;
+  const usersSplits = split(randomBytes, userParts, userQuorum, adminSplits['3'] );
+
+  // throw away third share that is split into 4 user parts
+  delete adminSplits['3'];
+
+  console.log('Admin Shares:');
+  console.log(`1 = ${adminSplits['1']}`);
+  console.log(`2 = ${adminSplits['2']}`);
+
+  console.log('User Shares:');
+  console.log(`1 = ${usersSplits['1']}`);
+  console.log(`2 = ${usersSplits['2']}`);
+  console.log(`3 = ${usersSplits['3']}`);
+  console.log(`4 = ${usersSplits['4']}`);
+
+  // throw away an admin share and one user share
+  delete adminSplits['2'];
+  delete usersSplits['1'];
+
+  // reconstruct the deleted third admin share from the three user shares 
+  const joinedUserShares = join(usersSplits);
+  // use the first admin share and the recovered third share 
+  const recoverdSecret = join({ '1': adminSplits['1'], '3': joinedUserShares } );
+```
 
 ## License
 

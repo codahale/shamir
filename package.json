@@ -4,7 +4,7 @@
   "description": "A JavaScript implementation of Shamir's Secret Sharing algorithm over GF(256).",
   "main": "src/main/js/Scheme.js",
   "scripts": {
-    "test": "tape src/test/js/GF256Tests.js src/test/js/SchemeTests.js",
+    "test": "tape src/test/js/GF256Tests.js src/test/js/SchemeTests.js src/test/js/TieredSharing.js",
     "testwithjava": "node --jvm --vm.cp=./target/classes:./target/test-classes src/test/js/PolygotTests.js",
     "lint": "eslint ./src/main/js/GF256.js ./src/main/js/Scheme.js  ./src/test/js/GF256Tests.js ./src/test/js/SchemeTests.js ./src/test/js/PolygotTests.js && echo 'Lint complete.'"
   },
@@ -18,7 +18,8 @@
     "secrets",
     "sharing",
     "crypto",
-    "nuclear-codes"
+    "nuclear-codes",
+    "shamir-secret-sharing"
   ],
   "author": "Simon Massey",
   "license": "Apache-2.0",
