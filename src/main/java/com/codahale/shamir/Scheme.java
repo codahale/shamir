@@ -95,7 +95,7 @@ public class Scheme {
    * @throws IllegalArgumentException if {@code parts} is empty or contains values of varying
    *     lengths
    */
-  public byte[] join(Map<Integer, byte[]> parts) {
+  public static byte[] join(Map<Integer, byte[]> parts) {
     checkArgument(parts.size() > 0, "No parts provided");
     final int[] lengths = parts.values().stream().mapToInt(v -> v.length).distinct().toArray();
     checkArgument(lengths.length == 1, "Varying lengths of part values");

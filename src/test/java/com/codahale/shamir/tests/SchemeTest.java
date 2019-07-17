@@ -62,7 +62,7 @@ class SchemeTest implements WithQuickTheories {
 
   @Test
   void joinEmptyParts() {
-    assertThatThrownBy(() -> new Scheme(new SecureRandom(), 3, 2).join(Collections.emptyMap()))
+    assertThatThrownBy(() -> Scheme.join(Collections.emptyMap()))
         .isInstanceOf(IllegalArgumentException.class);
   }
 
@@ -71,8 +71,7 @@ class SchemeTest implements WithQuickTheories {
     final byte[] one = new byte[] {1};
     final byte[] two = new byte[] {1, 2};
 
-    assertThatThrownBy(
-            () -> new Scheme(new SecureRandom(), 3, 2).join(ImmutableMap.of(1, one, 2, two)))
+    assertThatThrownBy(() -> Scheme.join(ImmutableMap.of(1, one, 2, two)))
         .isInstanceOf(IllegalArgumentException.class);
   }
 
@@ -81,7 +80,7 @@ class SchemeTest implements WithQuickTheories {
     final Scheme scheme = new Scheme(new SecureRandom(), 8, 3);
     final byte[] secret = "x".getBytes(StandardCharsets.UTF_8);
 
-    assertThat(scheme.join(scheme.split(secret))).containsExactly(secret);
+    assertThat(Scheme.join(scheme.split(secret))).containsExactly(secret);
   }
 
   @Test
@@ -89,7 +88,7 @@ class SchemeTest implements WithQuickTheories {
     final Scheme scheme = new Scheme(new SecureRandom(), 200, 3);
     final byte[] secret = "x".getBytes(StandardCharsets.UTF_8);
 
-    assertThat(scheme.join(scheme.split(secret))).containsExactly(secret);
+    assertThat(Scheme.join(scheme.split(secret))).containsExactly(secret);
   }
 
   @Test
@@ -129,6 +128,6 @@ class SchemeTest implements WithQuickTheories {
   private byte[] join(Scheme scheme, Set<Map.Entry<Integer, byte[]>> entries) {
     final Map<Integer, byte[]> m = new HashMap<>();
     entries.forEach(v -> m.put(v.getKey(), v.getValue()));
-    return scheme.join(m);
+    return Scheme.join(m);
   }
 }
