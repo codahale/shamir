@@ -24,7 +24,7 @@ public class LoadHarness {
     final byte[] secret = new byte[10 * 1024];
     final Scheme scheme = new Scheme(new SecureRandom(), 200, 20);
     for (int i = 0; i < 100_000_000; i++) {
-      scheme.join(scheme.split(secret));
+      Scheme.join(scheme.split(secret));
     }
   }
 }

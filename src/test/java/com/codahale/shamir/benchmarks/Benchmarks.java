@@ -60,6 +60,6 @@ public class Benchmarks {
 
   @Benchmark
   public byte[] join() {
-    return scheme.join(parts);
+    return Scheme.join(parts);
   }
 }

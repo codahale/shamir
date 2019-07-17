@@ -30,7 +30,7 @@ class Example {
     final Scheme scheme = new Scheme(new SecureRandom(), 5, 3);
     final byte[] secret = "hello there".getBytes(StandardCharsets.UTF_8);
     final Map<Integer, byte[]> parts = scheme.split(secret);
-    final byte[] recovered = scheme.join(parts);
+    final byte[] recovered = Scheme.join(parts);
     System.out.println(new String(recovered, StandardCharsets.UTF_8));
   } 
 }
