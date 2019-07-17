@@ -1,0 +1,11 @@
+# Run the stand java build on openjdk
+FROM maven:3-jdk-12-alpine AS build
+COPY . src
+WORKDIR src
+RUN mvn package
+
+# Copy the result to graaljs and test node.js+java in the same vm 
+FROM oracle/graalvm-ce:latest AS graal
+COPY --from=build /src /src
+WORKDIR src
+RUN npm test && npm run testwithjava && npm run lint

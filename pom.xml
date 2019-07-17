@@ -64,6 +64,36 @@
         </plugin>
       </plugins>
     </pluginManagement>
+    <plugins>
+      <!-- turn off added licences to contributed js files (and ./node_modules/**) -->
+      <plugin>
+        <groupId>com.mycila</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <version>3.0</version>
+        <configuration combine.self="override">
+                  <header>com/mycila/maven/plugin/license/templates/APACHE-2.txt</header>
+          <properties>
+            <owner>Coda Hale</owner>
+            <email>coda.hale@gmail.com</email>
+          </properties>
+          <mapping>
+            <java>SLASHSTAR_STYLE</java>
+          </mapping>
+          <useDefaultExcludes />
+          <excludes>
+            <!-- Ignore license files. -->
+            <exclude>LICENSE</exclude>
+            <!-- Ignore text files. -->
+            <exclude>**/*.txt</exclude>
+            <exclude>**/*.js</exclude>
+            <!-- Ignore all resource files. -->
+            <exclude>src/main/resources/**</exclude>
+            <exclude>src/test/resources/**</exclude>
+            <exclude>node_modules/**</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+      </plugins>
   </build>
 
 </project>
