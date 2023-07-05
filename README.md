@@ -5,18 +5,6 @@
 A implementation of [Shamir's Secret Sharing
 algorithm](http://en.wikipedia.org/wiki/Shamir's_Secret_Sharing) over GF(256) in both Java and JavaScript. 
 
-## Add to your Java project
-
-```xml
-<dependency>
-  <groupId>com.codahale</groupId>
-  <artifactId>shamir</artifactId>
-  <version>0.7.0</version>
-</dependency>
-```
-
-*Note: module name for Java 9+ is `com.codahale.shamir`.*
-
 ## Add to your JavaScript project
 
 ```sh
