@@ -9,7 +9,7 @@ Javascript version is original and is crossed checked against the Java version.
 
 You can use docker build both codebases and run cross-checks between them using:
 
-`docker build -f Dockerfile.graaljs . `
+`docker build . `
 
 *Note: module name for Java 9+ is `com.codahale.shamir`.*
 
