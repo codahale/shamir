@@ -1,5 +1,7 @@
 # Shamir's Secret Sharing
 
+[![CircleCI](https://circleci.com/gh/simbo1905/shamir.svg?style=svg)](https://circleci.com/gh/simbo1905/shamir)
+
 A implementation of [Shamir's Secret Sharing
 algorithm](http://en.wikipedia.org/wiki/Shamir's_Secret_Sharing) over GF(256) in both Java and JavaScript. The Java code is from 
 the archive Codahale's [shamir](https://github.com/codahale/shamir) implementation. The 
