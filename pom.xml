@@ -16,84 +16,118 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+
+    <artifactId>shamir</artifactId>
     <groupId>com.codahale</groupId>
-    <artifactId>common-pom</artifactId>
-    <version>0.0.19</version>
-  </parent>
-
-  <artifactId>shamir</artifactId>
-  <version>0.7.1-SNAPSHOT</version>
-  <name>Shamir's Secret Sharing</name>
-  <url>https://github.com/codahale/shamir</url>
-  <description>
-    An implementation of Shamir's Secret Sharing algorithm over GF(256).
-  </description>
-
-  <inceptionYear>2017</inceptionYear>
-  <scm>
-    <connection>scm:git:https://github.com/codahale/shamir.git</connection>
-    <developerConnection>scm:git:https://github.com/codahale/shamir.git</developerConnection>
+    <version>0.7.1-SNAPSHOT</version>
+    <name>Shamir's Secret Sharing</name>
     <url>https://github.com/codahale/shamir</url>
-    <tag>HEAD</tag>
-  </scm>
+    <description>
+        An implementation of Shamir's Secret Sharing algorithm over GF(256).
+    </description>
 
-  <dependencies>
-    <dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>guava</artifactId>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
+    <inceptionYear>2017</inceptionYear>
+    <scm>
+        <connection>scm:git:https://github.com/codahale/shamir.git</connection>
+        <developerConnection>scm:git:https://github.com/codahale/shamir.git</developerConnection>
+        <url>https://github.com/codahale/shamir</url>
+        <tag>HEAD</tag>
+    </scm>
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <jmh.version>1.21</jmh.version>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>27.0.1-jre</version>
+            <scope>test</scope>
+        </dependency>
 
-  <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-jar-plugin</artifactId>
-          <configuration>
-            <archive>
-              <manifestEntries>
-                <Automatic-Module-Name>com.codahale.shamir</Automatic-Module-Name>
-              </manifestEntries>
-            </archive>
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-    <plugins>
-      <!-- turn off added licences to contributed js files (and ./node_modules/**) -->
-      <plugin>
-        <groupId>com.mycila</groupId>
-        <artifactId>license-maven-plugin</artifactId>
-        <version>3.0</version>
-        <configuration combine.self="override">
-                  <header>com/mycila/maven/plugin/license/templates/APACHE-2.txt</header>
-          <properties>
-            <owner>Coda Hale</owner>
-            <email>coda.hale@gmail.com</email>
-          </properties>
-          <mapping>
-            <java>SLASHSTAR_STYLE</java>
-          </mapping>
-          <useDefaultExcludes />
-          <excludes>
-            <!-- Ignore license files. -->
-            <exclude>LICENSE</exclude>
-            <!-- Ignore text files. -->
-            <exclude>**/*.txt</exclude>
-            <exclude>**/*.js</exclude>
-            <!-- Ignore all resource files. -->
-            <exclude>src/main/resources/**</exclude>
-            <exclude>src/test/resources/**</exclude>
-            <exclude>node_modules/**</exclude>
-          </excludes>
-        </configuration>
-      </plugin>
-      </plugins>
-  </build>
+        <dependency>
+            <groupId>org.quicktheories</groupId>
+            <artifactId>quicktheories</artifactId>
+            <version>0.26</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>5.9.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>3.24.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openjdk.jmh</groupId>
+            <artifactId>jmh-core</artifactId>
+            <version>${jmh.version}</version>
+
+        </dependency>
+        <dependency>
+            <groupId>org.openjdk.jmh</groupId>
+            <artifactId>jmh-generator-annprocess</artifactId>
+            <version>${jmh.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <configuration>
+                        <archive>
+                            <manifestEntries>
+                                <Automatic-Module-Name>com.codahale.shamir</Automatic-Module-Name>
+                            </manifestEntries>
+                        </archive>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <!-- turn off added licences to contributed js files (and ./node_modules/**) -->
+            <plugin>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>3.0</version>
+                <configuration combine.self="override">
+                    <header>com/mycila/maven/plugin/license/templates/APACHE-2.txt</header>
+                    <properties>
+                        <owner>Coda Hale</owner>
+                        <email>coda.hale@gmail.com</email>
+                    </properties>
+                    <mapping>
+                        <java>SLASHSTAR_STYLE</java>
+                    </mapping>
+                    <useDefaultExcludes/>
+                    <excludes>
+                        <!-- Ignore license files. -->
+                        <exclude>LICENSE</exclude>
+                        <!-- Ignore text files. -->
+                        <exclude>**/*.txt</exclude>
+                        <exclude>**/*.js</exclude>
+                        <!-- Ignore all resource files. -->
+                        <exclude>src/main/resources/**</exclude>
+                        <exclude>src/test/resources/**</exclude>
+                        <exclude>node_modules/**</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
