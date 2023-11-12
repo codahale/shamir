@@ -1,19 +1,13 @@
 # Shamir's Secret Sharing
 
-[![CircleCI](https://circleci.com/gh/simbo1905/shamir.svg?style=svg)](https://circleci.com/gh/simbo1905/shamir)
-
 A implementation of [Shamir's Secret Sharing
-algorithm](http://en.wikipedia.org/wiki/Shamir's_Secret_Sharing) over GF(256) in both Java and JavaScript. 
+algorithm](http://en.wikipedia.org/wiki/Shamir's_Secret_Sharing) over GF(256) in both Java and JavaScript. The Java code is from 
+the archive Codahale's [shamir](https://github.com/codahale/shamir) implementation. The 
+Javascript version is original and is crossed checked against the Java version. 
 
-## Add to your Java project
+You can use docker build both codebases and run cross-checks between them using:
 
-```xml
-<dependency>
-  <groupId>com.codahale</groupId>
-  <artifactId>shamir</artifactId>
-  <version>0.7.0</version>
-</dependency>
-```
+`docker build -f Dockerfile.graaljs . `
 
 *Note: module name for Java 9+ is `com.codahale.shamir`.*
 
@@ -21,25 +15,6 @@ algorithm](http://en.wikipedia.org/wiki/Shamir's_Secret_Sharing) over GF(256) in
 
 ```sh
 npm i shamir
-```
-
-## Use the thing in Java
-
-```java
-import com.codahale.shamir.Scheme;
-import java.nio.charset.StandardCharsets;
-import java.security.SecureRandom;
-import java.util.Map;
-
-class Example {
-  void doIt() {
-    final Scheme scheme = new Scheme(new SecureRandom(), 5, 3);
-    final byte[] secret = "hello there".getBytes(StandardCharsets.UTF_8);
-    final Map<Integer, byte[]> parts = scheme.split(secret);
-    final byte[] recovered = scheme.join(parts);
-    System.out.println(new String(recovered, StandardCharsets.UTF_8));
-  } 
-}
 ```
 
 ## Use the thing in JavaScript
@@ -66,6 +41,37 @@ function doIt() {
     const recovered = join(parts);
     // prints 'hello there'
     console.log(utf8Decoder.decode(recovered));
+}
+```
+
+## [Optional] Add to your Java project
+
+The Java version is available as the orginal Codahale distribution:
+
+```xml
+<dependency>
+  <groupId>com.codahale</groupId>
+  <artifactId>shamir</artifactId>
+  <version>0.7.0</version>
+</dependency>
+```
+
+## Use the thing in Java
+
+```java
+import com.codahale.shamir.Scheme;
+import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
+import java.util.Map;
+
+class Example {
+  void doIt() {
+    final Scheme scheme = new Scheme(new SecureRandom(), 5, 3);
+    final byte[] secret = "hello there".getBytes(StandardCharsets.UTF_8);
+    final Map<Integer, byte[]> parts = scheme.split(secret);
+    final byte[] recovered = scheme.join(parts);
+    System.out.println(new String(recovered, StandardCharsets.UTF_8));
+  } 
 }
 ```
 

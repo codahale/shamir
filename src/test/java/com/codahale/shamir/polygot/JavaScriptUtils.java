@@ -1,5 +1,5 @@
 /*
- * Copyright © 2019 Simon Massey (massey1905@gmail.com)
+ * Copyright © 2017 Coda Hale (coda.hale@gmail.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,11 +22,10 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 /**
- * The GraalJS internals cannot be fooled into casting between unsigned 
- * JavaScript bytes and signed Java bytes. We only ever want to 
- * do this within unit tests to compare arrays in-memory. This class uses  
- * an inefficent workaround of building bidirectional maps. The keys are 
- * Integer to fit a signed byte. 
+ * The GraalJS internals cannot be fooled into casting between unsigned JavaScript bytes and signed
+ * Java bytes. We only ever want to do this within unit tests to compare arrays in-memory. This
+ * class uses an inefficent workaround of building bidirectional maps. The keys are Integer to fit a
+ * signed byte.
  */
 public class JavaScriptUtils {
   // https://stackoverflow.com/a/12310078/329496
@@ -39,7 +38,7 @@ public class JavaScriptUtils {
     for (byte b = Byte.MIN_VALUE; ; b++) {
       final String bits = byteToBinaryString(b);
       final Integer i = Integer.parseInt(bits, 2) & 0xff;
-      result.put((int)b, i);
+      result.put((int) b, i);
       // here we avoid overflow on b++ causing an infinit loop
       if (b == Byte.MAX_VALUE) break;
     }
@@ -51,5 +50,4 @@ public class JavaScriptUtils {
   public static Map<Integer, Integer> unsignedToSignedByteMap =
       signedToUnsignedByteMap.entrySet().stream()
           .collect(Collectors.toMap(Entry::getValue, Entry::getKey));;
-
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2019 Simon Massey (massey1905@gmail.com)
+ * Copyright © 2017 Coda Hale (coda.hale@gmail.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,7 @@ package com.codahale.shamir.polygot;
 
 import java.security.SecureRandom;
 
-/**
- * This class ensures that unit tests can repeatedly initalise with 
- * the same polynomial. 
- */
+/** This class ensures that unit tests can repeatedly initalise with the same polynomial. */
 public class NotRandomSource extends SecureRandom {
 
   @Override
