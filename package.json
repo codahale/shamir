@@ -1,0 +1,38 @@
+{
+  "name": "shamir",
+  "version": "0.7.1",
+  "description": "A JavaScript implementation of Shamir's Secret Sharing algorithm over GF(256).",
+  "main": "src/main/js/Scheme.js",
+  "scripts": {
+    "test": "tape src/test/js/GF256Tests.js src/test/js/SchemeTests.js src/test/js/TieredSharing.js",
+    "testwithjava": "node --jvm --vm.cp=./target/classes:./target/test-classes src/test/js/PolygotTests.js",
+    "lint": "eslint ./src/main/js/GF256.js ./src/main/js/Scheme.js  ./src/test/js/GF256Tests.js ./src/test/js/SchemeTests.js ./src/test/js/PolygotTests.js && echo 'Lint complete.'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/simbo1905/shamir.git"
+  },
+  "keywords": [
+    "sss",
+    "shamir",
+    "secrets",
+    "sharing",
+    "crypto",
+    "nuclear-codes",
+    "shamir-secret-sharing"
+  ],
+  "author": "Simon Massey",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/simbo1905/shamir/issues"
+  },
+  "homepage": "https://github.com/simbo1905/shamir#readme",
+  "devDependencies": {
+    "eslint": "^6.0.1",
+    "eslint-config-prettier": "^6.0.0",
+    "eslint-plugin-prettier": "^3.1.0",
+    "prettier": "^1.18.2",
+    "tape": "^4.11.0",
+    "tape-catch": "^1.0.6"
+  }
+}
